@@ -19,3 +19,12 @@ venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# Environments, build artifacts, caches
+.venv/
+node_modules/
+frontend/dist/
+*.egg-info/
+.coverage
+htmlcov/
+.vite/
