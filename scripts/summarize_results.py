@@ -13,6 +13,11 @@ RES = ROOT / "results"
 P = "standard"
 
 
+
+def tidy(lines: list[str]) -> str:
+    """Join lines without trailing whitespace and with exactly one final newline."""
+    return "\n".join(l.rstrip() for l in lines).rstrip("\n") + "\n"
+
 def L(sub, name):
     return json.loads((RES / sub / f"{name}_{P}.json").read_text())
 
@@ -138,7 +143,7 @@ def main() -> None:
         out.append(f"| {m} | {b['n_rows']} | {b['n_feasible']} | {b['n_successful']} | {b['random_feasible']['mean_score']:.1f} ({100 * b['random_feasible']['success_rate']:.1f}%) | "
                    f"{b['greedy_sequential']['score']:.1f} | {b['best_enumerated']['score']:.1f} |")
     out += [""]
-    (ROOT / "docs" / "benchmark_results.md").write_text("\n".join(out) + "\n")
+    (ROOT / "docs" / "benchmark_results.md").write_text(tidy(out))
     # ---------------- performance
     t = perf["timings"]
     pr = ["# Performance report", "", f"Measured by `python -m qta6.cli benchmark --profile standard --only performance` on: {perf['meta']['machine']['cpu_count']} CPU cores, {perf['meta']['machine']['platform']}, Python {perf['meta']['software']['python']}. "
@@ -152,7 +157,7 @@ def main() -> None:
     pr += ["", "Initialization vs steady state: Stim circuit generation, detector-error-model construction and matching initialization are one-off per (d, rounds, p) and cached (`lru_cache`) by the engine; "
            "per-shot decoding and batched decoding are the steady-state costs. Scenario serialization is performed once by `qta6.cli export` (≈15 s for the standard profile, 3.3 MB JSON); "
            "the browser only loads and replays this file. Frontend production bundle: see `docs/frontend_and_api.md`.", ""]
-    (ROOT / "docs" / "performance_report.md").write_text("\n".join(pr) + "\n")
+    (ROOT / "docs" / "performance_report.md").write_text(tidy(pr))
     print("wrote docs/benchmark_results.md and docs/performance_report.md")
 
 

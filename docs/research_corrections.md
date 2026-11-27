@@ -1,0 +1,30 @@
+# Research corrections and re-verifications
+
+Phase 1 research documents in `research/` are **preserved unchanged**. This file records, with evidence, where implementation showed that a Phase 1 statement was wrong, imprecise or newly resolved. Bibliographic verification in Phase 1 was not scientific validation; items below were checked by running code.
+
+## Corrections
+
+| # | Phase 1 statement / assumption | Finding during implementation | Evidence | Effect |
+|---|---|---|---|---|
+| C1 | `research/03`: qiskit-paulice's `NoiseModel(gate_noise=…)` described only as a rough noise model | `gate_noise` is an **average two-qubit gate infidelity r**; the total non-identity Pauli probability is `5r/4` (read from the package's `GateNoise` docstring). Qiskit's depolarizing parameter is a third quantity (`16p/15`). | `tests/physics/test_noise_channels.py::test_depolarizing_parameter_conversions`; `noise/channels.py` | Explicit conversions; the checks are picked with `r = 4p/5` for the simulated `p` |
+| C2 | `research/03`/`09`: `CheckedCircuit.uncovered_paulis` treated (following the competing game paper) as the set of "Z-safe"/undetectable-logical locations | The library's list does **not** coincide with the exact classification of undetected-and-damaging faults (e.g. it lists `Z` on the `|0⟩` input wire, which is harmless; counts differ by tens of locations). Its precise semantics are not documented. | exploratory comparison in the implementation; two independent exact classifiers agree (`test_fault_classifiers_agree_and_cover_all_categories`) | QTA6 does not rely on `uncovered_paulis`; fault classification is computed exactly |
+| C3 | `research/03`: post-selected **state** fidelity requires a coherent-parity trick for the measured-basis check mode | v0.3 offers a **stabilizer mode** (`stabilizers="all"`): checks back-propagate to stabilizers, the syndrome is the ancilla bit alone and stays valid for any later measurement | `add_pauli_checks` docstring; `detection/evaluate.py` | Simpler and exact state-fidelity definition used throughout |
+| C4 | `research/03`: unprotected baseline = "the same circuit without ancilla gates" | Paulice may **re-synthesize** single-qubit gates; the data-only gates of a protected circuit differ in decomposition from the original payload (fidelity offset ≈ 0.001–0.004 at p2 = 0.01–0.02). | `baseline_note` in exported outcomes | Gameplay conditions use the *original* payload as baseline; matched-skeleton fidelity is used only for detection-probability bookkeeping and both are exported |
+| C5 | `research/03`: any requested number of checks can be placed | `add_pauli_checks` returns fewer circuits than targets+1 when checks cannot be placed (depth ≤ 2 or small widths); requesting more raises a clear error | `build_protected`; benchmark rows with status `not_placeable` | Reported as not placeable, never fabricated |
+| C6 | `research/14`: "Python 3.12 only if Mitiq is included; Mitiq GPL" | Mitiq is **not used**: ZNE/Richardson, readout mitigation and allocation are re-implemented (small, tested). With Mitiq dropped, Python 3.12 still satisfies all constraints (installed and tested: 3.12.3). | `pyproject.toml`, `requirements-lock.txt` | No GPL dependency; license audit in `dependency_audit.md` |
+| C7 | `research/08`: `qiskit-iqm` deprecated in favour of `iqm-client[qiskit]` | `iqm-client[qiskit]==37.0.0` requires `qiskit>=1.0,<2.2`, **incompatible with Qiskit 2.6.2**; `qiskit-paulice` needs Qiskit ≥ 2.1, so an IQM environment would have to pin Qiskit 2.1.x separately. | `uv pip install --dry-run` conflict message | IQM execution is documented as an isolated optional environment ([hardware_readiness.md](hardware_readiness.md)) |
+| C8 | `research/04`: offline use of PNA/SLC "unverified" | `qiskit-addon-pna 0.2.0` and `qiskit-addon-slc 0.2.0` **install and import** together with Qiskit 2.6.2 (isolated test environment). They were *not executed* in QTA6. | install/import log | Availability confirmed; use deferred (P2) |
+| C9 | `research/05`: circuit-level surface-code threshold "≈0.8–1 %" used with a caveat | For QTA6's uniform circuit-level depolarizing model with PyMatching MWPM, logical failure decreases with distance for p ≤ 0.005 and increases for p ≥ 0.007 (grid 0.001–0.015). This brackets a crossover in (0.005, 0.007); **no threshold value is claimed** (coarse grid, fixed samples). | `docs/benchmark_results.md` §3 | Phase 1 caveat retained |
+| C10 | `research/04` §2.5: variance factor `1/(1−ε₀−ε₁)²` for single-qubit readout inversion | Re-derived and implemented via full/tensor calibration; condition numbers are exposed because finite-shot calibration noise can dominate for near-singular matrices | `tests/physics/test_mitigation.py` | Added calibration shots to every budget |
+
+## Re-verified without change
+
+* Pauli propagation tables, signs and the T doping rule `TZT† = Z`, `TXT† = (X+Y)/√2` (checked by exact simulation: a T gate on a monitored wire makes a check fire with non-zero probability).
+* Twirled amplitude damping `p_X = p_Y = γ/4`, `p_Z = (2−γ−2√(1−γ))/4`; Richardson coefficients (1,3), (1,3,5) variance factors 5 and 19 for equally spaced (1,2)/(1,2,3); Neyman allocation 49 vs 57 example; PEC arithmetic (γ = (2−f)/f) is **not** implemented (PEC is P2) and was not re-tested.
+* Active qubits of the rotated code 17/49/97 and index-space sizes 26/64/118; MWPM edge weights `ln((1−p)/p)`.
+
+## Implementation bugs found and fixed (kept for transparency)
+
+* Wilson interval returned `3.5e-18` instead of exactly `0` for zero successes (floating point) — clamped at the boundary.
+* An early A1 experiment criterion used a normal-approximation standard error that collapses when no shot reads 1; replaced by the Wilson interval (a 10-shot run could otherwise be "successful").
+* A real-browser test revealed overlapping SVG hit areas that made some decoder edges unclickable although jsdom tests passed; click targets were moved to non-overlapping edge-midpoint circles and boundary edges are fanned out.
