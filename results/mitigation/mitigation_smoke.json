@@ -1,0 +1,613 @@
+{
+ "meta": {
+  "benchmark": "mitigation",
+  "profile": "smoke",
+  "qta6": "0.1.0",
+  "source_revision": "6201f4e+dirty",
+  "software": {
+   "python": "3.12.3",
+   "qiskit": "2.6.2",
+   "qiskit-aer": "0.18.4",
+   "qiskit-paulice": "0.3",
+   "stim": "1.16.0",
+   "pymatching": "2.4.0",
+   "sinter": "1.16.0",
+   "numpy": "2.5.5",
+   "scipy": "1.18.1",
+   "networkx": "3.7",
+   "pandas": "3.1.1",
+   "matplotlib": "3.11.2",
+   "pydantic": "2.14.4",
+   "fastapi": "0.165.0"
+  },
+  "machine": {
+   "cpu_count": 4,
+   "platform": "Linux-6.18.44-fc-v880-x86_64-with-glibc2.39"
+  },
+  "result_kind": "exact_numerical + monte_carlo (see per-row kind)",
+  "seconds": 0.3141462439998577,
+  "trials": 60
+ },
+ "rows": [
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "unmitigated",
+   "bias": 0.029106357598777444,
+   "variance": 0.00033683022598870067,
+   "mse": 0.0011783964415567974,
+   "abs_err": 0.031494398807829324,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 4,
+   "depth": 14,
+   "example_allocation": [
+    2000
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 1.0
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "readout_tensor",
+   "bias": 0.024285970514086153,
+   "variance": 0.00037385752784976,
+   "mse": 0.0009574349328633279,
+   "abs_err": 0.024936256621097278,
+   "trials": 60,
+   "calibration_shots": 100,
+   "pilot_shots": 0,
+   "two_qubit_gates": 4,
+   "depth": 14,
+   "example_allocation": [
+    1900
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 0.8124896673978802
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "zne_linear_uniform",
+   "bias": 0.011239690932110968,
+   "variance": 0.0030014516949152512,
+   "mse": 0.003077758152249375,
+   "abs_err": 0.043981615155351816,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 12,
+   "depth": 58,
+   "example_allocation": [
+    1000,
+    1000
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 2.611818946248091
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "zne_richardson3_uniform",
+   "bias": 0.01614943245774436,
+   "variance": 0.00857270148097527,
+   "mse": 0.008690627291666262,
+   "abs_err": 0.0729456939740139,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    667,
+    667,
+    666
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 7.37496056945398
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "zne_richardson3_oracle",
+   "bias": 0.01555458713868213,
+   "variance": 0.0043073068707503905,
+   "mse": 0.004477463603959405,
+   "abs_err": 0.05334061336302936,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    1063,
+    719,
+    218
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 3.7996241723576154
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "zne_richardson3_adaptive",
+   "bias": 0.02005200365661247,
+   "variance": 0.004783820149196712,
+   "mse": 0.005106172664021565,
+   "abs_err": 0.06026516633258163,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 99,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    1065,
+    668,
+    168
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 4.333153499068381
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "readout+zne_linear",
+   "bias": -0.003013232389140197,
+   "variance": 0.0027922610022740003,
+   "mse": 0.0027548028883337297,
+   "abs_err": 0.04032795430549765,
+   "trials": 60,
+   "calibration_shots": 100,
+   "pilot_shots": 0,
+   "two_qubit_gates": 12,
+   "depth": 58,
+   "example_allocation": [
+    950,
+    950
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 2.3377556068434133
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 2000,
+   "strategy": "readout+zne_richardson3",
+   "bias": 0.0035011579499520384,
+   "variance": 0.005772572516539963,
+   "mse": 0.005688621081588142,
+   "abs_err": 0.06439254796844159,
+   "trials": 60,
+   "calibration_shots": 100,
+   "pilot_shots": 0,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    634,
+    633,
+    633
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 4.827425542861296
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "unmitigated",
+   "bias": 0.03059385759877742,
+   "variance": 0.00013040570268361583,
+   "mse": 0.0010642163970798256,
+   "abs_err": 0.030593857598777405,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 4,
+   "depth": 14,
+   "example_allocation": [
+    8000
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 1.0
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "readout_tensor",
+   "bias": 0.018810882665595885,
+   "variance": 0.00013716591145161345,
+   "mse": 0.0004887291195862359,
+   "abs_err": 0.019839743334926233,
+   "trials": 60,
+   "calibration_shots": 400,
+   "pilot_shots": 0,
+   "two_qubit_gates": 4,
+   "depth": 14,
+   "example_allocation": [
+    7600
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 0.45923847906054854
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "zne_linear_uniform",
+   "bias": 0.011314690932111016,
+   "variance": 0.0005426752118644064,
+   "mse": 0.0006616528558891947,
+   "abs_err": 0.021410876372844393,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 12,
+   "depth": 58,
+   "example_allocation": [
+    4000,
+    4000
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 0.6217277404339456
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "zne_richardson3_uniform",
+   "bias": 0.010956482269052603,
+   "variance": 0.0018704670588426434,
+   "mse": 0.0019593371115739955,
+   "abs_err": 0.03376797834983108,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    2667,
+    2667,
+    2666
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 1.8411078019003948
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "zne_richardson3_oracle",
+   "bias": 0.006112000962628539,
+   "variance": 0.0010616764543899455,
+   "mse": 0.0010813384025839512,
+   "abs_err": 0.026959221473796115,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 0,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    4251,
+    2876,
+    873
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 1.01608883827679
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "zne_richardson3_adaptive",
+   "bias": 0.013377578758735353,
+   "variance": 0.0013590953785824781,
+   "mse": 0.0015154034023856032,
+   "abs_err": 0.0305832751320357,
+   "trials": 60,
+   "calibration_shots": 0,
+   "pilot_shots": 399,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    4028,
+    2748,
+    825
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 1.423961711681778
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "readout+zne_linear",
+   "bias": 0.0037709522458904687,
+   "variance": 0.0009216072640362067,
+   "mse": 0.0009204672238097231,
+   "abs_err": 0.025985270856335004,
+   "trials": 60,
+   "calibration_shots": 400,
+   "pilot_shots": 0,
+   "two_qubit_gates": 12,
+   "depth": 58,
+   "example_allocation": [
+    3800,
+    3800
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 0.8649248652205084
+  },
+  {
+   "profile": "gate_dominated",
+   "task_seed": 4,
+   "ideal": -0.41158969093211073,
+   "budget": 8000,
+   "strategy": "readout+zne_richardson3",
+   "bias": 0.005296463410042973,
+   "variance": 0.0016398349029120094,
+   "mse": 0.0016405568458507333,
+   "abs_err": 0.03345967003902525,
+   "trials": 60,
+   "calibration_shots": 400,
+   "pilot_shots": 0,
+   "two_qubit_gates": 20,
+   "depth": 102,
+   "example_allocation": [
+    2534,
+    2533,
+    2533
+   ],
+   "kind": "monte_carlo",
+   "curve": {
+    "1": {
+     "noisy": -0.3923791033715345,
+     "observed": -0.38072505162229653
+    },
+    "3": {
+     "noisy": -0.3566044970937032,
+     "observed": -0.34601298692552296
+    },
+    "5": {
+     "noisy": -0.32408979088709955,
+     "observed": -0.31446400000796176
+    }
+   },
+   "mse_ratio_vs_unmitigated": 1.5415632105954828
+  }
+ ]
+}

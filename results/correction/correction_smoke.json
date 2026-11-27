@@ -1,0 +1,170 @@
+{
+ "meta": {
+  "benchmark": "correction",
+  "profile": "smoke",
+  "qta6": "0.1.0",
+  "source_revision": "6201f4e+dirty",
+  "software": {
+   "python": "3.12.3",
+   "qiskit": "2.6.2",
+   "qiskit-aer": "0.18.4",
+   "qiskit-paulice": "0.3",
+   "stim": "1.16.0",
+   "pymatching": "2.4.0",
+   "sinter": "1.16.0",
+   "numpy": "2.5.5",
+   "scipy": "1.18.1",
+   "networkx": "3.7",
+   "pandas": "3.1.1",
+   "matplotlib": "3.11.2",
+   "pydantic": "2.14.4",
+   "fastapi": "0.165.0"
+  },
+  "machine": {
+   "cpu_count": 4,
+   "platform": "Linux-6.18.44-fc-v880-x86_64-with-glibc2.39"
+  },
+  "result_kind": "exact_numerical + monte_carlo (see per-row kind)",
+  "seconds": 0.015466241000012815
+ },
+ "rows": [
+  {
+   "distance": 3,
+   "rounds": 3,
+   "p": 0.005,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 5000,
+   "failures": 97,
+   "estimate": {
+    "failures": 97,
+    "trials": 5000,
+    "p": 0.0194,
+    "wilson95": [
+     0.015929606684229693,
+     0.02360830842535922
+    ],
+    "clopper_pearson95": [
+     0.015759541010466376,
+     0.023615703115726135
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.00655215303399137,
+   "active_qubits": 17,
+   "index_space_qubits": 26,
+   "qubit_rounds": 51,
+   "sample_seconds": 0.000832957000056922,
+   "decode_seconds": 0.0019245720000071742,
+   "decode_us_per_shot": 0.38491440000143484,
+   "throughput_shots_per_s": 2597980.2262432175,
+   "build_seconds": 0.002869334000024537,
+   "seed": 11,
+   "kind": "monte_carlo",
+   "stopping_rule": "fixed sample of 5000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  }
+ ],
+ "x_memory": [],
+ "repetition_code": [
+  {
+   "error": "none",
+   "syndrome": [
+    0,
+    0
+   ],
+   "recovery_qubit": null,
+   "fidelity": 0.9999999999999998,
+   "corrected": true
+  },
+  {
+   "error": "X0",
+   "syndrome": [
+    1,
+    0
+   ],
+   "recovery_qubit": 0,
+   "fidelity": 0.9999999999999998,
+   "corrected": true
+  },
+  {
+   "error": "X1",
+   "syndrome": [
+    1,
+    1
+   ],
+   "recovery_qubit": 1,
+   "fidelity": 0.9999999999999998,
+   "corrected": true
+  },
+  {
+   "error": "X2",
+   "syndrome": [
+    0,
+    1
+   ],
+   "recovery_qubit": 2,
+   "fidelity": 0.9999999999999998,
+   "corrected": true
+  },
+  {
+   "error": "Y0",
+   "syndrome": [
+    1,
+    0
+   ],
+   "recovery_qubit": 0,
+   "fidelity": 0.20574944137232712,
+   "corrected": false
+  },
+  {
+   "error": "Y1",
+   "syndrome": [
+    1,
+    1
+   ],
+   "recovery_qubit": 1,
+   "fidelity": 0.20574944137232712,
+   "corrected": false
+  },
+  {
+   "error": "Y2",
+   "syndrome": [
+    0,
+    1
+   ],
+   "recovery_qubit": 2,
+   "fidelity": 0.20574944137232712,
+   "corrected": false
+  },
+  {
+   "error": "Z0",
+   "syndrome": [
+    0,
+    0
+   ],
+   "recovery_qubit": null,
+   "fidelity": 0.205749441372327,
+   "corrected": false
+  },
+  {
+   "error": "Z1",
+   "syndrome": [
+    0,
+    0
+   ],
+   "recovery_qubit": null,
+   "fidelity": 0.205749441372327,
+   "corrected": false
+  },
+  {
+   "error": "Z2",
+   "syndrome": [
+    0,
+    0
+   ],
+   "recovery_qubit": null,
+   "fidelity": 0.205749441372327,
+   "corrected": false
+  }
+ ]
+}

@@ -1,0 +1,110 @@
+{
+ "meta": {
+  "benchmark": "performance",
+  "profile": "standard",
+  "qta6": "0.1.0",
+  "source_revision": "712e423+dirty",
+  "software": {
+   "python": "3.12.3",
+   "qiskit": "2.6.2",
+   "qiskit-aer": "0.18.4",
+   "qiskit-paulice": "0.3",
+   "stim": "1.16.0",
+   "pymatching": "2.4.0",
+   "sinter": "1.16.0",
+   "numpy": "2.5.5",
+   "scipy": "1.18.1",
+   "networkx": "3.7",
+   "pandas": "3.1.1",
+   "matplotlib": "3.11.2",
+   "pydantic": "2.14.4",
+   "fastapi": "0.165.0"
+  },
+  "machine": {
+   "cpu_count": 4,
+   "platform": "Linux-6.18.44-fc-v880-x86_64-with-glibc2.39"
+  },
+  "result_kind": "exact_numerical + monte_carlo (see per-row kind)"
+ },
+ "timings": {
+  "clifford_circuit_construction": {
+   "median_ms": 0.3017489998455858,
+   "p95_ms": 0.3709267001113403,
+   "reps": 15
+  },
+  "paulice_check_generation_k3": {
+   "median_ms": 10.460312000077465,
+   "p95_ms": 13.03041689998281,
+   "reps": 15
+  },
+  "aer_density_matrix_7q": {
+   "median_ms": 21.694197999977405,
+   "p95_ms": 26.535695799930178,
+   "reps": 15
+  },
+  "post_selection_exact_eval": {
+   "median_ms": 40.88272300009521,
+   "p95_ms": 47.17301650007357,
+   "reps": 15
+  },
+  "zne_global_fold_x5": {
+   "median_ms": 3.6463920000642247,
+   "p95_ms": 4.805518000102893,
+   "reps": 15
+  },
+  "mitigation_estimation_100_trials": {
+   "median_ms": 4.698397999845838,
+   "p95_ms": 5.086537800025326,
+   "reps": 5
+  },
+  "stim_surface_d5_generation": {
+   "median_ms": 0.05011899997953151,
+   "p95_ms": 0.18735719997948752,
+   "reps": 15
+  },
+  "detector_error_model_d5": {
+   "median_ms": 5.677994000052422,
+   "p95_ms": 7.966750900095574,
+   "reps": 15
+  },
+  "matching_init_d5": {
+   "median_ms": 1.739067000016803,
+   "p95_ms": 1.9199585000706063,
+   "reps": 15
+  },
+  "decode_single_shot_d5_us": {
+   "median_ms": 0.002636500084918225,
+   "p95_ms": 0.0030682000669912664,
+   "reps": 200
+  },
+  "decode_batch_2000_d5": {
+   "median_ms": 2.157170999907976,
+   "p95_ms": 2.3208961001046187,
+   "reps": 15
+  },
+  "batched_decode_throughput_shots_per_s_d5": {
+   "value": 927140.2221174489
+  },
+  "decode_batch_5000_d3": {
+   "median_ms": 1.0461109998232132,
+   "p95_ms": 1.1706299998877512,
+   "reps": 15
+  },
+  "decode_batch_5000_d5": {
+   "median_ms": 10.234068000045227,
+   "p95_ms": 11.920409100025603,
+   "reps": 15
+  },
+  "decode_batch_5000_d7": {
+   "median_ms": 43.34978399992906,
+   "p95_ms": 51.52226539994444,
+   "reps": 15
+  },
+  "pareto_front_500_candidates": {
+   "median_ms": 64.7920440001144,
+   "p95_ms": 83.49742699992927,
+   "reps": 15
+  }
+ },
+ "note": "median/p95 wall-clock on the recorded machine; cold-start costs (imports, first Aer call) are excluded by warm-up in the first rep"
+}
