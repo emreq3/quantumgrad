@@ -87,3 +87,25 @@ def run_single_error(theta: float, phi: float, error: str, phase_flip: bool = Fa
 def sweep_single_errors(theta: float = 1.1, phi: float = 0.7, phase_flip: bool = False) -> list[RepetitionOutcome]:
     errs = ["none"] + [f"{p}{q}" for p in "XYZ" for q in range(3)]
     return [run_single_error(theta, phi, e, phase_flip) for e in errs]
+
+
+def run_with_recovery(theta: float, phi: float, error: str, recovery: int | None, phase_flip: bool = False) -> RepetitionOutcome:
+    """Same experiment but the *player* chooses the recovery qubit (``None`` = do nothing)."""
+    base = run_single_error(theta, phi, error, phase_flip)
+    qc = QuantumCircuit(5)
+    qc.compose(logical_input(theta, phi), qubits=[0], inplace=True)
+    encode(qc, phase_flip)
+    if error != "none":
+        getattr(qc, error[0].lower())(int(error[1:]))
+    sv = Statevector.from_instruction(qc)
+    fix = QuantumCircuit(5)
+    if recovery is not None:
+        (fix.z if phase_flip else fix.x)(recovery)
+    if phase_flip:
+        fix.h([0, 1, 2])
+    fix.cx(0, 2)
+    fix.cx(0, 1)
+    ref = Statevector.from_instruction(logical_input(theta, phi))
+    rho = partial_trace(sv.evolve(fix), [1, 2, 3, 4])
+    fid = float(np.real(ref.data.conj() @ rho.data @ ref.data))
+    return RepetitionOutcome(error, base.syndrome, recovery, fid, fid > 1 - 1e-9)

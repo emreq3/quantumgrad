@@ -128,3 +128,9 @@ def paulice_uncovered_set(pc: ProtectedCircuit) -> set[tuple[int, int | None, st
     """Library-reported undetectable *logical* single-qubit faults on data qubits."""
     assert pc.checked is not None
     return {(u.qubit, u.after_instruction, u.pauli) for u in pc.checked.uncovered_paulis}
+
+
+def syndrome_of_fault(pc: ProtectedCircuit, loc: FaultLocation) -> tuple[int, ...]:
+    """Syndrome bit vector (one bit per check ancilla) of a single Pauli fault in a Clifford protected circuit."""
+    final = propagate_error(pc.circuit, loc.qubit, loc.pauli, loc.after_instruction)
+    return tuple(int(final.x[a]) for a in pc.ancillas)

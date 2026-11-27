@@ -206,7 +206,8 @@ def run_trial(td: TaskData, st: Strategy, total_budget: int, rng: np.random.Gene
                          two_qubit_gates=td.scales[top].two_qubit_gates, depth=td.scales[top].depth,
                          measurements=n)
     assert res.total_measured_shots == total_budget
-    return est, res, {"allocation": alloc.tolist(), "sigma_used": None if sigma_used is None else sigma_used.tolist()}
+    return est, res, {"allocation": alloc.tolist(), "sigma_used": None if sigma_used is None else sigma_used.tolist(),
+                      "values": [float(v) for v in vals]}
 
 
 @dataclass
@@ -217,23 +218,27 @@ class StrategyResult:
     resources: ResourceVector
     estimates: np.ndarray = field(repr=False)
     example_allocation: list[int] = field(default_factory=list)
+    example_values: list[float] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {"strategy": self.strategy.__dict__ | {"scales": list(self.strategy.scales)},
                 "total_budget": self.total_budget, "summary": self.summary.to_dict(),
-                "resources": self.resources.to_dict(), "example_allocation": self.example_allocation}
+                "resources": self.resources.to_dict(), "example_allocation": self.example_allocation,
+                "example_values": self.example_values}
 
 
 def evaluate_strategy(td: TaskData, st: Strategy, total_budget: int, n_trials: int, seed: int) -> StrategyResult:
     ests = np.empty(n_trials)
     res = None
     alloc: list[int] = []
+    vals: list[float] = []
     for t in range(n_trials):
         rng = stream(seed, td.task.name, td.profile.name, st.name, total_budget, t)
         ests[t], res, info = run_trial(td, st, total_budget, rng)
         if t == 0:
             alloc = info["allocation"]
-    return StrategyResult(st, total_budget, summarize_estimates(ests, td.task.ideal), res, ests, alloc)  # type: ignore[arg-type]
+            vals = info["values"]
+    return StrategyResult(st, total_budget, summarize_estimates(ests, td.task.ideal), res, ests, alloc, vals)  # type: ignore[arg-type]
 
 
 def standard_strategies(n: int, total_budget: int) -> list[Strategy]:

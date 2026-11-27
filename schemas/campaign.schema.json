@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/emreq3/quantumgrad/schemas/campaign.schema.json",
+  "title": "QTA6 campaign data",
+  "type": "object",
+  "required": ["schema", "generator", "districts", "missions", "glossary"],
+  "properties": {
+    "schema": {"const": "qta6.data/1"},
+    "generator": {"type": "object", "required": ["qta6", "profile", "source_revision", "software"]},
+    "notice": {"type": "string"},
+    "districts": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "name", "order", "pillar", "blurb"]}},
+    "missions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/mission"}},
+    "glossary": {"type": "array", "items": {"type": "object", "required": ["term", "def"]}},
+    "test_vectors": {"type": "array", "items": {"type": "object", "required": ["mission", "instance", "chosen", "expected"]}}
+  },
+  "$defs": {
+    "mission": {
+      "type": "object",
+      "required": ["id", "district", "order", "title", "difficulty", "pillar", "kind", "story", "learning_objective", "noise",
+                   "resources", "allowed_actions", "constraints", "success_conditions", "unlock_requires", "replay", "provenance",
+                   "ui", "outcomes", "reference"],
+      "properties": {
+        "difficulty": {"enum": ["beginner", "intermediate", "advanced"]},
+        "pillar": {"enum": ["tutorial", "detection", "mitigation", "correction", "optimization", "integrated"]},
+        "kind": {"enum": ["experiment", "repetition", "detection", "diagnosis", "mitigation", "decoding", "distance", "optimization", "drift", "joint", "integrated"]},
+        "noise": {"type": "object", "required": ["profile", "category", "description", "provenance"],
+                  "properties": {"category": {"enum": ["synthetic", "literature-inspired", "analytically derived", "hardware-calibrated"]}}},
+        "resources": {"type": "object", "required": ["credits", "caps"]},
+        "unlock_requires": {"type": "array", "items": {"type": "string"}},
+        "provenance": {"type": "object", "required": ["kind", "build_profile"], "properties": {"kind": {"const": "precomputed"}}},
+        "outcomes": {"type": "object"},
+        "reference": {"type": "object"}
+      }
+    }
+  }
+}

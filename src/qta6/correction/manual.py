@@ -180,3 +180,89 @@ def class_probabilities(inst: DecodingInstance, max_edges: int = 16) -> dict[int
         cl[c["logical_flip"]] += c["likelihood"]
     z = cl[0] + cl[1]
     return {k: v / z for k, v in cl.items()} if z > 0 else cl
+
+
+# ---------------------------------------------------------------------------------------------------
+# Code-capacity decoding instances built from the *actual* rotated-surface-code circuit
+# ---------------------------------------------------------------------------------------------------
+
+def code_capacity_graph(distance: int, p: float) -> tuple[dict[int, list[float]], list[GraphEdge], dict[int, list[float]]]:
+    """Matching graph whose edges are the data qubits (single X errors), with detector sets read from Stim.
+
+    Independent X errors with probability ``p`` and perfect syndrome measurement = *code-capacity* noise
+    (a simplification of circuit-level noise). Returns ``(detector coords, edges, data-qubit coords)``.
+    """
+    from .surface import data_error_incidence
+
+    inc = data_error_incidence(distance)
+    w = math.log((1 - p) / p)
+    edges: list[GraphEdge] = []
+    seen: dict[tuple[int, int | None], int] = {}
+    for q in sorted(inc["detectors"]):
+        dets = inc["detectors"][q]
+        if not dets:
+            continue  # error invisible to every Z detector and to the logical observable
+        u, v = dets[0], (dets[1] if len(dets) > 1 else None)
+        obs = inc["observable"][q]
+        key = (u, v)
+        if key in seen and edges[seen[key]].obs != obs:
+            raise AssertionError("parallel edges with different logical effect")
+        seen[key] = len(edges)
+        e = GraphEdge(len(edges), u, v, p, w, obs)
+        edges.append(e)
+    coords = {k: v for k, v in inc["detector_coords"].items() if k in {e.u for e in edges} | {e.v for e in edges if e.v is not None}}
+    return coords, edges, {q: inc["data_coords"][q] for q in inc["data_coords"]}
+
+
+def sample_code_capacity_instance(distance: int, p: float, seed: int, *, require_events: bool = True,
+                                  want_mwpm_failure: bool | None = None, need_boundary: bool = False,
+                                  max_tries: int = 100000) -> DecodingInstance:
+    """Reproducible code-capacity instance; the injected error and MWPM outcome are kept hidden."""
+    import pymatching
+
+    coords, edges, _ = code_capacity_graph(distance, p)
+    m = pymatching.Matching()
+    for e in edges:
+        if e.v is None:
+            m.add_boundary_edge(e.u, fault_ids={0} if e.obs else set(), weight=e.weight, error_probability=p,
+                                merge_strategy="smallest-weight")
+        else:
+            m.add_edge(e.u, e.v, fault_ids={0} if e.obs else set(), weight=e.weight, error_probability=p,
+                       merge_strategy="smallest-weight")
+    index: dict[tuple[int, int], int] = {}
+    for e in edges:
+        index.setdefault((e.u, -1 if e.v is None else e.v), e.id)
+        if e.v is not None:
+            index.setdefault((e.v, e.u), e.id)
+    from ..core.rng import stream
+    rng = stream(seed, "cc_instance", distance, p)
+    n_det = max(max(e.u, e.v if e.v is not None else 0) for e in edges) + 1
+    for n_try in range(1, max_tries + 1):
+        flips = rng.random(len(edges)) < p
+        if not flips.any():
+            continue
+        syn = np.zeros(n_det, dtype=np.uint8)
+        obs = 0
+        for e, f in zip(edges, flips):
+            if f:
+                syn[e.u] ^= 1
+                if e.v is not None:
+                    syn[e.v] ^= 1
+                obs ^= e.obs
+        ev = np.flatnonzero(syn)
+        if require_events and ev.size == 0:
+            continue
+        pairs = m.decode_to_edges_array(syn)
+        medges = []
+        for a, b in pairs:
+            k = (int(a), int(b))
+            medges.append(index.get(k, index.get((int(b), int(a)))))
+        medges = [x for x in medges if x is not None]
+        mlog = sum(edges[i].obs for i in medges) % 2
+        if want_mwpm_failure is not None and ((mlog != obs) != want_mwpm_failure):
+            continue
+        if need_boundary and not any(edges[i].v is None for i in medges):
+            continue
+        return DecodingInstance(distance, 1, p, "code_capacity", seed, n_try, coords, edges, [int(x) for x in ev], int(obs),
+                                medges, int(mlog))
+    raise RuntimeError("no suitable instance found")

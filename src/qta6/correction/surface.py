@@ -34,7 +34,9 @@ def circuit_noise_kwargs(p: float, noise: NoiseKind) -> dict[str, float]:
                     before_measure_flip_probability=p, before_round_data_depolarization=p)
     if noise == "data_only":
         return dict(before_round_data_depolarization=p)
-    raise ValueError("noise must be 'circuit' or 'data_only'")
+    if noise == "phenom":  # data depolarization + measurement flips, no gate noise
+        return dict(before_round_data_depolarization=p, before_measure_flip_probability=p)
+    raise ValueError("noise must be 'circuit', 'data_only' or 'phenom'")
 
 
 def active_qubit_count(c: stim.Circuit) -> int:
@@ -178,3 +180,33 @@ def geometry(distance: int) -> dict:
 
 def matching_weight_formula(p: float) -> float:
     return math.log((1 - p) / p)
+
+
+@lru_cache(maxsize=8)
+def data_error_incidence(distance: int) -> dict:
+    """Effect of a single X error on each data qubit, read off the *actual* generated Stim circuit.
+
+    Returns ``{"detectors": {qubit: [detector ids]}, "observable": {qubit: 0/1}, "data_coords", "detector_coords"}``
+    for the Z-basis memory experiment with one round (noiseless apart from the injected error).
+    """
+    base = stim.Circuit.generated("surface_code:rotated_memory_z", distance=distance, rounds=1)
+    coords = base.get_final_qubit_coordinates()
+    meas_ids: set[int] = set()
+    for inst in base.flattened():
+        if inst.name in ("MR", "MRX", "MRY"):
+            meas_ids.update(t.value for t in inst.targets_copy())
+    data_ids = sorted(q for q in coords if q not in meas_ids)
+    first_tick = next(i for i, inst in enumerate(base) if inst.name == "TICK")
+    det: dict[int, list[int]] = {}
+    obs: dict[int, int] = {}
+    for q in data_ids:
+        c = stim.Circuit()
+        for i, inst in enumerate(base):
+            c.append(inst)
+            if i == first_tick:
+                c.append("X_ERROR", [q], 1.0)
+        d, o = c.compile_detector_sampler(seed=0).sample(1, separate_observables=True)
+        det[q] = [int(i) for i in range(d.shape[1]) if d[0, i]]
+        obs[q] = int(o[0, 0])
+    return {"detectors": det, "observable": obs, "data_coords": {q: list(coords[q]) for q in data_ids},
+            "detector_coords": {int(k): list(v) for k, v in base.get_detector_coordinates().items()}}
