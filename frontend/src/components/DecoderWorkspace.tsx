@@ -25,10 +25,15 @@ export function DecoderWorkspace() {
     const c = nodes[String(id)];
     return { x: OX + c[0] * SX / 2 + (temporal ? c[2] * TDX : 0), y: OY + c[1] * SY / 2 + (temporal ? c[2] * TDY : 0) };
   };
+  // boundary edges that share a detector are fanned out vertically so that their midpoints (click targets) never overlap
+  const bGroup = new Map<number, number[]>();
+  for (const e of edges) if (e.v === null) bGroup.set(e.u, [...(bGroup.get(e.u) ?? []), e.id]);
   const stub = (e: Edge) => {
     const p = pos(e.u);
     const left = p.x < OX + (temporal ? 2 * SX : 2.5 * SX);
-    return { x: p.x + (left ? -48 : 48), y: p.y + ((e.id % 3) - 1) * 14 };
+    const grp = bGroup.get(e.u) ?? [e.id];
+    const k = grp.indexOf(e.id);
+    return { x: p.x + (left ? -52 : 52), y: p.y + (k - (grp.length - 1) / 2) * 34 };
   };
   const preview = useMemo(() => evaluateCorrection(edges, inst.events, chosen, null), [edges, inst, chosen]);
   const toggle = (id: number) => setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id]));
@@ -52,11 +57,12 @@ export function DecoderWorkspace() {
               return (
                 <g key={e.id} className={canPlay ? "edge clickable" : "edge"} onClick={() => canPlay && toggle(e.id)} role="button"
                    aria-label={`edge ${e.id} ${e.v === null ? "to boundary" : `between ${e.u} and ${e.v}`}`} aria-pressed={on}>
-                  <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="transparent" strokeWidth={14} />
-                  <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={on ? "var(--cyan)" : e.v === null ? "#6b7399" : "#4a5280"} strokeWidth={on ? 5 : 2.5}
-                        strokeDasharray={e.obs ? "6 4" : undefined} />
-                  {e.v === null && <circle cx={b.x} cy={b.y} r={5} fill="#0B1020" stroke={on ? "var(--cyan)" : "#6b7399"} />}
-                  <circle cx={mx} cy={my} r={on ? 5 : 3} fill={on ? "var(--cyan)" : "#8f98c8"}><title>w={e.weight.toFixed(2)}{e.obs ? " — crosses the logical operator" : ""}</title></circle>
+                  <line className="vis" x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={on ? "var(--cyan)" : e.v === null ? "#6b7399" : "#4a5280"} strokeWidth={on ? 5 : 2.5}
+                        strokeDasharray={e.obs ? "6 4" : undefined} style={{ pointerEvents: "none" }} />
+                  {e.v === null && <circle cx={b.x} cy={b.y} r={5} fill="#0B1020" stroke={on ? "var(--cyan)" : "#6b7399"} style={{ pointerEvents: "none" }} />}
+                  <circle className="vis" cx={mx} cy={my} r={on ? 6 : 4} fill={on ? "var(--cyan)" : "#8f98c8"} style={{ pointerEvents: "none" }} />
+                  {/* the only pointer-active element: a hit circle on the edge midpoint (edges never share midpoints) */}
+                  <circle cx={mx} cy={my} r={8} fill="transparent" style={{ pointerEvents: "all" }}><title>w={e.weight.toFixed(2)}{e.obs ? " — crosses the logical operator" : ""}</title></circle>
                 </g>
               );
             })}
@@ -65,7 +71,7 @@ export function DecoderWorkspace() {
               const p = pos(id);
               const fired = events.has(id);
               return (
-                <g key={id}>
+                <g key={id} style={{ pointerEvents: "none" }}>
                   <rect x={p.x - 11} y={p.y - 11} width={22} height={22} rx={4} fill={fired ? "var(--pink)" : "#141a38"} stroke={fired ? "var(--pink)" : "#6b7399"} />
                   <text x={p.x} y={p.y + 4} textAnchor="middle" fontSize={10} fill="#fff">{fired ? "!" : id}</text>
                 </g>
