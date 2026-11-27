@@ -18,5 +18,5 @@ Honest list of what QTA6 does **not** do or does only partially.
 ## Engineering
 * Extended benchmark profile not run. No load testing. No cross-browser testing (Chromium only, via Playwright, for the screenshots and the manual play-through).
 * Python 3.12 only; Windows/macOS untested.
-* CI is defined in `.github/workflows/ci.yml`; its result on GitHub must be checked in the Actions tab — it is **not** claimed as passing in this repository's docs.
+* CI (`.github/workflows/ci.yml`) passed for commit `765b069` (run 46068464509). It installs from `pyproject.toml`, runs the smoke benchmark only (not the standard profile) and does not run browser-level tests.
 * Hardware: see `hardware_readiness.md` — nothing executed.

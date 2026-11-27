@@ -53,7 +53,7 @@ PASS = implemented and verified by the tests/benchmarks named; PARTIAL = impleme
 ### Software
 | Criterion | Status | Evidence / note |
 |---|---|---|
-| Reproducible environment | PARTIAL | pinned `requirements-lock.txt`, `doctor` command; a clean-container reinstall was not repeated in this session (CI would exercise it) |
+| Reproducible environment | PARTIAL | pinned `requirements-lock.txt` and `doctor` command; the CI run installs from `pyproject.toml` (`pip install -e ".[dev]"`) on a clean runner, but a clean install from `requirements-lock.txt` itself was not repeated |
 | Executable CLI | PASS | `doctor`, `benchmark`, `export` |
 | Mandatory tests | PASS | 152 Python + 22 frontend passed, 0 failed, 0 skipped |
 | Frontend production build | PASS | `npm run build` (≈ 279 kB JS) |
@@ -61,7 +61,7 @@ PASS = implemented and verified by the tests/benchmarks named; PARTIAL = impleme
 | Local startup procedure | PASS | `docs/environment.md` |
 | Documented limitations | PASS | `known_limitations.md` |
 | No empty placeholder modules | PASS | every package contains implemented, tested modules; Phase 4 art is not stubbed |
-| Continuous integration | PARTIAL | workflow written; a completed GitHub run is **not** asserted here |
+| Continuous integration | PASS | GitHub Actions run 46068464509 for commit `765b069` completed successfully (Python and frontend jobs, every step) |
 
 ### Repository
 | Criterion | Status | Note |

@@ -127,7 +127,7 @@ Full tables and figures: [`docs/benchmark_results.md`](docs/benchmark_results.md
 
 ## Testing and CI
 
-152 Python and 22 frontend tests pass locally (0 failed, 0 skipped); the production build succeeds. A GitHub Actions workflow is defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml); its status is shown in the repository's Actions tab and is not asserted here. Report: [`docs/scientific_validation.md`](docs/scientific_validation.md).
+152 Python and 22 frontend tests pass locally (0 failed, 0 skipped); the production build succeeds. A GitHub Actions workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml): Python doctor + tests + smoke benchmark + schema-validated export, and frontend `npm ci` + typecheck + tests + build) completed successfully for commit `765b069` ([run 46068464509](https://github.com/emreq3/quantumgrad/actions/runs/46068464509)). Later commits are covered by their own runs in the Actions tab. Report: [`docs/scientific_validation.md`](docs/scientific_validation.md).
 
 ## Known limitations
 
