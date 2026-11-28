@@ -161,9 +161,36 @@ Distance ordering by physical error rate:
 - p=0.01: d3=5.86e-02 → d5=8.31e-02 → d7=1.03e-01
 - p=0.015: d3=1.18e-01 → d5=1.95e-01 → d7=2.72e-01
 
-Observed: larger distance gives lower p_L for p ∈ [0.001, 0.002, 0.003, 0.005] and higher p_L for p ∈ [0.007, 0.01, 0.015]. This brackets the crossover between those grid points for *this* noise model and decoder; **no threshold value is claimed** (the grid is too coarse and the sample sizes fixed).
+Observed: larger distance gives lower p_L for p ∈ [0.001, 0.002, 0.003, 0.005] and higher p_L for p ∈ [0.007, 0.01, 0.015]. This brackets an apparent crossover between those grid points for *this* noise model, decoder **and round policy (d rounds)** — see 3b for a fixed-round comparison; **no threshold value is claimed** (the grid is coarse, the sample sizes are fixed and the crossing moves with the round policy).
 
 Repetition code (exact statevector, one logical state): all single X errors corrected = True; Y/Z errors corrected = False (expected False).
+
+### 3b. Fixed-round comparison (added in Phase 4)
+
+The table above scales the number of syndrome rounds with the distance (d rounds for distance d). This second experiment keeps the rounds fixed at 3 for every distance, so that only the code size changes. Same engine, new seed; the earlier table is kept unchanged.
+
+| d | p | rounds | trials | failures | p_L | 95% Wilson | 95% Clopper–Pearson |
+|---|---|---|---|---|---|---|---|
+| 3 | 0.001 | 3 | 200000 | 164 | 8.20e-04 | [7.04e-04, 9.55e-04] | [6.99e-04, 9.55e-04] |
+| 5 | 0.001 | 3 | 200000 | 13 | 6.50e-05 | [3.80e-05, 1.11e-04] | [3.46e-05, 1.11e-04] |
+| 7 | 0.001 | 3 | 200000 | 1 | 5.00e-06 | [8.83e-07, 2.83e-05] | [1.27e-07, 2.79e-05] |
+| 3 | 0.003 | 3 | 100000 | 638 | 6.38e-03 | [5.91e-03, 6.89e-03] | [5.90e-03, 6.89e-03] |
+| 5 | 0.003 | 3 | 100000 | 175 | 1.75e-03 | [1.51e-03, 2.03e-03] | [1.50e-03, 2.03e-03] |
+| 7 | 0.003 | 3 | 100000 | 52 | 5.20e-04 | [3.97e-04, 6.82e-04] | [3.88e-04, 6.82e-04] |
+| 3 | 0.005 | 3 | 100000 | 1696 | 1.70e-02 | [1.62e-02, 1.78e-02] | [1.62e-02, 1.78e-02] |
+| 5 | 0.005 | 3 | 100000 | 791 | 7.91e-03 | [7.38e-03, 8.48e-03] | [7.37e-03, 8.48e-03] |
+| 7 | 0.005 | 3 | 100000 | 317 | 3.17e-03 | [2.84e-03, 3.54e-03] | [2.83e-03, 3.54e-03] |
+| 3 | 0.007 | 3 | 100000 | 3236 | 3.24e-02 | [3.13e-02, 3.35e-02] | [3.13e-02, 3.35e-02] |
+| 5 | 0.007 | 3 | 100000 | 1982 | 1.98e-02 | [1.90e-02, 2.07e-02] | [1.90e-02, 2.07e-02] |
+| 7 | 0.007 | 3 | 100000 | 1115 | 1.12e-02 | [1.05e-02, 1.18e-02] | [1.05e-02, 1.18e-02] |
+| 3 | 0.01 | 3 | 100000 | 5870 | 5.87e-02 | [5.73e-02, 6.02e-02] | [5.73e-02, 6.02e-02] |
+| 5 | 0.01 | 3 | 100000 | 4883 | 4.88e-02 | [4.75e-02, 5.02e-02] | [4.75e-02, 5.02e-02] |
+| 7 | 0.01 | 3 | 100000 | 3764 | 3.76e-02 | [3.65e-02, 3.88e-02] | [3.65e-02, 3.88e-02] |
+| 3 | 0.015 | 3 | 100000 | 11424 | 1.14e-01 | [1.12e-01, 1.16e-01] | [1.12e-01, 1.16e-01] |
+| 5 | 0.015 | 3 | 100000 | 12260 | 1.23e-01 | [1.21e-01, 1.25e-01] | [1.21e-01, 1.25e-01] |
+| 7 | 0.015 | 3 | 100000 | 12102 | 1.21e-01 | [1.19e-01, 1.23e-01] | [1.19e-01, 1.23e-01] |
+
+With fixed rounds, d = 7 is below d = 3 for p ∈ [0.001, 0.003, 0.005, 0.007, 0.01] and not below for p ∈ [0.015]; in the distance-scaled table the crossing was between p = 0.005 and p = 0.007. The location of the apparent crossing therefore depends on the round policy (d rounds also gives larger codes more opportunities to fail), and it is **not** a fault-tolerance threshold. Rows with only a handful of failures (notably d = 7 at p = 0.001, where one failure was observed) have wide intervals: the point estimate must not be read as a precise suppression factor. No threshold value is claimed from either table.
 
 ## 4. Optimization
 

@@ -157,6 +157,27 @@ def bench_correction(profile: str) -> Path:
     return _write("correction", f"correction_{profile}", out)
 
 
+def bench_correction_fixed_rounds(profile: str) -> Path:
+    """Phase 4 addition: distance comparison at a FIXED number of syndrome rounds (the main correction benchmark
+    scales the rounds with the distance, which conflates distance and time extent). New file; earlier results are untouched."""
+    std = profile == "standard"
+    rounds = 3
+    ps = [0.001, 0.003, 0.005, 0.007, 0.01, 0.015] if std else [0.005]
+    ds = [3, 5, 7] if std else [3]
+    rows = []
+    t0 = time.perf_counter()
+    for d in ds:
+        for p in ps:
+            shots = (200000 if p <= 0.001 else 100000) if std else 3000
+            r = run_memory(d, rounds, p, shots, seed=21).to_dict()
+            r["kind"] = "monte_carlo"
+            r["rounds_policy"] = f"fixed {rounds} rounds for every distance"
+            r["stopping_rule"] = f"fixed sample of {shots} shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+            rows.append(r)
+    out = {"meta": _meta(profile, "correction_fixed_rounds", {"seconds": time.perf_counter() - t0, "rounds": rounds}), "rows": rows}
+    return _write("correction", f"correction_fixed_rounds_{profile}", out)
+
+
 # ------------------------------------------------------------------------------------------------ optimization
 def bench_optimization(profile: str) -> Path:
     std = profile == "standard"
@@ -241,6 +262,7 @@ def bench_performance(profile: str) -> Path:
 
 
 BENCHES = {"detection": bench_detection, "mitigation": bench_mitigation, "correction": bench_correction,
+           "correction_fixed_rounds": bench_correction_fixed_rounds,
            "optimization": bench_optimization, "performance": bench_performance}
 
 

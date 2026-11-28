@@ -1,0 +1,681 @@
+{
+ "meta": {
+  "benchmark": "correction_fixed_rounds",
+  "profile": "standard",
+  "qta6": "0.1.0",
+  "source_revision": "bb10ec0+dirty",
+  "software": {
+   "python": "3.12.3",
+   "qiskit": "2.6.2",
+   "qiskit-aer": "0.18.4",
+   "qiskit-paulice": "0.3",
+   "stim": "1.16.0",
+   "pymatching": "2.4.0",
+   "sinter": "1.16.0",
+   "numpy": "2.5.5",
+   "scipy": "1.18.1",
+   "networkx": "3.7",
+   "pandas": "3.1.1",
+   "matplotlib": "3.11.2",
+   "pydantic": "2.14.4",
+   "fastapi": "0.165.0"
+  },
+  "machine": {
+   "cpu_count": 4,
+   "platform": "Linux-6.18.44-fc-v880-x86_64-with-glibc2.39"
+  },
+  "result_kind": "exact_numerical + monte_carlo (see per-row kind)",
+  "seconds": 6.500643266999987,
+  "rounds": 3
+ },
+ "rows": [
+  {
+   "distance": 3,
+   "rounds": 3,
+   "p": 0.001,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 200000,
+   "failures": 164,
+   "estimate": {
+    "failures": 164,
+    "trials": 200000,
+    "p": 0.00082,
+    "wilson95": [
+     0.0007037755984020551,
+     0.0009553998274310423
+    ],
+    "clopper_pearson95": [
+     0.00069934227665146,
+     0.0009554830369001066
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.0002734828918448118,
+   "active_qubits": 17,
+   "index_space_qubits": 26,
+   "qubit_rounds": 51,
+   "sample_seconds": 0.020800629999712328,
+   "decode_seconds": 0.018422727000142913,
+   "decode_us_per_shot": 0.09211363500071457,
+   "throughput_shots_per_s": 10856156.09450482,
+   "build_seconds": 0.003213072999983524,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 200000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 3,
+   "rounds": 3,
+   "p": 0.003,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 638,
+   "estimate": {
+    "failures": 638,
+    "trials": 100000,
+    "p": 0.00638,
+    "wilson95": [
+     0.005905127891933796,
+     0.0068927950693326865
+    ],
+    "clopper_pearson95": [
+     0.005895881815220971,
+     0.006893073551804253
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.002135776761501673,
+   "active_qubits": 17,
+   "index_space_qubits": 26,
+   "qubit_rounds": 51,
+   "sample_seconds": 0.011023756000099638,
+   "decode_seconds": 0.022446971000135818,
+   "decode_us_per_shot": 0.22446971000135818,
+   "throughput_shots_per_s": 4454944.05456286,
+   "build_seconds": 0.0033637909999697513,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 3,
+   "rounds": 3,
+   "p": 0.005,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 1696,
+   "estimate": {
+    "failures": 1696,
+    "trials": 100000,
+    "p": 0.01696,
+    "wilson95": [
+     0.01617806679961762,
+     0.017779043340186602
+    ],
+    "clopper_pearson95": [
+     0.01616874456257397,
+     0.01777944739607791
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.005718486167158976,
+   "active_qubits": 17,
+   "index_space_qubits": 26,
+   "qubit_rounds": 51,
+   "sample_seconds": 0.01404507300003388,
+   "decode_seconds": 0.038263166999968234,
+   "decode_us_per_shot": 0.38263166999968234,
+   "throughput_shots_per_s": 2613479.4331081645,
+   "build_seconds": 0.002853690999927494,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 3,
+   "rounds": 3,
+   "p": 0.007,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 3236,
+   "estimate": {
+    "failures": 3236,
+    "trials": 100000,
+    "p": 0.03236,
+    "wilson95": [
+     0.03128108340190963,
+     0.03347484361402704
+    ],
+    "clopper_pearson95": [
+     0.031271826066170905,
+     0.03347540678725812
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.011028117089597611,
+   "active_qubits": 17,
+   "index_space_qubits": 26,
+   "qubit_rounds": 51,
+   "sample_seconds": 0.011038526999982423,
+   "decode_seconds": 0.04108500799986814,
+   "decode_us_per_shot": 0.4108500799986814,
+   "throughput_shots_per_s": 2433977.8636606555,
+   "build_seconds": 0.002190579000057369,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 3,
+   "rounds": 3,
+   "p": 0.01,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 5870,
+   "estimate": {
+    "failures": 5870,
+    "trials": 100000,
+    "p": 0.0587,
+    "wilson95": [
+     0.057259976280886145,
+     0.060173927132279655
+    ],
+    "clopper_pearson95": [
+     0.05725091011964511,
+     0.060174750794908555
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.020386596006279678,
+   "active_qubits": 17,
+   "index_space_qubits": 26,
+   "qubit_rounds": 51,
+   "sample_seconds": 0.014837518999797794,
+   "decode_seconds": 0.06777075500008323,
+   "decode_us_per_shot": 0.6777075500008323,
+   "throughput_shots_per_s": 1475562.7261327868,
+   "build_seconds": 0.0033712540000578883,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 3,
+   "rounds": 3,
+   "p": 0.015,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 11424,
+   "estimate": {
+    "failures": 11424,
+    "trials": 100000,
+    "p": 0.11424,
+    "wilson95": [
+     0.11228321671752198,
+     0.1162264197670981
+    ],
+    "clopper_pearson95": [
+     0.11227462392639428,
+     0.11622778095902497
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.04141582142618727,
+   "active_qubits": 17,
+   "index_space_qubits": 26,
+   "qubit_rounds": 51,
+   "sample_seconds": 0.016849285000148484,
+   "decode_seconds": 0.10028016199999001,
+   "decode_us_per_shot": 1.0028016199999001,
+   "throughput_shots_per_s": 997206.2071460352,
+   "build_seconds": 0.002470085000027211,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 5,
+   "rounds": 3,
+   "p": 0.001,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 200000,
+   "failures": 13,
+   "estimate": {
+    "failures": 13,
+    "trials": 200000,
+    "p": 6.5e-05,
+    "wilson95": [
+     3.798839838372632e-05,
+     0.0001112160299064086
+    ],
+    "clopper_pearson95": [
+     3.4610201841238936e-05,
+     0.00011114941464963615
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 2.1667605623387765e-05,
+   "active_qubits": 49,
+   "index_space_qubits": 64,
+   "qubit_rounds": 147,
+   "sample_seconds": 0.05272194799988483,
+   "decode_seconds": 0.04926853200026926,
+   "decode_us_per_shot": 0.2463426600013463,
+   "throughput_shots_per_s": 4059386.2224047384,
+   "build_seconds": 0.007018111000093086,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 200000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 5,
+   "rounds": 3,
+   "p": 0.003,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 175,
+   "estimate": {
+    "failures": 175,
+    "trials": 100000,
+    "p": 0.00175,
+    "wilson95": [
+     0.0015093863334698,
+     0.0020288923332191992
+    ],
+    "clopper_pearson95": [
+     0.0015004985018074657,
+     0.002029073232509772
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.0005840152152870037,
+   "active_qubits": 49,
+   "index_space_qubits": 64,
+   "qubit_rounds": 147,
+   "sample_seconds": 0.03167306699992878,
+   "decode_seconds": 0.0772977600000786,
+   "decode_us_per_shot": 0.7729776000007859,
+   "throughput_shots_per_s": 1293698.5496073666,
+   "build_seconds": 0.0069328609999956825,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 5,
+   "rounds": 3,
+   "p": 0.005,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 791,
+   "estimate": {
+    "failures": 791,
+    "trials": 100000,
+    "p": 0.00791,
+    "wilson95": [
+     0.007379537986866223,
+     0.008478267430275757
+    ],
+    "clopper_pearson95": [
+     0.007370260521918034,
+     0.008478566759100362
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.002650694193745806,
+   "active_qubits": 49,
+   "index_space_qubits": 64,
+   "qubit_rounds": 147,
+   "sample_seconds": 0.03553578699995796,
+   "decode_seconds": 0.1498285620000388,
+   "decode_us_per_shot": 1.498285620000388,
+   "throughput_shots_per_s": 667429.4851736887,
+   "build_seconds": 0.006457621999970797,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 5,
+   "rounds": 3,
+   "p": 0.007,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 1982,
+   "estimate": {
+    "failures": 1982,
+    "trials": 100000,
+    "p": 0.01982,
+    "wilson95": [
+     0.018974386065805534,
+     0.02070250435099472
+    ],
+    "clopper_pearson95": [
+     0.0189650693176456,
+     0.02070293887075205
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.0066959375373552565,
+   "active_qubits": 49,
+   "index_space_qubits": 64,
+   "qubit_rounds": 147,
+   "sample_seconds": 0.04593490100012332,
+   "decode_seconds": 0.24354350700014038,
+   "decode_us_per_shot": 2.435435070001404,
+   "throughput_shots_per_s": 410604.2539657703,
+   "build_seconds": 0.009689261000062288,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 5,
+   "rounds": 3,
+   "p": 0.01,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 4883,
+   "estimate": {
+    "failures": 4883,
+    "trials": 100000,
+    "p": 0.04883,
+    "wilson95": [
+     0.04751150839525257,
+     0.05018315329275561
+    ],
+    "clopper_pearson95": [
+     0.047502365437179186,
+     0.05018388015060576
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.016837291035916135,
+   "active_qubits": 49,
+   "index_space_qubits": 64,
+   "qubit_rounds": 147,
+   "sample_seconds": 0.05357421299993348,
+   "decode_seconds": 0.40650383500008047,
+   "decode_us_per_shot": 4.065038350000805,
+   "throughput_shots_per_s": 246000.13921143007,
+   "build_seconds": 0.007739089999972748,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 5,
+   "rounds": 3,
+   "p": 0.015,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 12260,
+   "estimate": {
+    "failures": 12260,
+    "trials": 100000,
+    "p": 0.1226,
+    "wilson95": [
+     0.1205816962102356,
+     0.12464729800714211
+    ],
+    "clopper_pearson95": [
+     0.12057317759720303,
+     0.12464873953280296
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.04475278096873131,
+   "active_qubits": 49,
+   "index_space_qubits": 64,
+   "qubit_rounds": 147,
+   "sample_seconds": 0.07120926900006452,
+   "decode_seconds": 0.6677965579998499,
+   "decode_us_per_shot": 6.677965579998499,
+   "throughput_shots_per_s": 149746.2045918818,
+   "build_seconds": 0.010371965999979693,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 7,
+   "rounds": 3,
+   "p": 0.001,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 200000,
+   "failures": 1,
+   "estimate": {
+    "failures": 1,
+    "trials": 200000,
+    "p": 5e-06,
+    "wilson95": [
+     8.826233199317763e-07,
+     2.8324109801225995e-05
+    ],
+    "clopper_pearson95": [
+     1.265890319090573e-07,
+     2.785789856219694e-05
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 1.6666722222336006e-06,
+   "active_qubits": 97,
+   "index_space_qubits": 118,
+   "qubit_rounds": 291,
+   "sample_seconds": 0.15813373199978287,
+   "decode_seconds": 0.1372981219999474,
+   "decode_us_per_shot": 0.6864906099997371,
+   "throughput_shots_per_s": 1456684.1635319428,
+   "build_seconds": 0.02079204500000742,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 200000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 7,
+   "rounds": 3,
+   "p": 0.003,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 52,
+   "estimate": {
+    "failures": 52,
+    "trials": 100000,
+    "p": 0.00052,
+    "wilson95": [
+     0.000396594307677524,
+     0.0006817788552684293
+    ],
+    "clopper_pearson95": [
+     0.00038838449607892374,
+     0.0006818556091369441
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.0001733934569643214,
+   "active_qubits": 97,
+   "index_space_qubits": 118,
+   "qubit_rounds": 291,
+   "sample_seconds": 0.08283856400009881,
+   "decode_seconds": 0.19131812299985995,
+   "decode_us_per_shot": 1.9131812299985995,
+   "throughput_shots_per_s": 522689.63562889025,
+   "build_seconds": 0.01642389899996033,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 7,
+   "rounds": 3,
+   "p": 0.005,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 317,
+   "estimate": {
+    "failures": 317,
+    "trials": 100000,
+    "p": 0.00317,
+    "wilson95": [
+     0.002840161032237316,
+     0.0035380085412119473
+    ],
+    "clopper_pearson95": [
+     0.002831070856761567,
+     0.0035382315121200336
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.0010589076543907616,
+   "active_qubits": 97,
+   "index_space_qubits": 118,
+   "qubit_rounds": 291,
+   "sample_seconds": 0.08837673799996537,
+   "decode_seconds": 0.3524441409999781,
+   "decode_us_per_shot": 3.524441409999781,
+   "throughput_shots_per_s": 283732.9050676607,
+   "build_seconds": 0.018190087999983007,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 7,
+   "rounds": 3,
+   "p": 0.007,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 1115,
+   "estimate": {
+    "failures": 1115,
+    "trials": 100000,
+    "p": 0.01115,
+    "wilson95": [
+     0.010517715108917802,
+     0.011819841391254637
+    ],
+    "clopper_pearson95": [
+     0.010508403961605477,
+     0.011820180557531252
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.0037446413325805117,
+   "active_qubits": 97,
+   "index_space_qubits": 118,
+   "qubit_rounds": 291,
+   "sample_seconds": 0.09812177699996028,
+   "decode_seconds": 0.5588382140001613,
+   "decode_us_per_shot": 5.588382140001613,
+   "throughput_shots_per_s": 178942.6662221262,
+   "build_seconds": 0.016412945999945805,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 7,
+   "rounds": 3,
+   "p": 0.01,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 3764,
+   "estimate": {
+    "failures": 3764,
+    "trials": 100000,
+    "p": 0.03764,
+    "wilson95": [
+     0.036478030857718016,
+     0.03883749051574978
+    ],
+    "clopper_pearson95": [
+     0.036468807481707444,
+     0.038838106572982665
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.012875371141397973,
+   "active_qubits": 97,
+   "index_space_qubits": 118,
+   "qubit_rounds": 291,
+   "sample_seconds": 0.10263330200007204,
+   "decode_seconds": 0.8331629979999207,
+   "decode_us_per_shot": 8.331629979999207,
+   "throughput_shots_per_s": 120024.53330267737,
+   "build_seconds": 0.014631638000082603,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  },
+  {
+   "distance": 7,
+   "rounds": 3,
+   "p": 0.015,
+   "basis": "z",
+   "noise": "circuit",
+   "trials": 100000,
+   "failures": 12102,
+   "estimate": {
+    "failures": 12102,
+    "trials": 100000,
+    "p": 0.12102,
+    "wilson95": [
+     0.11901307950614289,
+     0.12305603609667058
+    ],
+    "clopper_pearson95": [
+     0.1190045468398138,
+     0.12305746244719595
+    ]
+   },
+   "upper_bound_if_zero": null,
+   "per_round_model_estimate": 0.0441183620014885,
+   "active_qubits": 97,
+   "index_space_qubits": 118,
+   "qubit_rounds": 291,
+   "sample_seconds": 0.11534946200004015,
+   "decode_seconds": 1.3287313580000273,
+   "decode_us_per_shot": 13.287313580000273,
+   "throughput_shots_per_s": 75259.75766126078,
+   "build_seconds": 0.014736050999999861,
+   "seed": 21,
+   "kind": "monte_carlo",
+   "rounds_policy": "fixed 3 rounds for every distance",
+   "stopping_rule": "fixed sample of 100000 shots (no adaptive stopping); Wilson and Clopper-Pearson 95% intervals"
+  }
+ ]
+}

@@ -124,10 +124,29 @@ def main() -> None:
     below = [p for p in ps if {r["distance"]: r["estimate"]["p"] for r in rows if r["p"] == p}[7] < {r["distance"]: r["estimate"]["p"] for r in rows if r["p"] == p}[3]]
     above = [p for p in ps if p not in below]
     out += ["", f"Observed: larger distance gives lower p_L for p ∈ {below} and higher p_L for p ∈ {above}. "
-            "This brackets the crossover between those grid points for *this* noise model and decoder; **no threshold value is claimed** (the grid is too coarse and the sample sizes fixed).", ""]
+            "This brackets an apparent crossover between those grid points for *this* noise model, decoder **and round policy (d rounds)** — see 3b for a fixed-round comparison; **no threshold value is claimed** (the grid is coarse, the sample sizes are fixed and the crossing moves with the round policy).", ""]
     out += ["Repetition code (exact statevector, one logical state): all single X errors corrected = "
             f"{all(o['corrected'] for o in cor['repetition_code'] if o['error'].startswith('X') or o['error'] == 'none')}; "
             f"Y/Z errors corrected = {any(o['corrected'] for o in cor['repetition_code'] if o['error'][0] in 'YZ')} (expected False).", ""]
+    fr_path = ROOT / "results" / "correction" / "correction_fixed_rounds_standard.json"
+    if fr_path.exists():
+        fr = json.loads(fr_path.read_text())
+        out += ["### 3b. Fixed-round comparison (added in Phase 4)", "",
+                "The table above scales the number of syndrome rounds with the distance (d rounds for distance d). This second experiment keeps the rounds fixed at "
+                f"{fr['meta'].get('rounds', 3)} for every distance, so that only the code size changes. Same engine, new seed; the earlier table is kept unchanged.", "",
+                "| d | p | rounds | trials | failures | p_L | 95% Wilson | 95% Clopper–Pearson |", "|---|---|---|---|---|---|---|---|"]
+        for r in sorted(fr["rows"], key=lambda r: (r["p"], r["distance"])):
+            e = r["estimate"]
+            out.append(f"| {r['distance']} | {r['p']} | {r['rounds']} | {r['trials']} | {r['failures']} | {e['p']:.2e} | [{e['wilson95'][0]:.2e}, {e['wilson95'][1]:.2e}] | [{e['clopper_pearson95'][0]:.2e}, {e['clopper_pearson95'][1]:.2e}] |"
+                       if 'clopper_pearson95' in e else
+                       f"| {r['distance']} | {r['p']} | {r['rounds']} | {r['trials']} | {r['failures']} | {e['p']:.2e} | [{e['wilson95'][0]:.2e}, {e['wilson95'][1]:.2e}] | n/a |")
+        fps = sorted({r["p"] for r in fr["rows"]})
+        fbelow = [q for q in fps if {r["distance"]: r["estimate"]["p"] for r in fr["rows"] if r["p"] == q}[7] < {r["distance"]: r["estimate"]["p"] for r in fr["rows"] if r["p"] == q}[3]]
+        fabove = [q for q in fps if q not in fbelow]
+        out += ["", f"With fixed rounds, d = 7 is below d = 3 for p ∈ {fbelow} and not below for p ∈ {fabove}; in the distance-scaled table the crossing was between "
+                f"p = {max(below)} and p = {min(above)}. The location of the apparent crossing therefore depends on the round policy (d rounds also gives larger codes more "
+                "opportunities to fail), and it is **not** a fault-tolerance threshold. Rows with only a handful of failures (notably d = 7 at p = 0.001, where one failure was "
+                "observed) have wide intervals: the point estimate must not be read as a precise suppression factor. No threshold value is claimed from either table.", ""]
     # ---------------- optimization
     out += ["## 4. Optimization", "", f"Pareto fronts (exact extraction over the enumerated candidate sets): detection {len(opt['pareto_fronts']['detection']['front'])} of "
             f"{len(opt['pareto_fronts']['detection']['candidates'])} feasible candidates; mitigation {len(opt['pareto_fronts']['mitigation']['front'])} of {len(opt['pareto_fronts']['mitigation']['candidates'])}; "
