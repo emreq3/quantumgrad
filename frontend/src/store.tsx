@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { defaultApiBase } from "./config";
+import { useOptionalSettings } from "./settings";
 import {
   canAfford, canGo, charge, creditCost, DEMO_IDS, DEMO_KEY, emptyProgress, evaluateCorrection, isUnlocked, loadProgress, newWallet, outcomeUnits,
   safeStorage, saveProgress, SAVE_KEY, validateProgress, type GameState, type Json, type Progress, type Wallet,
@@ -70,6 +71,10 @@ export function correctionFeedback(res: Json): Json {
 }
 
 export function GameProvider({ children, dataUrl = "data/campaign.json", initialData }: { children: ReactNode; dataUrl?: string; initialData?: Json }) {
+  const sfx = useOptionalSettings()?.sfx ?? (() => undefined);
+  const sfxTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => { sfxTimers.current.forEach(clearTimeout); }, []); // no sound is scheduled after the provider is gone
+  const later = (ms: number, fn: () => void) => { sfxTimers.current.push(setTimeout(fn, ms)); };
   const [data, setData] = useState<Json | null>(initialData ?? null);
   const [error, setError] = useState<string | null>(null);
   const [apiBase, setApiBase] = useState<string | null>(() => defaultApiBase());
@@ -160,7 +165,7 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
   };
   const begin = () => { if (walletRef.current) go("strategy_configuration"); };
 
-  const reject = (msg: string): null => { setNotice(msg); return null; };
+  const reject = (msg: string): null => { setNotice(msg); sfx("invalid"); return null; };
 
   /** Atomically (a) validate (b) charge (c) record. Re-entrancy safe: the state flips before any other work. */
   const execute = (key: string, build: () => { out: Json; units: Record<string, number> } | string): Json | null => {
@@ -181,6 +186,7 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
     setHistory((h) => [...h, { key, outcome: built.out, n }]);
     setLast(built.out);
     setS("scientific_analysis");
+    sfx("execute"); later(140, () => sfx("spend")); later(420, () => sfx(built.out.success ? "expSuccess" : "expFail"));
     return built.out;
   };
 

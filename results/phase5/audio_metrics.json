@@ -1,0 +1,1679 @@
+{
+ "sampleRate": 44100,
+ "defaults": {
+  "master": 0.8,
+  "music": 0.8,
+  "sfx": 0.8,
+  "ambience": 0.8,
+  "muted": false
+ },
+ "maximum": {
+  "master": 1,
+  "music": 1,
+  "sfx": 1,
+  "ambience": 1,
+  "muted": false
+ },
+ "tracks": {
+  "menu": {
+   "title": "Neon Skyline (main menu)",
+   "bpm": 96,
+   "bars": 16,
+   "kind": "loop",
+   "bus": "music",
+   "loopSeconds": 40,
+   "default": {
+    "id": "menu",
+    "seconds": 82.8,
+    "peak": 0.5819898843765259,
+    "peakDbfs": -4.7,
+    "rmsDbfs": -21.5,
+    "activeRmsDbfs": -21.4,
+    "crestDb": 16.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.000184,
+     -0.000184
+    ],
+    "silentRatio": 0.019,
+    "endRmsDbfs": -100.2,
+    "maxStep": 0.1249,
+    "maxStepAtSeconds": 67.561,
+    "maxStepVsP999": 2.4,
+    "spectralCentroidHz": 212,
+    "bandsDb": {
+     "sub 20-120 Hz": -3.4,
+     "low 120-500 Hz": -3.4,
+     "mid 500-2000 Hz": -11.3,
+     "high 2-6 kHz": -26.4,
+     "air 6-16 kHz": -32.3
+    },
+    "loop": {
+     "seamMaxStep": 0.0119,
+     "seamVsP999": 0.23,
+     "rmsBeforeDb": -27.7,
+     "rmsAfterDb": -29.2
+    }
+   },
+   "maximum": {
+    "id": "menu",
+    "seconds": 82.8,
+    "peak": 0.7399423122406006,
+    "peakDbfs": -2.6,
+    "rmsDbfs": -17.8,
+    "activeRmsDbfs": -17.7,
+    "crestDb": 15.1,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.000272,
+     -0.000272
+    ],
+    "silentRatio": 0.017,
+    "endRmsDbfs": -96.3,
+    "maxStep": 0.1714,
+    "maxStepAtSeconds": 14.746,
+    "maxStepVsP999": 2.3,
+    "spectralCentroidHz": 214,
+    "bandsDb": {
+     "sub 20-120 Hz": -3.4,
+     "low 120-500 Hz": -3.4,
+     "mid 500-2000 Hz": -11.1,
+     "high 2-6 kHz": -26.3,
+     "air 6-16 kHz": -32.5
+    },
+    "loop": {
+     "seamMaxStep": 0.0186,
+     "seamVsP999": 0.25,
+     "rmsBeforeDb": -23.8,
+     "rmsAfterDb": -25.3
+    }
+   }
+  },
+  "campaign": {
+   "title": "Quantum City Drive (campaign)",
+   "bpm": 100,
+   "bars": 16,
+   "kind": "loop",
+   "bus": "music",
+   "loopSeconds": 38.4,
+   "default": {
+    "id": "campaign",
+    "seconds": 79.6,
+    "peak": 0.4984290599822998,
+    "peakDbfs": -6,
+    "rmsDbfs": -20.7,
+    "activeRmsDbfs": -20.6,
+    "crestDb": 14.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.000219,
+     -0.000219
+    ],
+    "silentRatio": 0.021,
+    "endRmsDbfs": -100.3,
+    "maxStep": 0.1047,
+    "maxStepAtSeconds": 28.562,
+    "maxStepVsP999": 1.9,
+    "spectralCentroidHz": 181,
+    "bandsDb": {
+     "sub 20-120 Hz": -3.6,
+     "low 120-500 Hz": -2.8,
+     "mid 500-2000 Hz": -14.1,
+     "high 2-6 kHz": -31.1,
+     "air 6-16 kHz": -32.4
+    },
+    "loop": {
+     "seamMaxStep": 0.0026,
+     "seamVsP999": 0.05,
+     "rmsBeforeDb": -33.1,
+     "rmsAfterDb": -21.8
+    }
+   },
+   "maximum": {
+    "id": "campaign",
+    "seconds": 79.6,
+    "peak": 0.6894510388374329,
+    "peakDbfs": -3.2,
+    "rmsDbfs": -17.1,
+    "activeRmsDbfs": -17,
+    "crestDb": 13.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.000333,
+     -0.000333
+    ],
+    "silentRatio": 0.017,
+    "endRmsDbfs": -96.4,
+    "maxStep": 0.1636,
+    "maxStepAtSeconds": 28.562,
+    "maxStepVsP999": 1.9,
+    "spectralCentroidHz": 183,
+    "bandsDb": {
+     "sub 20-120 Hz": -3.6,
+     "low 120-500 Hz": -2.8,
+     "mid 500-2000 Hz": -13.9,
+     "high 2-6 kHz": -31,
+     "air 6-16 kHz": -32.3
+    },
+    "loop": {
+     "seamMaxStep": 0.0041,
+     "seamVsP999": 0.05,
+     "rmsBeforeDb": -29.2,
+     "rmsAfterDb": -18
+    }
+   }
+  },
+  "lab": {
+   "title": "Cold Room (laboratory ambience)",
+   "bpm": 72,
+   "bars": 12,
+   "kind": "loop",
+   "bus": "ambience",
+   "loopSeconds": 40,
+   "default": {
+    "id": "lab",
+    "seconds": 83.5,
+    "peak": 0.23940490186214447,
+    "peakDbfs": -12.4,
+    "rmsDbfs": -25.3,
+    "activeRmsDbfs": -25.2,
+    "crestDb": 12.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.00000148,
+     -0.00000151
+    ],
+    "silentRatio": 0.029,
+    "endRmsDbfs": -120.5,
+    "maxStep": 0.0216,
+    "maxStepAtSeconds": 43.81,
+    "maxStepVsP999": 1.8,
+    "spectralCentroidHz": 263,
+    "bandsDb": {
+     "sub 20-120 Hz": -4.6,
+     "low 120-500 Hz": -2.7,
+     "mid 500-2000 Hz": -9.3,
+     "high 2-6 kHz": -31.3,
+     "air 6-16 kHz": -42.5
+    },
+    "loop": {
+     "seamMaxStep": 0.0029,
+     "seamVsP999": 0.25,
+     "rmsBeforeDb": -28.6,
+     "rmsAfterDb": -24.3
+    }
+   },
+   "maximum": {
+    "id": "lab",
+    "seconds": 83.5,
+    "peak": 0.3740701377391815,
+    "peakDbfs": -8.5,
+    "rmsDbfs": -21.5,
+    "activeRmsDbfs": -21.4,
+    "crestDb": 12.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.00000231,
+     -0.00000236
+    ],
+    "silentRatio": 0.028,
+    "endRmsDbfs": -116.6,
+    "maxStep": 0.0338,
+    "maxStepAtSeconds": 43.81,
+    "maxStepVsP999": 1.8,
+    "spectralCentroidHz": 263,
+    "bandsDb": {
+     "sub 20-120 Hz": -4.6,
+     "low 120-500 Hz": -2.7,
+     "mid 500-2000 Hz": -9.3,
+     "high 2-6 kHz": -31.3,
+     "air 6-16 kHz": -42.5
+    },
+    "loop": {
+     "seamMaxStep": 0.0046,
+     "seamVsP999": 0.25,
+     "rmsBeforeDb": -24.7,
+     "rmsAfterDb": -20.4
+    }
+   }
+  },
+  "tension": {
+   "title": "Blackout Protocol (final mission)",
+   "bpm": 108,
+   "bars": 16,
+   "kind": "loop",
+   "bus": "music",
+   "loopSeconds": 35.56,
+   "default": {
+    "id": "tension",
+    "seconds": 73.91,
+    "peak": 0.7232691645622253,
+    "peakDbfs": -2.8,
+    "rmsDbfs": -20.9,
+    "activeRmsDbfs": -20.8,
+    "crestDb": 17.9,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.00046,
+     -0.00046
+    ],
+    "silentRatio": 0.026,
+    "endRmsDbfs": -112,
+    "maxStep": 0.1109,
+    "maxStepAtSeconds": 55.615,
+    "maxStepVsP999": 2,
+    "spectralCentroidHz": 171,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.6,
+     "low 120-500 Hz": -5.6,
+     "mid 500-2000 Hz": -15.1,
+     "high 2-6 kHz": -27.7,
+     "air 6-16 kHz": -30.2
+    },
+    "loop": {
+     "seamMaxStep": 0.0135,
+     "seamVsP999": 0.24,
+     "rmsBeforeDb": -30.7,
+     "rmsAfterDb": -21.3
+    }
+   },
+   "maximum": {
+    "id": "tension",
+    "seconds": 73.91,
+    "peak": 0.8311929106712341,
+    "peakDbfs": -1.6,
+    "rmsDbfs": -17.4,
+    "activeRmsDbfs": -17.3,
+    "crestDb": 15.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.000664,
+     -0.000664
+    ],
+    "silentRatio": 0.024,
+    "endRmsDbfs": -108.1,
+    "maxStep": 0.1654,
+    "maxStepAtSeconds": 25.615,
+    "maxStepVsP999": 2,
+    "spectralCentroidHz": 171,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.6,
+     "low 120-500 Hz": -5.8,
+     "mid 500-2000 Hz": -14.9,
+     "high 2-6 kHz": -28,
+     "air 6-16 kHz": -30.2
+    },
+    "loop": {
+     "seamMaxStep": 0.0211,
+     "seamVsP999": 0.26,
+     "rmsBeforeDb": -26.8,
+     "rmsAfterDb": -17.4
+    }
+   }
+  },
+  "success": {
+   "title": "Network Restored (success)",
+   "bpm": 100,
+   "bars": 2,
+   "kind": "cue",
+   "bus": "music",
+   "loopSeconds": 4.8,
+   "default": {
+    "id": "success",
+    "seconds": 8.1,
+    "peak": 0.2949107885360718,
+    "peakDbfs": -10.6,
+    "rmsDbfs": -23.8,
+    "activeRmsDbfs": -22.4,
+    "crestDb": 11.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000243,
+     -0.0000244
+    ],
+    "silentRatio": 0.267,
+    "endRmsDbfs": -109.7,
+    "maxStep": 0.0325,
+    "maxStepAtSeconds": 2.798,
+    "maxStepVsP999": 1.7,
+    "spectralCentroidHz": 276,
+    "bandsDb": {
+     "sub 20-120 Hz": -2.2,
+     "low 120-500 Hz": -7.3,
+     "mid 500-2000 Hz": -6.9,
+     "high 2-6 kHz": -23.1,
+     "air 6-16 kHz": -49.5
+    }
+   },
+   "maximum": {
+    "id": "success",
+    "seconds": 8.1,
+    "peak": 0.4607981741428375,
+    "peakDbfs": -6.7,
+    "rmsDbfs": -19.9,
+    "activeRmsDbfs": -18.7,
+    "crestDb": 12,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000379,
+     -0.0000381
+    ],
+    "silentRatio": 0.235,
+    "endRmsDbfs": -105.8,
+    "maxStep": 0.0508,
+    "maxStepAtSeconds": 2.798,
+    "maxStepVsP999": 1.7,
+    "spectralCentroidHz": 276,
+    "bandsDb": {
+     "sub 20-120 Hz": -2.2,
+     "low 120-500 Hz": -7.3,
+     "mid 500-2000 Hz": -6.9,
+     "high 2-6 kHz": -23.1,
+     "air 6-16 kHz": -49.5
+    }
+   }
+  },
+  "sting": {
+   "title": "Studio sting",
+   "bpm": 120,
+   "bars": 1,
+   "kind": "cue",
+   "bus": "sfx",
+   "loopSeconds": 2,
+   "default": {
+    "id": "sting",
+    "seconds": 4.3,
+    "peak": 0.3858955502510071,
+    "peakDbfs": -8.3,
+    "rmsDbfs": -28.1,
+    "activeRmsDbfs": -26.9,
+    "crestDb": 18.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000941,
+     -0.0000941
+    ],
+    "silentRatio": 0.237,
+    "endRmsDbfs": -80.5,
+    "maxStep": 0.0421,
+    "maxStepAtSeconds": 1.029,
+    "maxStepVsP999": 2.1,
+    "spectralCentroidHz": 212,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.6,
+     "low 120-500 Hz": -6.7,
+     "mid 500-2000 Hz": -10.7,
+     "high 2-6 kHz": -22.2,
+     "air 6-16 kHz": -30.6
+    }
+   },
+   "maximum": {
+    "id": "sting",
+    "seconds": 4.3,
+    "peak": 0.5916997194290161,
+    "peakDbfs": -4.6,
+    "rmsDbfs": -24.2,
+    "activeRmsDbfs": -23.3,
+    "crestDb": 18.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.000145,
+     -0.000145
+    ],
+    "silentRatio": 0.186,
+    "endRmsDbfs": -76.6,
+    "maxStep": 0.0657,
+    "maxStepAtSeconds": 1.029,
+    "maxStepVsP999": 2.1,
+    "spectralCentroidHz": 212,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.6,
+     "low 120-500 Hz": -6.7,
+     "mid 500-2000 Hz": -10.6,
+     "high 2-6 kHz": -22.2,
+     "air 6-16 kHz": -30.6
+    }
+   }
+  }
+ },
+ "sfx": {
+  "click": {
+   "default": {
+    "id": "click",
+    "seconds": 2.3,
+    "peak": 0.08464402705430984,
+    "peakDbfs": -21.4,
+    "rmsDbfs": -47.5,
+    "activeRmsDbfs": -29.9,
+    "crestDb": 8.4,
+    "clippedSamples": 0,
+    "dcOffset": [
+     9.74e-7,
+     9.74e-7
+    ],
+    "silentRatio": 0.983,
+    "endRmsDbfs": -180,
+    "maxStep": 0.015,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 1315,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.3,
+     "low 120-500 Hz": -36.8,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -28.4,
+     "air 6-16 kHz": -49
+    }
+   },
+   "maximum": {
+    "id": "click",
+    "seconds": 2.3,
+    "peak": 0.13225629925727844,
+    "peakDbfs": -17.6,
+    "rmsDbfs": -43.6,
+    "activeRmsDbfs": -26,
+    "crestDb": 8.4,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000152,
+     0.00000152
+    ],
+    "silentRatio": 0.983,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0235,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 1315,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.3,
+     "low 120-500 Hz": -36.8,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -28.4,
+     "air 6-16 kHz": -49
+    }
+   }
+  },
+  "select": {
+   "default": {
+    "id": "select",
+    "seconds": 2.3,
+    "peak": 0.10929375886917114,
+    "peakDbfs": -19.2,
+    "rmsDbfs": -44.2,
+    "activeRmsDbfs": -28.3,
+    "crestDb": 9.1,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000174,
+     0.00000174
+    ],
+    "silentRatio": 0.974,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0137,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 880,
+    "bandsDb": {
+     "sub 20-120 Hz": -44.4,
+     "low 120-500 Hz": -37.5,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -56.3,
+     "air 6-16 kHz": -78.5
+    }
+   },
+   "maximum": {
+    "id": "select",
+    "seconds": 2.3,
+    "peak": 0.1707714945077896,
+    "peakDbfs": -15.4,
+    "rmsDbfs": -40.3,
+    "activeRmsDbfs": -25.1,
+    "crestDb": 9.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000272,
+     0.00000272
+    ],
+    "silentRatio": 0.97,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0214,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 880,
+    "bandsDb": {
+     "sub 20-120 Hz": -44.4,
+     "low 120-500 Hz": -37.5,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -56.3,
+     "air 6-16 kHz": -78.5
+    }
+   }
+  },
+  "confirm": {
+   "default": {
+    "id": "confirm",
+    "seconds": 2.3,
+    "peak": 0.18426455557346344,
+    "peakDbfs": -14.7,
+    "rmsDbfs": -38,
+    "activeRmsDbfs": -27.4,
+    "crestDb": 12.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     9.07e-7,
+     9.07e-7
+    ],
+    "silentRatio": 0.913,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0158,
+    "maxStepAtSeconds": 0.141,
+    "maxStepVsP999": 1.3,
+    "spectralCentroidHz": 627,
+    "bandsDb": {
+     "sub 20-120 Hz": -45.9,
+     "low 120-500 Hz": -6.3,
+     "mid 500-2000 Hz": -1.2,
+     "high 2-6 kHz": -25.3,
+     "air 6-16 kHz": -59.5
+    }
+   },
+   "maximum": {
+    "id": "confirm",
+    "seconds": 2.3,
+    "peak": 0.28791335225105286,
+    "peakDbfs": -10.8,
+    "rmsDbfs": -34.1,
+    "activeRmsDbfs": -23.5,
+    "crestDb": 12.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000142,
+     0.00000142
+    ],
+    "silentRatio": 0.913,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0246,
+    "maxStepAtSeconds": 0.141,
+    "maxStepVsP999": 1.3,
+    "spectralCentroidHz": 627,
+    "bandsDb": {
+     "sub 20-120 Hz": -45.9,
+     "low 120-500 Hz": -6.3,
+     "mid 500-2000 Hz": -1.2,
+     "high 2-6 kHz": -25.3,
+     "air 6-16 kHz": -59.5
+    }
+   }
+  },
+  "back": {
+   "default": {
+    "id": "back",
+    "seconds": 2.3,
+    "peak": 0.1362246870994568,
+    "peakDbfs": -17.3,
+    "rmsDbfs": -41,
+    "activeRmsDbfs": -29.7,
+    "crestDb": 12.4,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -1.63e-8,
+     -1.63e-8
+    ],
+    "silentRatio": 0.926,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0084,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 510,
+    "bandsDb": {
+     "sub 20-120 Hz": -44.3,
+     "low 120-500 Hz": -1.3,
+     "mid 500-2000 Hz": -6,
+     "high 2-6 kHz": -26.2,
+     "air 6-16 kHz": -62.1
+    }
+   },
+   "maximum": {
+    "id": "back",
+    "seconds": 2.3,
+    "peak": 0.21285107731819153,
+    "peakDbfs": -13.4,
+    "rmsDbfs": -37.2,
+    "activeRmsDbfs": -25.8,
+    "crestDb": 12.4,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -2.53e-8,
+     -2.53e-8
+    ],
+    "silentRatio": 0.926,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0131,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 510,
+    "bandsDb": {
+     "sub 20-120 Hz": -44.3,
+     "low 120-500 Hz": -1.3,
+     "mid 500-2000 Hz": -6,
+     "high 2-6 kHz": -26.2,
+     "air 6-16 kHz": -62.1
+    }
+   }
+  },
+  "invalid": {
+   "default": {
+    "id": "invalid",
+    "seconds": 2.3,
+    "peak": 0.12016626447439194,
+    "peakDbfs": -18.4,
+    "rmsDbfs": -41.9,
+    "activeRmsDbfs": -29,
+    "crestDb": 10.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000192,
+     -0.0000192
+    ],
+    "silentRatio": 0.948,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0029,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 165,
+    "bandsDb": {
+     "sub 20-120 Hz": -17.9,
+     "low 120-500 Hz": -0.1,
+     "mid 500-2000 Hz": -40.5,
+     "high 2-6 kHz": -64.8,
+     "air 6-16 kHz": -81.5
+    }
+   },
+   "maximum": {
+    "id": "invalid",
+    "seconds": 2.3,
+    "peak": 0.18775978684425354,
+    "peakDbfs": -14.5,
+    "rmsDbfs": -38,
+    "activeRmsDbfs": -25.5,
+    "crestDb": 11,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000301,
+     -0.0000301
+    ],
+    "silentRatio": 0.943,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0045,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 165,
+    "bandsDb": {
+     "sub 20-120 Hz": -17.9,
+     "low 120-500 Hz": -0.1,
+     "mid 500-2000 Hz": -40.5,
+     "high 2-6 kHz": -64.8,
+     "air 6-16 kHz": -81.5
+    }
+   }
+  },
+  "missionStart": {
+   "default": {
+    "id": "missionStart",
+    "seconds": 2.3,
+    "peak": 0.20396050810813904,
+    "peakDbfs": -13.8,
+    "rmsDbfs": -34.2,
+    "activeRmsDbfs": -30.5,
+    "crestDb": 16.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000185,
+     -0.0000182
+    ],
+    "silentRatio": 0.578,
+    "endRmsDbfs": -147.7,
+    "maxStep": 0.0115,
+    "maxStepAtSeconds": 0.241,
+    "maxStepVsP999": 1.4,
+    "spectralCentroidHz": 325,
+    "bandsDb": {
+     "sub 20-120 Hz": -8.6,
+     "low 120-500 Hz": -0.7,
+     "mid 500-2000 Hz": -18.3,
+     "high 2-6 kHz": -30.4,
+     "air 6-16 kHz": -64.2
+    }
+   },
+   "maximum": {
+    "id": "missionStart",
+    "seconds": 2.3,
+    "peak": 0.3186883330345154,
+    "peakDbfs": -9.9,
+    "rmsDbfs": -30.3,
+    "activeRmsDbfs": -27.1,
+    "crestDb": 17.2,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000289,
+     -0.0000284
+    ],
+    "silentRatio": 0.522,
+    "endRmsDbfs": -143.8,
+    "maxStep": 0.0179,
+    "maxStepAtSeconds": 0.241,
+    "maxStepVsP999": 1.4,
+    "spectralCentroidHz": 325,
+    "bandsDb": {
+     "sub 20-120 Hz": -8.6,
+     "low 120-500 Hz": -0.7,
+     "mid 500-2000 Hz": -18.3,
+     "high 2-6 kHz": -30.4,
+     "air 6-16 kHz": -64.2
+    }
+   }
+  },
+  "spend": {
+   "default": {
+    "id": "spend",
+    "seconds": 2.3,
+    "peak": 0.11573630571365356,
+    "peakDbfs": -18.7,
+    "rmsDbfs": -41.3,
+    "activeRmsDbfs": -28.5,
+    "crestDb": 9.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000266,
+     0.00000266
+    ],
+    "silentRatio": 0.948,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0141,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 879,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.5,
+     "low 120-500 Hz": -32.3,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -51.4,
+     "air 6-16 kHz": -77.8
+    }
+   },
+   "maximum": {
+    "id": "spend",
+    "seconds": 2.3,
+    "peak": 0.1808379888534546,
+    "peakDbfs": -14.9,
+    "rmsDbfs": -37.5,
+    "activeRmsDbfs": -25,
+    "crestDb": 10.1,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000416,
+     0.00000416
+    ],
+    "silentRatio": 0.943,
+    "endRmsDbfs": -180,
+    "maxStep": 0.022,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 879,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.5,
+     "low 120-500 Hz": -32.3,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -51.4,
+     "air 6-16 kHz": -77.8
+    }
+   }
+  },
+  "execute": {
+   "default": {
+    "id": "execute",
+    "seconds": 2.3,
+    "peak": 0.16565047204494476,
+    "peakDbfs": -15.6,
+    "rmsDbfs": -35.1,
+    "activeRmsDbfs": -27.3,
+    "crestDb": 11.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000165,
+     0.00000165
+    ],
+    "silentRatio": 0.835,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0126,
+    "maxStepAtSeconds": 0.304,
+    "maxStepVsP999": 1.3,
+    "spectralCentroidHz": 424,
+    "bandsDb": {
+     "sub 20-120 Hz": -35.1,
+     "low 120-500 Hz": -1.1,
+     "mid 500-2000 Hz": -6.6,
+     "high 2-6 kHz": -27.2,
+     "air 6-16 kHz": -33.8
+    }
+   },
+   "maximum": {
+    "id": "execute",
+    "seconds": 2.3,
+    "peak": 0.2588288187980652,
+    "peakDbfs": -11.7,
+    "rmsDbfs": -31.2,
+    "activeRmsDbfs": -23.5,
+    "crestDb": 11.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000258,
+     0.00000258
+    ],
+    "silentRatio": 0.83,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0197,
+    "maxStepAtSeconds": 0.304,
+    "maxStepVsP999": 1.3,
+    "spectralCentroidHz": 424,
+    "bandsDb": {
+     "sub 20-120 Hz": -35.1,
+     "low 120-500 Hz": -1.1,
+     "mid 500-2000 Hz": -6.6,
+     "high 2-6 kHz": -27.2,
+     "air 6-16 kHz": -33.8
+    }
+   }
+  },
+  "checkOn": {
+   "default": {
+    "id": "checkOn",
+    "seconds": 2.3,
+    "peak": 0.14159607887268066,
+    "peakDbfs": -17,
+    "rmsDbfs": -39.8,
+    "activeRmsDbfs": -27,
+    "crestDb": 10,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000456,
+     0.00000456
+    ],
+    "silentRatio": 0.948,
+    "endRmsDbfs": -180,
+    "maxStep": 0.02,
+    "maxStepAtSeconds": 0.12,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 877,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.3,
+     "low 120-500 Hz": -31.7,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -48.8,
+     "air 6-16 kHz": -77
+    }
+   },
+   "maximum": {
+    "id": "checkOn",
+    "seconds": 2.3,
+    "peak": 0.22124385833740234,
+    "peakDbfs": -13.1,
+    "rmsDbfs": -35.9,
+    "activeRmsDbfs": -23.1,
+    "crestDb": 10,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000713,
+     0.00000713
+    ],
+    "silentRatio": 0.948,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0312,
+    "maxStepAtSeconds": 0.12,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 877,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.3,
+     "low 120-500 Hz": -31.7,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -48.8,
+     "air 6-16 kHz": -77
+    }
+   }
+  },
+  "syndrome": {
+   "default": {
+    "id": "syndrome",
+    "seconds": 2.3,
+    "peak": 0.09697950631380081,
+    "peakDbfs": -20.3,
+    "rmsDbfs": -41.4,
+    "activeRmsDbfs": -29.6,
+    "crestDb": 9.3,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000174,
+     0.00000174
+    ],
+    "silentRatio": 0.935,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0129,
+    "maxStepAtSeconds": 0.129,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 912,
+    "bandsDb": {
+     "sub 20-120 Hz": -49.1,
+     "low 120-500 Hz": -42.3,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -59.6,
+     "air 6-16 kHz": -82.7
+    }
+   },
+   "maximum": {
+    "id": "syndrome",
+    "seconds": 2.3,
+    "peak": 0.15153048932552338,
+    "peakDbfs": -16.4,
+    "rmsDbfs": -37.6,
+    "activeRmsDbfs": -26,
+    "crestDb": 9.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000272,
+     0.00000272
+    ],
+    "silentRatio": 0.93,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0201,
+    "maxStepAtSeconds": 0.129,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 912,
+    "bandsDb": {
+     "sub 20-120 Hz": -49.1,
+     "low 120-500 Hz": -42.3,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -59.6,
+     "air 6-16 kHz": -82.7
+    }
+   }
+  },
+  "edge": {
+   "default": {
+    "id": "edge",
+    "seconds": 2.3,
+    "peak": 0.08075067400932312,
+    "peakDbfs": -21.9,
+    "rmsDbfs": -48,
+    "activeRmsDbfs": -31.4,
+    "crestDb": 9.5,
+    "clippedSamples": 0,
+    "dcOffset": [
+     4.3e-7,
+     4.3e-7
+    ],
+    "silentRatio": 0.978,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0084,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 800,
+    "bandsDb": {
+     "sub 20-120 Hz": -43.7,
+     "low 120-500 Hz": -35.3,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -19.6,
+     "air 6-16 kHz": -59.1
+    }
+   },
+   "maximum": {
+    "id": "edge",
+    "seconds": 2.3,
+    "peak": 0.12617293000221252,
+    "peakDbfs": -18,
+    "rmsDbfs": -44.1,
+    "activeRmsDbfs": -27.5,
+    "crestDb": 9.5,
+    "clippedSamples": 0,
+    "dcOffset": [
+     6.72e-7,
+     6.72e-7
+    ],
+    "silentRatio": 0.978,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0131,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 800,
+    "bandsDb": {
+     "sub 20-120 Hz": -43.7,
+     "low 120-500 Hz": -35.3,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -19.6,
+     "air 6-16 kHz": -59.1
+    }
+   }
+  },
+  "undo": {
+   "default": {
+    "id": "undo",
+    "seconds": 2.3,
+    "peak": 0.11882805079221725,
+    "peakDbfs": -18.5,
+    "rmsDbfs": -42.6,
+    "activeRmsDbfs": -30.1,
+    "crestDb": 11.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -5.38e-7,
+     -5.38e-7
+    ],
+    "silentRatio": 0.943,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0062,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 455,
+    "bandsDb": {
+     "sub 20-120 Hz": -45.8,
+     "low 120-500 Hz": -1.7,
+     "mid 500-2000 Hz": -4.9,
+     "high 2-6 kHz": -30.5,
+     "air 6-16 kHz": -64.5
+    }
+   },
+   "maximum": {
+    "id": "undo",
+    "seconds": 2.3,
+    "peak": 0.18566882610321045,
+    "peakDbfs": -14.6,
+    "rmsDbfs": -38.7,
+    "activeRmsDbfs": -26.3,
+    "crestDb": 11.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -8.41e-7,
+     -8.41e-7
+    ],
+    "silentRatio": 0.943,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0097,
+    "maxStepAtSeconds": 0.07,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 455,
+    "bandsDb": {
+     "sub 20-120 Hz": -45.8,
+     "low 120-500 Hz": -1.7,
+     "mid 500-2000 Hz": -4.9,
+     "high 2-6 kHz": -30.5,
+     "air 6-16 kHz": -64.5
+    }
+   }
+  },
+  "calibrated": {
+   "default": {
+    "id": "calibrated",
+    "seconds": 2.3,
+    "peak": 0.16472646594047546,
+    "peakDbfs": -15.7,
+    "rmsDbfs": -37.6,
+    "activeRmsDbfs": -34.3,
+    "crestDb": 18.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000677,
+     0.00000639
+    ],
+    "silentRatio": 0.535,
+    "endRmsDbfs": -134.6,
+    "maxStep": 0.0287,
+    "maxStepAtSeconds": 0.162,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 1249,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.7,
+     "low 120-500 Hz": -37.1,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -23.4,
+     "air 6-16 kHz": -45.1
+    }
+   },
+   "maximum": {
+    "id": "calibrated",
+    "seconds": 2.3,
+    "peak": 0.25738513469696045,
+    "peakDbfs": -11.8,
+    "rmsDbfs": -33.8,
+    "activeRmsDbfs": -30.8,
+    "crestDb": 19,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.0000106,
+     0.00000999
+    ],
+    "silentRatio": 0.491,
+    "endRmsDbfs": -130.7,
+    "maxStep": 0.0449,
+    "maxStepAtSeconds": 0.162,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 1249,
+    "bandsDb": {
+     "sub 20-120 Hz": -42.7,
+     "low 120-500 Hz": -37.1,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -23.4,
+     "air 6-16 kHz": -45.1
+    }
+   }
+  },
+  "expSuccess": {
+   "default": {
+    "id": "expSuccess",
+    "seconds": 2.3,
+    "peak": 0.19732128083705902,
+    "peakDbfs": -14.1,
+    "rmsDbfs": -35,
+    "activeRmsDbfs": -26.2,
+    "crestDb": 12.1,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000296,
+     0.00000296
+    ],
+    "silentRatio": 0.87,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0169,
+    "maxStepAtSeconds": 0.244,
+    "maxStepVsP999": 1.3,
+    "spectralCentroidHz": 584,
+    "bandsDb": {
+     "sub 20-120 Hz": -46.6,
+     "low 120-500 Hz": -6.7,
+     "mid 500-2000 Hz": -1.1,
+     "high 2-6 kHz": -26.4,
+     "air 6-16 kHz": -59.6
+    }
+   },
+   "maximum": {
+    "id": "expSuccess",
+    "seconds": 2.3,
+    "peak": 0.3083144724369049,
+    "peakDbfs": -10.2,
+    "rmsDbfs": -31.1,
+    "activeRmsDbfs": -22.4,
+    "crestDb": 12.2,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000462,
+     0.00000462
+    ],
+    "silentRatio": 0.865,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0264,
+    "maxStepAtSeconds": 0.244,
+    "maxStepVsP999": 1.3,
+    "spectralCentroidHz": 584,
+    "bandsDb": {
+     "sub 20-120 Hz": -46.6,
+     "low 120-500 Hz": -6.7,
+     "mid 500-2000 Hz": -1.1,
+     "high 2-6 kHz": -26.4,
+     "air 6-16 kHz": -59.6
+    }
+   }
+  },
+  "expFail": {
+   "default": {
+    "id": "expFail",
+    "seconds": 2.3,
+    "peak": 0.12561778724193573,
+    "peakDbfs": -18,
+    "rmsDbfs": -38.4,
+    "activeRmsDbfs": -29.9,
+    "crestDb": 11.9,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000183,
+     0.00000183
+    ],
+    "silentRatio": 0.861,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0047,
+    "maxStepAtSeconds": 0.185,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 281,
+    "bandsDb": {
+     "sub 20-120 Hz": -34,
+     "low 120-500 Hz": 0,
+     "mid 500-2000 Hz": -36.2,
+     "high 2-6 kHz": -60.9,
+     "air 6-16 kHz": -81
+    }
+   },
+   "maximum": {
+    "id": "expFail",
+    "seconds": 2.3,
+    "peak": 0.19627778232097626,
+    "peakDbfs": -14.1,
+    "rmsDbfs": -34.6,
+    "activeRmsDbfs": -26.1,
+    "crestDb": 12,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000286,
+     0.00000286
+    ],
+    "silentRatio": 0.857,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0073,
+    "maxStepAtSeconds": 0.185,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 281,
+    "bandsDb": {
+     "sub 20-120 Hz": -34,
+     "low 120-500 Hz": 0,
+     "mid 500-2000 Hz": -36.2,
+     "high 2-6 kHz": -60.9,
+     "air 6-16 kHz": -81
+    }
+   }
+  },
+  "unlock": {
+   "default": {
+    "id": "unlock",
+    "seconds": 2.3,
+    "peak": 0.1797080934047699,
+    "peakDbfs": -14.9,
+    "rmsDbfs": -35.6,
+    "activeRmsDbfs": -32.6,
+    "crestDb": 17.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000737,
+     0.00000696
+    ],
+    "silentRatio": 0.509,
+    "endRmsDbfs": -132.6,
+    "maxStep": 0.0248,
+    "maxStepAtSeconds": 0.201,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 848,
+    "bandsDb": {
+     "sub 20-120 Hz": -44.1,
+     "low 120-500 Hz": -21.1,
+     "mid 500-2000 Hz": -0.1,
+     "high 2-6 kHz": -20.6,
+     "air 6-16 kHz": -54.5
+    }
+   },
+   "maximum": {
+    "id": "unlock",
+    "seconds": 2.3,
+    "peak": 0.2807939052581787,
+    "peakDbfs": -11,
+    "rmsDbfs": -31.8,
+    "activeRmsDbfs": -29.2,
+    "crestDb": 18.1,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.0000115,
+     0.0000109
+    ],
+    "silentRatio": 0.452,
+    "endRmsDbfs": -128.8,
+    "maxStep": 0.0387,
+    "maxStepAtSeconds": 0.201,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 848,
+    "bandsDb": {
+     "sub 20-120 Hz": -44.1,
+     "low 120-500 Hz": -21.1,
+     "mid 500-2000 Hz": -0.1,
+     "high 2-6 kHz": -20.6,
+     "air 6-16 kHz": -54.5
+    }
+   }
+  },
+  "success": {
+   "default": {
+    "id": "success",
+    "seconds": 8.1,
+    "peak": 0.29491087794303894,
+    "peakDbfs": -10.6,
+    "rmsDbfs": -23.8,
+    "activeRmsDbfs": -22.4,
+    "crestDb": 11.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000243,
+     -0.0000244
+    ],
+    "silentRatio": 0.267,
+    "endRmsDbfs": -109.7,
+    "maxStep": 0.0325,
+    "maxStepAtSeconds": 2.798,
+    "maxStepVsP999": 1.7,
+    "spectralCentroidHz": 276,
+    "bandsDb": {
+     "sub 20-120 Hz": -2.2,
+     "low 120-500 Hz": -7.3,
+     "mid 500-2000 Hz": -6.9,
+     "high 2-6 kHz": -23.1,
+     "air 6-16 kHz": -49.5
+    }
+   },
+   "maximum": {
+    "id": "success",
+    "seconds": 8.1,
+    "peak": 0.4607982337474823,
+    "peakDbfs": -6.7,
+    "rmsDbfs": -19.9,
+    "activeRmsDbfs": -18.7,
+    "crestDb": 12,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000379,
+     -0.0000381
+    ],
+    "silentRatio": 0.235,
+    "endRmsDbfs": -105.8,
+    "maxStep": 0.0508,
+    "maxStepAtSeconds": 2.798,
+    "maxStepVsP999": 1.7,
+    "spectralCentroidHz": 276,
+    "bandsDb": {
+     "sub 20-120 Hz": -2.2,
+     "low 120-500 Hz": -7.3,
+     "mid 500-2000 Hz": -6.9,
+     "high 2-6 kHz": -23.1,
+     "air 6-16 kHz": -49.5
+    }
+   }
+  },
+  "failure": {
+   "default": {
+    "id": "failure",
+    "seconds": 3.1,
+    "peak": 0.15785302221775055,
+    "peakDbfs": -16,
+    "rmsDbfs": -35.8,
+    "activeRmsDbfs": -33.3,
+    "crestDb": 17.2,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.00000287,
+     -0.00000271
+    ],
+    "silentRatio": 0.445,
+    "endRmsDbfs": -101.6,
+    "maxStep": 0.0058,
+    "maxStepAtSeconds": 0.804,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 297,
+    "bandsDb": {
+     "sub 20-120 Hz": -30.8,
+     "low 120-500 Hz": -0.3,
+     "mid 500-2000 Hz": -12.1,
+     "high 2-6 kHz": -36.3,
+     "air 6-16 kHz": -61.9
+    }
+   },
+   "maximum": {
+    "id": "failure",
+    "seconds": 3.1,
+    "peak": 0.24664534628391266,
+    "peakDbfs": -12.2,
+    "rmsDbfs": -31.9,
+    "activeRmsDbfs": -29.8,
+    "crestDb": 17.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.00000448,
+     -0.00000423
+    ],
+    "silentRatio": 0.387,
+    "endRmsDbfs": -97.7,
+    "maxStep": 0.0091,
+    "maxStepAtSeconds": 0.804,
+    "maxStepVsP999": 1.2,
+    "spectralCentroidHz": 297,
+    "bandsDb": {
+     "sub 20-120 Hz": -30.8,
+     "low 120-500 Hz": -0.3,
+     "mid 500-2000 Hz": -12.1,
+     "high 2-6 kHz": -36.3,
+     "air 6-16 kHz": -61.9
+    }
+   }
+  },
+  "complete": {
+   "default": {
+    "id": "complete",
+    "seconds": 4.1,
+    "peak": 0.243089497089386,
+    "peakDbfs": -12.3,
+    "rmsDbfs": -27.8,
+    "activeRmsDbfs": -25.9,
+    "crestDb": 13.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000292,
+     -0.0000292
+    ],
+    "silentRatio": 0.354,
+    "endRmsDbfs": -96.3,
+    "maxStep": 0.0267,
+    "maxStepAtSeconds": 0.843,
+    "maxStepVsP999": 1.6,
+    "spectralCentroidHz": 258,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.8,
+     "low 120-500 Hz": -8.8,
+     "mid 500-2000 Hz": -7,
+     "high 2-6 kHz": -21.8,
+     "air 6-16 kHz": -48.2
+    }
+   },
+   "maximum": {
+    "id": "complete",
+    "seconds": 4.1,
+    "peak": 0.3798274099826813,
+    "peakDbfs": -8.4,
+    "rmsDbfs": -23.9,
+    "activeRmsDbfs": -22.5,
+    "crestDb": 14.1,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000456,
+     -0.0000456
+    ],
+    "silentRatio": 0.283,
+    "endRmsDbfs": -92.4,
+    "maxStep": 0.0417,
+    "maxStepAtSeconds": 0.843,
+    "maxStepVsP999": 1.6,
+    "spectralCentroidHz": 258,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.8,
+     "low 120-500 Hz": -8.8,
+     "mid 500-2000 Hz": -7,
+     "high 2-6 kHz": -21.8,
+     "air 6-16 kHz": -48.2
+    }
+   }
+  },
+  "tick": {
+   "default": {
+    "id": "tick",
+    "seconds": 2.3,
+    "peak": 0.06615452468395233,
+    "peakDbfs": -23.6,
+    "rmsDbfs": -49.8,
+    "activeRmsDbfs": -31,
+    "crestDb": 7.4,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000101,
+     0.00000101
+    ],
+    "silentRatio": 0.987,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0141,
+    "maxStepAtSeconds": 0.066,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 1556,
+    "bandsDb": {
+     "sub 20-120 Hz": -41.8,
+     "low 120-500 Hz": -36.4,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -32.5,
+     "air 6-16 kHz": -53.9
+    }
+   },
+   "maximum": {
+    "id": "tick",
+    "seconds": 2.3,
+    "peak": 0.1033664420247078,
+    "peakDbfs": -19.7,
+    "rmsDbfs": -45.9,
+    "activeRmsDbfs": -28.3,
+    "crestDb": 8.6,
+    "clippedSamples": 0,
+    "dcOffset": [
+     0.00000158,
+     0.00000158
+    ],
+    "silentRatio": 0.983,
+    "endRmsDbfs": -180,
+    "maxStep": 0.022,
+    "maxStepAtSeconds": 0.066,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 1556,
+    "bandsDb": {
+     "sub 20-120 Hz": -41.8,
+     "low 120-500 Hz": -36.4,
+     "mid 500-2000 Hz": 0,
+     "high 2-6 kHz": -32.5,
+     "air 6-16 kHz": -53.9
+    }
+   }
+  },
+  "briefing": {
+   "default": {
+    "id": "briefing",
+    "seconds": 2.3,
+    "peak": 0.15300847589969635,
+    "peakDbfs": -16.3,
+    "rmsDbfs": -36.6,
+    "activeRmsDbfs": -28.7,
+    "crestDb": 12.4,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -2.31e-8,
+     -2.31e-8
+    ],
+    "silentRatio": 0.839,
+    "endRmsDbfs": -180,
+    "maxStep": 0.0096,
+    "maxStepAtSeconds": 0.243,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 400,
+    "bandsDb": {
+     "sub 20-120 Hz": -41.2,
+     "low 120-500 Hz": 0,
+     "mid 500-2000 Hz": -22.8,
+     "high 2-6 kHz": -64.2,
+     "air 6-16 kHz": -80.9
+    }
+   },
+   "maximum": {
+    "id": "briefing",
+    "seconds": 2.3,
+    "peak": 0.23907573521137238,
+    "peakDbfs": -12.4,
+    "rmsDbfs": -32.7,
+    "activeRmsDbfs": -24.9,
+    "crestDb": 12.5,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -3.61e-8,
+     -3.61e-8
+    ],
+    "silentRatio": 0.835,
+    "endRmsDbfs": -180,
+    "maxStep": 0.015,
+    "maxStepAtSeconds": 0.243,
+    "maxStepVsP999": 1.1,
+    "spectralCentroidHz": 400,
+    "bandsDb": {
+     "sub 20-120 Hz": -41.2,
+     "low 120-500 Hz": 0,
+     "mid 500-2000 Hz": -22.8,
+     "high 2-6 kHz": -64.2,
+     "air 6-16 kHz": -80.9
+    }
+   }
+  },
+  "sting": {
+   "default": {
+    "id": "sting",
+    "seconds": 4.3,
+    "peak": 0.3858955502510071,
+    "peakDbfs": -8.3,
+    "rmsDbfs": -28.1,
+    "activeRmsDbfs": -26.9,
+    "crestDb": 18.7,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.0000941,
+     -0.0000941
+    ],
+    "silentRatio": 0.237,
+    "endRmsDbfs": -80.5,
+    "maxStep": 0.0421,
+    "maxStepAtSeconds": 1.029,
+    "maxStepVsP999": 2.1,
+    "spectralCentroidHz": 212,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.6,
+     "low 120-500 Hz": -6.7,
+     "mid 500-2000 Hz": -10.7,
+     "high 2-6 kHz": -22.2,
+     "air 6-16 kHz": -30.6
+    }
+   },
+   "maximum": {
+    "id": "sting",
+    "seconds": 4.3,
+    "peak": 0.5916997194290161,
+    "peakDbfs": -4.6,
+    "rmsDbfs": -24.2,
+    "activeRmsDbfs": -23.3,
+    "crestDb": 18.8,
+    "clippedSamples": 0,
+    "dcOffset": [
+     -0.000145,
+     -0.000145
+    ],
+    "silentRatio": 0.186,
+    "endRmsDbfs": -76.6,
+    "maxStep": 0.0657,
+    "maxStepAtSeconds": 1.029,
+    "maxStepVsP999": 2.1,
+    "spectralCentroidHz": 212,
+    "bandsDb": {
+     "sub 20-120 Hz": -1.6,
+     "low 120-500 Hz": -6.7,
+     "mid 500-2000 Hz": -10.6,
+     "high 2-6 kHz": -22.2,
+     "air 6-16 kHz": -30.6
+    }
+   }
+  }
+ },
+ "engine": {
+  "browser": "chromium",
+  "version": "158.0.8127.36",
+  "renderSeconds": 317.713
+ },
+ "errors": []
+}

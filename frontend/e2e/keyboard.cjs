@@ -1,5 +1,5 @@
 // Keyboard-only play in real Chromium: no mouse events are used after page load. Usage: node e2e/keyboard.cjs [baseUrl] [outJson]
-const { chromium } = require("playwright");
+const browsers = require("./browsers.cjs");
 const fs = require("fs");
 const path = require("path");
 const { loadCampaign } = require("./drivers.cjs");
@@ -9,7 +9,7 @@ const { loadCampaign } = require("./drivers.cjs");
   const outJson = process.argv[3] || "../results/e2e/keyboard_test.json";
   const data = loadCampaign();
   const ids = data.missions.map((m) => m.id);
-  const browser = await chromium.launch();
+  const browser = await browsers.launch();
   const results = [];
   const check = (name, ok, detail = "") => { results.push({ name, ok, detail }); console.log(ok ? "PASS" : "FAIL", name, detail); };
   const nameOf = () => document.activeElement && (document.activeElement.getAttribute("aria-label") || document.activeElement.innerText || document.activeElement.textContent || "").trim().replace(/\s+/g, " ");
@@ -41,7 +41,7 @@ const { loadCampaign } = require("./drivers.cjs");
   // 1. a whole beginner mission with the keyboard
   try {
     const page = await newPage(null);
-    await tabTo(page, (i) => /^New Game/.test(i.name)); await page.keyboard.press("Enter");
+    await tabTo(page, (i) => /^Play$/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /^Go to mission/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /Begin mission/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => i.name === "10000"); await page.keyboard.press("Enter");
@@ -56,7 +56,7 @@ const { loadCampaign } = require("./drivers.cjs");
   try {
     const save = { schema: "qta6.save/2", failures: {}, difficulty: "beginner", tutorial_done: true, completed: Object.fromEntries(ids.slice(0, 18).map((id) => [id, { best_score: 70, attempts: 1 }])) };
     const page = await newPage(save);
-    await tabTo(page, (i) => /^Continue Campaign/.test(i.name)); await page.keyboard.press("Enter");
+    await tabTo(page, (i) => /^Continue$/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /^Quantum Core:/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => i.mission === "C3"); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /Begin mission/.test(i.name)); await page.keyboard.press("Enter");
@@ -69,7 +69,7 @@ const { loadCampaign } = require("./drivers.cjs");
     pressed = await page.locator(`[data-edge="${first}"]`).getAttribute("aria-pressed");
     check("Ctrl+Z undoes the last toggle from the keyboard", pressed === "false");
     for (const e of ref.mwpm_edges) { await tabTo(page, (i) => i.edge === String(e), 200); await page.keyboard.press(e === first ? "Space" : "Enter"); }
-    await tabTo(page, (i) => /^Submit correction/.test(i.name)); await page.keyboard.press("Enter");
+    await tabTo(page, (i) => /^Submit$/.test(i.name)); await page.keyboard.press("Enter");
     await page.getByText("Evaluation", { exact: true }).waitFor({ timeout: 4000 });
     check("a correction was selected, submitted and evaluated with the keyboard only (Enter and Space both work)", true);
     // dialog focus management

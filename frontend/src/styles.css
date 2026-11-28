@@ -113,11 +113,11 @@ details > summary { cursor:pointer; min-height:36px; display:flex; align-items:c
 /* ---------- intro ---------- */
 .intro { position:fixed; inset:0; z-index:500; background:#000; color:var(--text); overflow:hidden; }
 .intro .stage { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; }
-.intro .skip { position:absolute; right:16px; bottom:16px; z-index:5; } .intro .hint { position:absolute; left:16px; bottom:20px; z-index:5; color:var(--muted); font-size:.82rem; }
+.intro .intro-ui { position:absolute; right:16px; bottom:16px; z-index:5; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; } .intro .hint { position:absolute; left:16px; bottom:20px; z-index:5; color:var(--muted); font-size:.82rem; }
 .intro .gate { text-align:center; max-width:520px; padding:20px; z-index:3; }
 .intro .caption { font-family:var(--font-display); letter-spacing:.3em; text-align:center; }
-.fade-in { animation:fadein 1s both; }
-.glitch { animation:glitch 3s steps(1) infinite; } @keyframes glitch { 0%,92%,100% { transform:none; filter:none; } 93% { transform:translateX(-3px); filter:hue-rotate(40deg); } 95% { transform:translateX(3px); } 97% { transform:none; filter:hue-rotate(-40deg); } }
+.fade-in { animation:fadein .7s cubic-bezier(.2,.7,.2,1) both; }
+.glitch { animation:glitch .7s steps(1) 1; } @keyframes glitch { 0%,100% { transform:none; filter:none; } 30% { transform:translateX(-3px); filter:hue-rotate(40deg); } 55% { transform:translateX(3px); } 80% { transform:none; filter:hue-rotate(-40deg); } }
 .draw { stroke-dasharray:var(--len,600); stroke-dashoffset:var(--len,600); animation:draw 1.6s ease-out forwards; } @keyframes draw { to { stroke-dashoffset:0; } }
 .pulse-dot { animation:pulse 1.6s ease-in-out infinite; } @keyframes pulse { 0%,100% { opacity:.4; transform:scale(1); } 50% { opacity:1; transform:scale(1.25); } }
 .sway { transform-origin:50% 100%; animation:sway 6s ease-in-out infinite; } @keyframes sway { 0%,100% { transform:rotate(-1.5deg); } 50% { transform:rotate(1.8deg); } }
@@ -218,3 +218,5 @@ html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-
 .menu-secondary { display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:4px; }
 .codex-entry { margin-bottom:6px; } .codex-entry dd .math-display { margin:6px 0; }
 .explain-text p { background:var(--panel-2); padding:10px 12px; border-radius:10px; border-left:3px solid var(--violet); }
+.tab[aria-selected="true"] .muted,.tab.on .muted { color:inherit; }
+.path { overflow-wrap:anywhere; word-break:break-all; }

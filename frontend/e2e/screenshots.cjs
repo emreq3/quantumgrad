@@ -1,5 +1,5 @@
 // Captures REAL screenshots of the production build in Chromium (not mock-ups). Usage: node e2e/screenshots.cjs [baseUrl] [outDir]
-const { chromium } = require("playwright");
+const browsers = require("./browsers.cjs");
 const fs = require("fs");
 const { drivers, loadCampaign, cheapestWin } = require("./drivers.cjs");
 
@@ -11,7 +11,7 @@ const { drivers, loadCampaign, cheapestWin } = require("./drivers.cjs");
   const M = (id) => data.missions.find((m) => m.id === id);
   const save = (ids) => ({ schema: "qta6.save/2", failures: {}, difficulty: "beginner", tutorial_done: true, completed: Object.fromEntries(ids.map((id) => [id, { best_score: 60 + (id.charCodeAt(0) % 30), attempts: 1 }])) });
   const ids = data.missions.map((m) => m.id);
-  const browser = await chromium.launch();
+  const browser = await browsers.launch();
   const issues = [];
   const mk = async (w, h, scale, seed, skipIntro = true) => {
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: scale });
@@ -35,11 +35,11 @@ const { drivers, loadCampaign, cheapestWin } = require("./drivers.cjs");
     const btn = () => page.locator(`button[data-mission="${id}"]:visible`).first();
     if (!(await btn().count())) { // desktop: the mission list shows the selected district only
       const dn = data.districts.find((d) => d.id === M(id).district).name;
-      await page.getByRole("button", { name: new RegExp(`^${dn}:`) }).click();
+      await page.getByRole("tab", { name: new RegExp(`^${dn}`) }).click();
     }
     await btn().click();
   };
-  const openMission = async (page, id) => { await page.goto(base); await page.getByRole("button", { name: /Continue Campaign/ }).click(); await pickMission(page, id); await page.getByRole("button", { name: /Begin mission/ }).click(); };
+  const openMission = async (page, id) => { await page.goto(base); await page.getByRole("button", { name: /^Continue$/ }).click(); await pickMission(page, id); await page.getByRole("button", { name: /Begin mission/ }).click(); };
 
   // 1-2: studio intro and title reveal (real time)
   let p = await mk(1280, 720, 2, null, false);
@@ -56,13 +56,13 @@ const { drivers, loadCampaign, cheapestWin } = require("./drivers.cjs");
   // 3-4: menu with progress, map
   p = await mk(1280, 800, 2, save(ids.slice(0, 12)));
   await p.goto(base); await p.waitForSelector("nav[aria-label='Main menu']"); await p.waitForTimeout(500); await shot(p, "03_main_menu");
-  await p.getByRole("button", { name: /Continue Campaign/ }).click(); await p.waitForTimeout(400); await shot(p, "04_city_map");
+  await p.getByRole("button", { name: /^Continue$/ }).click(); await p.waitForTimeout(400); await shot(p, "04_city_map");
   await p.getByRole("button", { name: /^Neon Labs:/ }).click(); await p.waitForTimeout(300); await shot(p, "04b_city_map_neon_labs");
   await p.context().close();
 
   // 5: Quantum Academy mission
   p = await mk(1280, 800, 2, save([]));
-  await p.goto(base); await p.getByRole("button", { name: /New Game/ }).click(); await p.locator('button[data-mission="A1"]:visible').first().click();
+  await p.goto(base); await p.getByRole("button", { name: /^Play$/ }).click(); await p.locator('button[data-mission="A1"]:visible').first().click();
   await p.waitForTimeout(300); await shot(p, "05a_academy_briefing");
   await p.getByRole("button", { name: /Begin mission/ }).click(); await p.getByRole("button", { name: "10000" }).click(); await p.getByRole("button", { name: /Measure/ }).click(); await p.waitForTimeout(400);
   await shot(p, "05_quantum_academy"); await p.context().close();
@@ -71,21 +71,21 @@ const { drivers, loadCampaign, cheapestWin } = require("./drivers.cjs");
   p = await mk(1280, 800, 2, save(ids.slice(0, 4)));
   await openMission(p, "D1");
   await p.getByLabel("toggle sentinel on qubit 0").click(); await p.getByLabel("toggle sentinel on qubit 2").click();
-  await p.getByRole("button", { name: /Run experiment/ }).click(); await p.waitForTimeout(2600); await shot(p, "06_neon_labs_detection", true);
+  await p.getByRole("button", { name: /^Execute$/ }).click(); await p.waitForTimeout(2600); await shot(p, "06_neon_labs_detection", true);
   await p.getByRole("button", { name: /Complete mission/ }).click(); await p.waitForTimeout(500); await shot(p, "11_result_success");
   await p.context().close();
 
   // 12: failed result
   p = await mk(1280, 800, 2, save(ids.slice(0, 4)));
   await openMission(p, "D1");
-  await p.getByRole("button", { name: /Run experiment/ }).click(); await p.getByRole("button", { name: "End attempt" }).click(); await p.waitForTimeout(500); await shot(p, "12_result_failed");
+  await p.getByRole("button", { name: /^Execute$/ }).click(); await p.getByRole("button", { name: "End attempt" }).click(); await p.waitForTimeout(500); await shot(p, "12_result_failed");
   await p.context().close();
 
   // 7: Sunset Bay mitigation (M3 with 3 scales)
   p = await mk(1280, 800, 2, save(ids.slice(0, 11)));
   await openMission(p, "M3");
   await p.locator("#ctl-scales").selectOption("1,3,5"); await p.locator("#ctl-extrap").selectOption("richardson");
-  await p.getByRole("button", { name: /Run experiment/ }).click(); await p.waitForTimeout(500); await shot(p, "07_sunset_bay_mitigation", true);
+  await p.getByRole("button", { name: /^Execute$/ }).click(); await p.waitForTimeout(500); await shot(p, "07_sunset_bay_mitigation", true);
   await p.context().close();
 
   // 8: Quantum Core correction (C5 logical trap shown after submit; C3 lattice before)
@@ -98,14 +98,14 @@ const { drivers, loadCampaign, cheapestWin } = require("./drivers.cjs");
   p = await mk(1280, 800, 2, save(ids.slice(0, 20)));
   await openMission(p, "C5");
   for (const e of M("C5").reference.instances[0].syndrome_clearing_but_logically_wrong_example) await p.locator(`[data-edge="${e}"]`).click();
-  await p.getByRole("button", { name: "Submit correction" }).click(); await p.getByRole("button", { name: /Show the MWPM correction/ }).click(); await p.waitForTimeout(400);
+  await p.getByRole("button", { name: "Submit", exact: true }).click(); await p.getByRole("button", { name: /Show the MWPM correction/ }).click(); await p.waitForTimeout(400);
   await shot(p, "08_quantum_core_correction", true); await p.context().close();
 
   // 9: Circuit Harbor optimization (O3 with several runs)
   p = await mk(1280, 800, 2, save(ids.slice(0, 24)));
   await openMission(p, "O3");
-  for (const mask of [1, 2, 5, 12]) { for (let q = 0; q < 4; q++) { if ((mask >> q) & 1) await p.getByLabel(`toggle sentinel on qubit ${q}`).click(); } await p.getByRole("button", { name: /Run experiment/ }).click(); await p.getByRole("button", { name: "Adjust strategy" }).click(); for (let q = 0; q < 4; q++) { if ((mask >> q) & 1) await p.getByLabel(`toggle sentinel on qubit ${q}`).click(); } }
-  await p.getByLabel("toggle sentinel on qubit 1").click(); await p.getByRole("button", { name: /Run experiment/ }).click(); await p.waitForTimeout(400);
+  for (const mask of [1, 2, 5, 12]) { for (let q = 0; q < 4; q++) { if ((mask >> q) & 1) await p.getByLabel(`toggle sentinel on qubit ${q}`).click(); } await p.getByRole("button", { name: /^Execute$/ }).click(); await p.getByRole("button", { name: "Adjust strategy" }).click(); for (let q = 0; q < 4; q++) { if ((mask >> q) & 1) await p.getByLabel(`toggle sentinel on qubit ${q}`).click(); } }
+  await p.getByLabel("toggle sentinel on qubit 1").click(); await p.getByRole("button", { name: /^Execute$/ }).click(); await p.waitForTimeout(400);
   await shot(p, "09_circuit_harbor_optimization", true); await p.context().close();
 
   // 10: Nexus Central final mission: stage 3 planner and outcome
@@ -119,9 +119,9 @@ const { drivers, loadCampaign, cheapestWin } = require("./drivers.cjs");
   // 13-14: mobile
   p = await mk(390, 844, 2, save(ids.slice(0, 12)));
   await p.goto(base); await p.waitForSelector("nav[aria-label='Main menu']"); await p.waitForTimeout(400); await shot(p, "13_mobile_main_menu");
-  await p.getByRole("button", { name: /Continue Campaign/ }).click(); await p.waitForTimeout(300); await shot(p, "13b_mobile_map", true);
+  await p.getByRole("button", { name: /^Continue$/ }).click(); await p.waitForTimeout(300); await shot(p, "13b_mobile_map", true);
   await pickMission(p, "D1"); await p.getByRole("button", { name: /Begin mission/ }).click();
-  await p.getByLabel("toggle sentinel on qubit 0").click(); await p.getByRole("button", { name: /Run experiment/ }).click(); await p.waitForTimeout(600);
+  await p.getByLabel("toggle sentinel on qubit 0").click(); await p.getByRole("button", { name: /^Execute$/ }).click(); await p.waitForTimeout(600);
   await shot(p, "14_mobile_mission"); await shot(p, "14b_mobile_mission_full", true); await p.context().close();
   p = await mk(390, 844, 2, save(ids.slice(0, 18)));
   await openMission(p, "C3"); await shot(p, "14c_mobile_decoder", true); await p.context().close();

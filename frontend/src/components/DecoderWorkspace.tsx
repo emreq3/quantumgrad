@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Edge, Json } from "../engine";
 import { evaluateCorrection } from "../engine";
 import { Icon } from "../art";
+import { useSettings } from "../settings";
 import { useGame } from "../store";
 import { Details, Metric, Panel, ResultPanel, f3 } from "./common";
 import { ScientificText } from "../math";
@@ -94,6 +95,7 @@ export function layoutInstance(inst: Json, ui: Json): Layout {
 
 export function DecoderWorkspace() {
   const { mission, submitCorrection, last, state, solved } = useGame();
+  const { sfx } = useSettings();
   const ui = mission!.ui as Json;
   const insts: Json[] = ui.instances;
   const model = ui.model as Json | undefined;
@@ -112,9 +114,9 @@ export function DecoderWorkspace() {
   const residual = useMemo(() => new Set(preview.residual), [preview]);
   const canPlay = state === "strategy_configuration";
   const res = shown && shown.instance === inst.id ? shown : null;
-  const flip = (id: number) => { setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id])); setStack((s) => [...s, id]); };
-  const undo = () => setStack((s) => { if (!s.length) return s; const id = s[s.length - 1]; setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id])); return s.slice(0, -1); });
-  const clear = () => { setChosen([]); setStack([]); };
+  const flip = (id: number) => { sfx("edge"); setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id])); setStack((s) => [...s, id]); };
+  const undo = () => setStack((s) => { if (!s.length) return s; sfx("undo"); const id = s[s.length - 1]; setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id])); return s.slice(0, -1); });
+  const clear = () => { sfx("undo"); setChosen([]); setStack([]); };
   const reset = () => { clear(); setShown(null); setShowMwpm(false); };
   const pickInstance = (i: number) => { setIx(i); reset(); };
   useEffect(() => { // keyboard: Ctrl/Cmd+Z undoes the last toggle while focus is inside the workspace

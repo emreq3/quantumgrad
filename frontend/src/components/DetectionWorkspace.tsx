@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { Json } from "../engine";
 import { popcount } from "../engine";
 import { Icon } from "../art";
+import { useSettings } from "../settings";
 import { useGame } from "../store";
 import { BarList, Scatter, type Pt } from "./charts";
 import { CircuitView } from "./CircuitView";
@@ -31,6 +32,7 @@ export function DetectionWorkspace() {
   const [mask, setMask] = useState(0);
   const [mode, setMode] = useState<string>(modes[0]);
   const [tip, setTip] = useState<string | null>(null);
+  const { sfx } = useSettings();
   const n: number = ui.n;
   const key = `${mask}|${mode}`;
   const selected = useMemo(() => Array.from({ length: n }, (_, q) => q).filter((q) => (mask >> q) & 1), [mask, n]);
@@ -43,7 +45,8 @@ export function DetectionWorkspace() {
   const canRun = state === "strategy_configuration" && !!wallet;
   // an unsupported placement cannot be built: adding a sentinel beyond the ancilla budget is refused with an explanation (removing is always allowed)
   const toggle = (q: number) => {
-    if (!((mask >> q) & 1) && count >= capAnc) { setTip(`The ancilla budget is full (${capAnc}). Remove a sentinel before adding another.`); return; }
+    if (!((mask >> q) & 1) && count >= capAnc) { setTip(`The ancilla budget is full (${capAnc}). Remove a sentinel before adding another.`); sfx("invalid"); return; }
+    sfx((mask >> q) & 1 ? "click" : "checkOn");
     setTip(null); setMask((m) => m ^ (1 << q));
   };
   const gates = (out?.gates ?? pre?.gates ?? ui.payload_gates) as Json[];

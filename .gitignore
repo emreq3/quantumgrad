@@ -28,3 +28,7 @@ frontend/dist/
 .coverage
 htmlcov/
 .vite/
+
+# generated audio previews (reproduce with: cd frontend && node e2e/audio_analysis.cjs ../results/phase5/audio_metrics.json ../results/phase5/audio_previews)
+results/phase5/audio_previews/
+frontend/dist-audiolab/

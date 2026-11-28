@@ -5,7 +5,7 @@ const http = require("http");
 const path = require("path");
 
 const PORT = 4173, BASE = `http://127.0.0.1:${PORT}/`;
-const scripts = ["campaign", "keyboard", "responsive", "a11y", "audio", "subpath", ...(process.argv.includes("--perf") ? ["perf"] : [])];
+const scripts = ["campaign", "demo", "math", "keyboard", "responsive", "a11y", "audio", "subpath", ...(process.argv.includes("--perf") ? ["perf"] : [])];
 
 const waitUp = () => new Promise((resolve, reject) => {
   const t0 = Date.now();

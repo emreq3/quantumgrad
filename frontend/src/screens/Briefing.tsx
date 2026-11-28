@@ -18,7 +18,7 @@ export function Briefing() {
   const who = speaker(mission.id);
   const art = DISTRICT_ART[mission.district];
   const n = mission.noise;
-  const start = () => { sfx("confirm"); begin(); };
+  const start = () => { sfx("missionStart"); begin(); };
   return (
     <div>
       <div className="row"><button onClick={() => { sfx("back"); go("district_selection"); }}>← {mode === "demo" ? "Demo" : "Map"}</button>

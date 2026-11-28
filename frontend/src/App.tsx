@@ -15,7 +15,7 @@ import { SettingsScreen } from "./screens/Settings";
 import { SettingsProvider, useSettings } from "./settings";
 import { GameProvider, useGame } from "./store";
 import { UiProvider, useUi } from "./ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 function Screen() {
@@ -39,12 +39,19 @@ const OVERLAY_TITLE: Record<string, string> = { codex: "Quantum Codex", sandbox:
 
 function Shell() {
   const { state, go, history, leaveMission } = useGame();
-  const { overlay, open, close, introActive, finishIntro } = useUi();
-  const { settings, update, sfx, unlockAudio } = useSettings();
+  const { overlay, open, close, introActive, finishIntro, previewTrack } = useUi();
+  const { settings, update, sfx, unlockAudio, setMusic } = useSettings();
+  const { mission } = useGame();
   const [leave, setLeave] = useState(false);
   const inMission = ["strategy_configuration", "scientific_analysis", "resource_allocation", "experiment_execution", "replay"].includes(state);
   const toMenu = () => { leaveMission(); go("main_menu"); };
   const brand = () => (inMission && history.length > 0 ? setLeave(true) : toMenu());
+  // background music follows the screen (never during the intro; nothing plays while sound is off). One track at a time, cross-faded.
+  useEffect(() => {
+    const track = introActive ? null : state === "main_menu" || state === "campaign_complete" ? "menu"
+      : mission?.kind === "integrated" ? "tension" : mission && ["neon_labs", "sunset_bay"].includes(mission.district) ? "lab" : "campaign";
+    setMusic(introActive ? null : previewTrack ?? track);
+  }, [introActive, state, mission, previewTrack, setMusic]);
   const mute = async () => { const muted = !settings.muted; update({ muted }); if (!muted) { await unlockAudio(); window.setTimeout(() => sfx("confirm"), 40); } };
   return (
     <div className="app">

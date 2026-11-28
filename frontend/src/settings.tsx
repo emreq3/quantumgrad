@@ -1,8 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { SynthAudio, type SfxName } from "./audio/synth";
+import { SynthAudio, type SfxName, type TrackId } from "./audio/synth";
 
-export interface Settings { master: number; music: number; sfx: number; muted: boolean; motion: "system" | "reduced" | "full"; text: "normal" | "large"; introAuto: "ask" | "skip" }
-export const DEFAULT_SETTINGS: Settings = { master: 0.6, music: 0.5, sfx: 0.7, muted: true, motion: "system", text: "normal", introAuto: "ask" };
+export interface Settings { master: number; music: number; sfx: number; ambience: number; muted: boolean; motion: "system" | "reduced" | "full"; text: "normal" | "large"; introAuto: "ask" | "skip" }
+export const DEFAULT_SETTINGS: Settings = { master: 0.8, music: 0.8, sfx: 0.8, ambience: 0.8, muted: true, motion: "system", text: "normal", introAuto: "ask" };
 const KEY = "qta6.settings";
 const INTRO_KEY = "qta6.intro.seen";
 
@@ -10,7 +10,7 @@ const num = (x: unknown, d: number) => (typeof x === "number" && Number.isFinite
 export function validateSettings(raw: unknown): Settings {
   const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
   return {
-    master: num(r.master, DEFAULT_SETTINGS.master), music: num(r.music, DEFAULT_SETTINGS.music), sfx: num(r.sfx, DEFAULT_SETTINGS.sfx),
+    master: num(r.master, DEFAULT_SETTINGS.master), music: num(r.music, DEFAULT_SETTINGS.music), sfx: num(r.sfx, DEFAULT_SETTINGS.sfx), ambience: num(r.ambience, DEFAULT_SETTINGS.ambience),
     muted: typeof r.muted === "boolean" ? r.muted : DEFAULT_SETTINGS.muted,
     motion: r.motion === "reduced" || r.motion === "full" ? r.motion : "system", text: r.text === "large" ? "large" : "normal",
     introAuto: r.introAuto === "skip" ? "skip" : "ask",
@@ -24,15 +24,20 @@ export const markIntroSeen = (): void => { try { session()?.setItem(INTRO_KEY, "
 
 interface Ctx {
   settings: Settings; update: (p: Partial<Settings>) => void; reducedMotion: boolean;
-  audio: SynthAudio; sfx: (n: SfxName) => void; unlockAudio: () => Promise<boolean>; ambient: (on: boolean) => void;
+  audio: SynthAudio; sfx: (n: SfxName) => void; unlockAudio: () => Promise<boolean>; setMusic: (id: TrackId | null) => void; stopAudio: () => void;
 }
 const SettingsContext = createContext<Ctx | null>(null);
+/** For modules (the game store) that may run without a settings provider, e.g. in isolated tests: sound is then simply absent. */
+export const useOptionalSettings = (): Ctx | null => useContext(SettingsContext);
 export const useSettings = (): Ctx => { const c = useContext(SettingsContext); if (!c) throw new Error("useSettings outside SettingsProvider"); return c; };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
   const [systemReduced, setSystemReduced] = useState<boolean>(() => typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
   const audio = useRef<SynthAudio>(null as unknown as SynthAudio);
+  // always the latest committed settings: async callbacks must never re-apply a stale closure (that once left the engine muted after unmuting)
+  const latest = useRef(settings);
+  latest.current = settings;
   if (!audio.current) audio.current = new SynthAudio();
 
   useEffect(() => {
@@ -48,15 +53,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => { const a = audio.current; return () => a.dispose(); }, []); // release the AudioContext and every timer
 
   const update = useCallback((p: Partial<Settings>) => setSettings((s) => validateSettings({ ...s, ...p })), []);
-  const unlockAudio = useCallback(async () => { const ok = await audio.current.unlock(); audio.current.apply(settings); return ok; }, [settings]);
+  const unlockAudio = useCallback(async () => { const ok = await audio.current.unlock(); audio.current.apply(latest.current); return ok; }, []);
   // first user gesture unlocks audio (browser autoplay policy); nothing is played until the user has interacted
   useEffect(() => {
-    const h = () => { void audio.current.unlock().then(() => audio.current.apply(settings)); };
+    const h = () => { void audio.current.unlock().then(() => audio.current.apply(latest.current)); };
     window.addEventListener("pointerdown", h, { once: true }); window.addEventListener("keydown", h, { once: true });
     return () => { window.removeEventListener("pointerdown", h); window.removeEventListener("keydown", h); };
   }, [settings]);
   const sfx = useCallback((n: SfxName) => audio.current.sfx(n), []);
-  const ambient = useCallback((on: boolean) => { if (on) audio.current.startAmbient(); else audio.current.stopAmbient(); }, []);
-  const value = useMemo<Ctx>(() => ({ settings, update, reducedMotion, audio: audio.current, sfx, unlockAudio, ambient }), [settings, update, reducedMotion, sfx, unlockAudio, ambient]);
+  const setMusic = useCallback((id: TrackId | null) => audio.current.setMusic(id), []);
+  const stopAudio = useCallback(() => audio.current.stopAll(), []);
+  const value = useMemo<Ctx>(() => ({ settings, update, reducedMotion, audio: audio.current, sfx, unlockAudio, setMusic, stopAudio }), [settings, update, reducedMotion, sfx, unlockAudio, setMusic, stopAudio]);
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
 }

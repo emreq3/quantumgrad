@@ -20,7 +20,7 @@ GLOSSARY: list[dict[str, str]] = [
      "tex": r"\rho=\sum_k p_k\,|\psi_k\rangle\langle\psi_k|,\qquad \rho\ge 0,\quad \operatorname{Tr}\rho=1"},
     {"term": "Noise channel (Kraus form)", "pillar": "basics", "level": "research",
      "def": "Any physical noise process acts on a state as a completely positive trace-preserving map.",
-     "tex": r"\mathcal{E}(\rho)=\sum_k K_k\,\rho\,K_k^{\dagger},\qquad \sum_k K_k^{\dagger}K_k=I",
+     "tex": r"\Phi(\rho)=\sum_k K_k\,\rho\,K_k^{\dagger},\qquad \sum_k K_k^{\dagger}K_k=I",
      "note": r"A Pauli channel has $K_P=\sqrt{p_P}\,P$ with $P\in\{I,X,Y,Z\}$."},
     {"term": "Pauli error", "pillar": "basics", "level": "basics",
      "def": "$X$ flips 0 and 1, $Z$ flips the sign of the 1 component, $Y$ does both. Any single-qubit error can be expanded in Pauli operators.",

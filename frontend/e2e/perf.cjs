@@ -1,6 +1,6 @@
 // Measures the production build in real Chromium. Numbers are machine dependent; the throttled profile emulates a mid-range phone
 // (4x CPU slowdown, 1.6 Mbit/s down, 150 ms RTT) with Chrome DevTools Protocol throttling. Usage: node e2e/perf.cjs [baseUrl] [outJson]
-const { chromium } = require("playwright");
+const browsers = require("./browsers.cjs");
 const fs = require("fs");
 const path = require("path");
 const zlib = require("zlib");
@@ -18,7 +18,7 @@ const stats = (a) => { const s = [...a].sort((x, y) => x - y); const q = (p) => 
   const files = walk(dist).map((f) => { const b = fs.readFileSync(f); return { f: path.relative(dist, f), raw: b.length, gzip: zlib.gzipSync(b).length }; });
   const sum = (re) => files.filter((x) => re.test(x.f)).reduce((a, x) => ({ raw: a.raw + x.raw, gzip: a.gzip + x.gzip }), { raw: 0, gzip: 0 });
   out.build = { js: sum(/\.js$/), css: sum(/\.css$/), fonts_woff2: sum(/\.woff2$/), fonts_woff_unused_fallback: sum(/\.woff$/), campaign_json: sum(/campaign\.json$/), total: sum(/.*/), files: files.length };
-  const browser = await chromium.launch();
+  const browser = await browsers.launch();
   const data = loadCampaign();
   const ids = data.missions.map((m) => m.id);
   const save = { schema: "qta6.save/2", failures: {}, difficulty: "beginner", tutorial_done: true, completed: Object.fromEntries(ids.slice(0, 28).map((id) => [id, { best_score: 70, attempts: 1 }])) };
@@ -59,16 +59,16 @@ const stats = (a) => { const s = [...a].sort((x, y) => x - y); const q = (p) => 
     await page.goto(base); await page.waitForSelector("nav[aria-label='Main menu']");
     const heap = async () => page.evaluate(() => (performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1e6 * 10) / 10 : null));
     out.runtime.js_heap_mb_after_load = await heap();
-    const pick = async (id) => { const b = () => page.locator(`button[data-mission="${id}"]:visible`).first(); if (!(await b().count())) { const dn = data.districts.find((d) => d.id === data.missions.find((m) => m.id === id).district).name; await page.getByRole("button", { name: new RegExp(`^${dn}:`) }).click(); } await b().click(); };
+    const pick = async (id) => { const b = () => page.locator(`button[data-mission="${id}"]:visible`).first(); if (!(await b().count())) { const dn = data.districts.find((d) => d.id === data.missions.find((m) => m.id === id).district).name; await page.getByRole("tab", { name: new RegExp(`^${dn}`) }).click(); } await b().click(); };
     const sw = {};
     for (const id of ["D1", "M6", "C8", "O3", "N1"]) {
-      await page.getByRole("button", { name: /Continue Campaign|Map|Menu/ }).first().click().catch(() => {});
-      await page.goto(base); await page.getByRole("button", { name: /Continue Campaign/ }).click(); await pick(id);
+      await page.getByRole("button", { name: /^Continue$|Map|Menu/ }).first().click().catch(() => {});
+      await page.goto(base); await page.getByRole("button", { name: /^Continue$/ }).click(); await pick(id);
       const t0 = Date.now(); await page.getByRole("button", { name: /Begin mission/ }).click(); await page.locator(".hud").waitFor(); sw[id] = Date.now() - t0;
     }
     out.runtime.mission_switch_ms_briefing_to_workspace = sw;
     // decoder interaction on the largest lattice (C8, d=5)
-    await page.goto(base); await page.getByRole("button", { name: /Continue Campaign/ }).click(); await pick("C8"); await page.getByRole("button", { name: /Begin mission/ }).click();
+    await page.goto(base); await page.getByRole("button", { name: /^Continue$/ }).click(); await pick("C8"); await page.getByRole("button", { name: /Begin mission/ }).click();
     const lat = await page.evaluate(async () => {
       const els = Array.from(document.querySelectorAll("[data-edge]")); const t = [];
       for (let k = 0; k < 40; k++) { const e = els[k % els.length]; const t0 = performance.now(); e.dispatchEvent(new MouseEvent("click", { bubbles: true })); await new Promise((r) => requestAnimationFrame(() => r())); t.push(performance.now() - t0); }

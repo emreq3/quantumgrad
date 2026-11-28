@@ -4,7 +4,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { chromium } = require("playwright");
+const browsers = require("./browsers.cjs");
 const { drivers, loadCampaign } = require("./drivers.cjs");
 
 const PREFIX = "/quantumgrad/";
@@ -25,7 +25,7 @@ const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/cs
   });
   await new Promise((r) => server.listen(4200, "0.0.0.0", r));
   const base = `http://127.0.0.2:4200${PREFIX}`; // a non-local host name: the API probe is disabled exactly as on github.io
-  const browser = await chromium.launch();
+  const browser = await browsers.launch();
   const page = await (await browser.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
   const failed = [], errors = [];
   page.on("response", (r) => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
@@ -35,13 +35,13 @@ const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/cs
   const data = loadCampaign();
   const out = { base };
   await page.goto(base);
-  await page.getByRole("button", { name: /New Game/ }).click();
+  await page.getByRole("button", { name: /^Play$/ }).click();
   await page.getByRole("button", { name: /Go to mission/ }).click();
   await page.getByRole("button", { name: /Begin mission/ }).click();
   await drivers.experiment(page, data.missions[0]);
   out.played_A1_under_subpath = (await page.locator(".result-banner h2").innerText()).trim() === "MISSION COMPLETE";
   await page.reload();
-  await page.getByRole("button", { name: /Continue Campaign/ }).waitFor();
+  await page.getByRole("button", { name: /^Continue$/ }).waitFor();
   out.reload_keeps_progress = true;
   // JetBrains Mono is only fetched when monospaced text is on screen (the menu has none), so it is reported but not required here
   out.fonts_loaded = await page.evaluate(async () => { await document.fonts.ready; return ["Orbitron", "Rajdhani", "Inter", "JetBrains Mono"].map((f) => [f, [...document.fonts].some((x) => x.family.replace(/"/g, "") === f && x.status === "loaded")]); });

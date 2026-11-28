@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-28T02:38:48.244Z",
+ "generated": "2026-11-28T09:44:46.596Z",
  "tool": "axe-core 4.14.1",
  "report": [
   {
@@ -13,11 +13,11 @@
    "viewport": "1280x720",
    "screen": "main menu",
    "violations": [],
-   "passes": 39,
+   "passes": 38,
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 9
+     "nodes": 10
     }
    ]
   },
@@ -25,11 +25,11 @@
    "viewport": "1280x720",
    "screen": "city map",
    "violations": [],
-   "passes": 43,
+   "passes": 45,
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 14
+     "nodes": 11
     }
    ]
   },
@@ -45,7 +45,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 24
+     "nodes": 9
     }
    ]
   },
@@ -53,7 +53,7 @@
    "viewport": "1280x720",
    "screen": "detection",
    "violations": [],
-   "passes": 42,
+   "passes": 39,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -61,11 +61,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 59
-    },
-    {
-     "id": "th-has-data-cells",
-     "nodes": 1
+     "nodes": 44
     }
    ]
   },
@@ -73,7 +69,7 @@
    "viewport": "1280x720",
    "screen": "detection (after run)",
    "violations": [],
-   "passes": 50,
+   "passes": 43,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -81,7 +77,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 94
+     "nodes": 55
     }
    ]
   },
@@ -89,11 +85,11 @@
    "viewport": "1280x720",
    "screen": "result",
    "violations": [],
-   "passes": 49,
+   "passes": 42,
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 28
+     "nodes": 7
     }
    ]
   },
@@ -101,7 +97,7 @@
    "viewport": "1280x720",
    "screen": "mitigation",
    "violations": [],
-   "passes": 54,
+   "passes": 47,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -109,7 +105,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 97
+     "nodes": 23
     }
    ]
   },
@@ -125,7 +121,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 28
+     "nodes": 21
     }
    ]
   },
@@ -141,7 +137,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 32
+     "nodes": 25
     }
    ]
   },
@@ -149,7 +145,7 @@
    "viewport": "1280x720",
    "screen": "optimization",
    "violations": [],
-   "passes": 43,
+   "passes": 40,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -157,11 +153,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 68
-    },
-    {
-     "id": "th-has-data-cells",
-     "nodes": 1
+     "nodes": 44
     }
    ]
   },
@@ -177,7 +169,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 52
+     "nodes": 71
     }
    ]
   },
@@ -189,7 +181,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 28
+     "nodes": 104
     }
    ]
   },
@@ -197,37 +189,22 @@
    "viewport": "1280x720",
    "screen": "settings",
    "violations": [],
-   "passes": 43,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 16
-    }
-   ]
+   "passes": 44,
+   "incomplete": []
   },
   {
    "viewport": "1280x720",
    "screen": "credits",
    "violations": [],
    "passes": 45,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 55
-    }
-   ]
+   "incomplete": []
   },
   {
    "viewport": "1280x720",
    "screen": "sandbox",
    "violations": [],
    "passes": 44,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 9
-    }
-   ]
+   "incomplete": []
   },
   {
    "viewport": "390x844",
@@ -240,7 +217,7 @@
    "viewport": "390x844",
    "screen": "main menu",
    "violations": [],
-   "passes": 39,
+   "passes": 38,
    "incomplete": [
     {
      "id": "color-contrast",
@@ -252,11 +229,11 @@
    "viewport": "390x844",
    "screen": "city map",
    "violations": [],
-   "passes": 41,
+   "passes": 43,
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 6
+     "nodes": 3
     }
    ]
   },
@@ -272,7 +249,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 22
+     "nodes": 6
     }
    ]
   },
@@ -280,7 +257,7 @@
    "viewport": "390x844",
    "screen": "detection",
    "violations": [],
-   "passes": 43,
+   "passes": 40,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -288,11 +265,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 63
-    },
-    {
-     "id": "th-has-data-cells",
-     "nodes": 1
+     "nodes": 48
     }
    ]
   },
@@ -300,7 +273,7 @@
    "viewport": "390x844",
    "screen": "detection (after run)",
    "violations": [],
-   "passes": 50,
+   "passes": 43,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -308,7 +281,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 98
+     "nodes": 59
     }
    ]
   },
@@ -316,11 +289,11 @@
    "viewport": "390x844",
    "screen": "result",
    "violations": [],
-   "passes": 49,
+   "passes": 42,
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 25
+     "nodes": 11
     }
    ]
   },
@@ -328,7 +301,7 @@
    "viewport": "390x844",
    "screen": "mitigation",
    "violations": [],
-   "passes": 55,
+   "passes": 47,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -336,7 +309,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 97
+     "nodes": 29
     }
    ]
   },
@@ -352,7 +325,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 27
+     "nodes": 19
     }
    ]
   },
@@ -368,7 +341,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 31
+     "nodes": 23
     }
    ]
   },
@@ -376,7 +349,7 @@
    "viewport": "390x844",
    "screen": "optimization",
    "violations": [],
-   "passes": 43,
+   "passes": 40,
    "incomplete": [
     {
      "id": "aria-prohibited-attr",
@@ -384,11 +357,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 67
-    },
-    {
-     "id": "th-has-data-cells",
-     "nodes": 1
+     "nodes": 46
     }
    ]
   },
@@ -404,7 +373,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 49
+     "nodes": 66
     }
    ]
   },
@@ -412,11 +381,11 @@
    "viewport": "390x844",
    "screen": "codex",
    "violations": [],
-   "passes": 42,
+   "passes": 43,
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 28
+     "nodes": 132
     }
    ]
   },
@@ -424,37 +393,22 @@
    "viewport": "390x844",
    "screen": "settings",
    "violations": [],
-   "passes": 43,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 16
-    }
-   ]
+   "passes": 44,
+   "incomplete": []
   },
   {
    "viewport": "390x844",
    "screen": "credits",
    "violations": [],
    "passes": 45,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 55
-    }
-   ]
+   "incomplete": []
   },
   {
    "viewport": "390x844",
    "screen": "sandbox",
    "violations": [],
    "passes": 44,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 9
-    }
-   ]
+   "incomplete": []
   }
  ]
 }

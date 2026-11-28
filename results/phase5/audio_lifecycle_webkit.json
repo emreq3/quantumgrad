@@ -1,0 +1,23 @@
+{
+ "browser": "webkit",
+ "version": "26.6",
+ "supported": true,
+ "contexts_before_opt_in": 0,
+ "contexts_after_opt_in": 1,
+ "state_during_intro": "running",
+ "audio_clock_advances": true,
+ "intro_sting_voices": 20,
+ "menu_music_voices_per_3s": 6,
+ "menu_music_runs": true,
+ "live_voices_menu": 12,
+ "muted": true,
+ "voices_created_while_muted": 0,
+ "live_voices_after_mute": 0,
+ "resumed_after_unmute": true,
+ "max_live_voices_in_12_samples": 25,
+ "state_when_tab_hidden": "suspended",
+ "state_when_tab_visible": "running",
+ "contexts_total": 1,
+ "page_errors": [],
+ "ok": true
+}

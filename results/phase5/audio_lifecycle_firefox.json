@@ -1,0 +1,11 @@
+{
+ "browser": "firefox",
+ "version": "155.0",
+ "supported": true,
+ "contexts_before_opt_in": 0,
+ "contexts_after_opt_in": 1,
+ "state_during_intro": "suspended",
+ "unverifiable": "AudioContext stayed suspended after the user gesture (no audio output device in this environment); lifecycle not observed",
+ "ok": null,
+ "page_errors": []
+}

@@ -58,7 +58,7 @@ export function Codex({ onClose }: { onClose: () => void }) {
           <Panel title="Key distinctions">{DISTINCTIONS.map(([t, b]) => <div key={t}><h4>{t}</h4><p>{b}</p></div>)}</Panel>
           <Panel title="Research documents and benchmarks">
             <p className="muted small">The research documents and the benchmark data live in the project repository (they are not bundled with the game). Links open GitHub.</p>
-            <ul>{DOCS.map(([p, t]) => <li key={p}><a href={researchUrl(p)} target="_blank" rel="noreferrer">{t}</a> <span className="muted small">({p})</span></li>)}</ul>
+            <ul>{DOCS.map(([p, t]) => <li key={p}><a href={researchUrl(p)} target="_blank" rel="noreferrer">{t}</a> <span className="muted small path">({p})</span></li>)}</ul>
             <p><a href={REPO_URL} target="_blank" rel="noreferrer">Project repository</a></p>
           </Panel>
         </>

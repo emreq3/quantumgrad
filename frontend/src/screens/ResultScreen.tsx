@@ -63,6 +63,8 @@ export function ResultScreen({ success }: { success: boolean }) {
   const { mission, last, go, restart, progress, data, isUnlocked, wallet, history, selectMission, leaveMission, mode } = useGame();
   const { sfx } = useSettings();
   useEffect(() => { sfx(success ? "success" : "failure"); }, [success, sfx]);
+  const unlockCount = success && mission && data ? (data.missions as Json[]).filter((m) => m.unlock_requires.includes(mission.id) && isUnlocked(m)).length : 0;
+  useEffect(() => { if (!unlockCount) return; const id = setTimeout(() => sfx("unlock"), 1800); return () => clearTimeout(id); }, [unlockCount, sfx]);
   if (!mission || !last) return null;
   const demo = mode === "demo";
   const rec = progress.completed[mission.id];

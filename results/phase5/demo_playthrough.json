@@ -1,0 +1,46 @@
+{
+ "browser": "chromium",
+ "version": "158.0.8127.36",
+ "steps": {
+  "A2": {
+   "kind": "experiment",
+   "status": "PASS",
+   "ms": 345
+  },
+  "D1": {
+   "kind": "detection",
+   "status": "PASS",
+   "ms": 297
+  },
+  "M2": {
+   "kind": "mitigation",
+   "status": "PASS",
+   "ms": 225
+  },
+  "C3": {
+   "kind": "decoding",
+   "status": "PASS",
+   "ms": 789
+  },
+  "C6": {
+   "kind": "distance",
+   "status": "PASS",
+   "ms": 222
+  },
+  "N1": {
+   "kind": "integrated",
+   "status": "PASS",
+   "ms": 1114
+  }
+ },
+ "issues": [],
+ "ok": true,
+ "totals": {
+  "steps": 6,
+  "passed": 6,
+  "demoCompleteShown": true,
+  "campaignSaveUntouched": true,
+  "demoCompleted": 6,
+  "automatedSeconds": 3.783
+ }
+}

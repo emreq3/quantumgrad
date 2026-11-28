@@ -89,7 +89,7 @@ describe("required expressions render with the strict profile", () => {
     qubit: String.raw`|\psi\rangle=\alpha|0\rangle+\beta|1\rangle,\quad |\alpha|^2+|\beta|^2=1`,
     bell: String.raw`|\Phi^{+}\rangle=\frac{|00\rangle+|11\rangle}{\sqrt{2}}`,
     density: String.raw`\rho=\sum_k p_k|\psi_k\rangle\langle\psi_k|`,
-    kraus: String.raw`\mathcal{E}(\rho)=\sum_k K_k\rho K_k^{\dagger},\quad \sum_k K_k^{\dagger}K_k=I`,
+    kraus: String.raw`\Phi(\rho)=\sum_k K_k\rho K_k^{\dagger},\quad \sum_k K_k^{\dagger}K_k=I`,
     fps: String.raw`F_{\mathrm{ps}}=\langle\psi|\sigma|\psi\rangle`,
     kappa: String.raw`\kappa=\operatorname{Tr}(\Pi_0\rho)=P(\mathrm{accept})`,
     overhead: String.raw`\text{overhead}=\begin{cases}1/\kappa & \kappa>0\\ \infty & \kappa=0\end{cases}`,
@@ -150,6 +150,15 @@ describe("shipped content audit", () => {
     }
     expect(failures).toEqual([]);
     expect(segs.size).toBeGreaterThan(30);
+  });
+
+  it("no formula uses a MathML variant that browsers are deprecating (script, fraktur, bold-script): Firefox warns about them in the console", () => {
+    const bad: string[] = [];
+    for (const [k, v] of segs) {
+      const html = katex.renderToString(k.slice(1), baseOptions(v.display, "error"));
+      if (/mathvariant="(script|fraktur|bold-script|bold-fraktur)"/.test(html)) bad.push(k.slice(1));
+    }
+    expect(bad).toEqual([]);
   });
 
   it("dollar delimiters are balanced in every string", () => {
