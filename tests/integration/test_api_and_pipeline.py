@@ -77,3 +77,17 @@ def test_session_flow_reference_is_gated_until_mission_is_run():
     assert client.post(f"/api/session/{sid}/evaluate", json={"mission_id": "D1", "action_key": "1|none"}).status_code == 409  # locked
     assert client.get("/api/reference-strategies/A1", params={"session": sid}).status_code == 200
     assert client.get("/api/reference-strategies/A1", params={"session": "unknown"}).status_code == 404
+
+
+def test_cors_allows_the_local_dev_and_pages_origins_only_and_answers_private_network_preflight():
+    from fastapi.testclient import TestClient
+    from qta6.api.app import create_app
+    client = TestClient(create_app())
+    ok = client.options("/api/detection/evaluate", headers={"Origin": "https://emreq3.github.io", "Access-Control-Request-Method": "POST",
+                                                             "Access-Control-Request-Private-Network": "true"})
+    assert ok.headers["access-control-allow-origin"] == "https://emreq3.github.io"
+    assert ok.headers["access-control-allow-private-network"] == "true"
+    bad = client.options("/api/detection/evaluate", headers={"Origin": "https://evil.example", "Access-Control-Request-Method": "POST",
+                                                              "Access-Control-Request-Private-Network": "true"})
+    assert "access-control-allow-origin" not in bad.headers and "access-control-allow-private-network" not in bad.headers
+    assert client.get("/api/health", headers={"Origin": "http://127.0.0.1:4173"}).headers["access-control-allow-origin"] == "http://127.0.0.1:4173"

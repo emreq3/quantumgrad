@@ -113,10 +113,23 @@ class SessionDiagnose(BaseModel):
     selected: list[str] = Field(max_length=30)
 
 
+# Browser origins allowed to call the (local, read-only, input-bounded) API: the Vite dev server, `vite preview`, and the public
+# GitHub Pages build, so that the hosted game can use a sandbox API the player runs on their own machine.
+ALLOWED_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173", "https://emreq3.github.io")
+
+
 def create_app(data_path: Path | None = None) -> FastAPI:
     app = FastAPI(title="QTA6 scientific engine API", version=__version__)
-    app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-                       allow_methods=["GET", "POST"], allow_headers=["*"])
+    app.add_middleware(CORSMiddleware, allow_origins=list(ALLOWED_ORIGINS), allow_methods=["GET", "POST"], allow_headers=["*"])
+
+    @app.middleware("http")
+    async def private_network_access(request, call_next):  # noqa: ANN001 - FastAPI middleware signature
+        """Chrome asks permission before a public HTTPS page (the GitHub Pages build) may call a local API."""
+        response = await call_next(request)
+        if (request.method == "OPTIONS" and request.headers.get("access-control-request-private-network") == "true"
+                and request.headers.get("origin") in ALLOWED_ORIGINS):
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+        return response
     path = data_path or Path(os.environ.get("QTA6_DATA", DEFAULT_OUT))
     state: dict[str, Any] = {"data": None}
     experiments: "OrderedDict[str, dict]" = OrderedDict()

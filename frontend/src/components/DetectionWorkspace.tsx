@@ -68,7 +68,7 @@ export function DetectionWorkspace() {
           )}
           <div className="metrics">
             <Metric label="sentinels / ancilla budget" value={`${popcount(mask)} / ${capAnc}`} tone={over ? "bad" : undefined} />
-            <Metric label="extra 2-qubit gates (cost preview)" value={pre?.feasible === false ? "—" : `${pre?.extra_two_qubit_gates ?? 0} / ${capGates}`} />
+            <Metric label="extra 2-qubit gates (cost preview)" value={pre?.feasible === false ? "—" : `${pre?.extra_two_qubit_gates ?? 0} / ${capGates >= 100000 ? "no cap" : capGates}`} />
             <Metric label="extra circuit depth" value={pre?.feasible === false ? "—" : (pre?.extra_depth ?? 0)} />
             <Metric label="check cost γ (Paulice)" value={pre?.check_cost != null ? f3(pre.check_cost, 2) : "—"} hint="sampling-overhead cost of the Pauli checks as reported by the library" />
           </div>

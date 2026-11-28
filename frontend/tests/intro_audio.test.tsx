@@ -119,3 +119,25 @@ describe("audio engine", () => {
     expect(validateSettings({ master: -3, music: 2, sfx: "x" })).toMatchObject({ master: 0, music: 1, sfx: DEFAULT_SETTINGS.sfx, muted: true });
   });
 });
+
+describe("failure fallbacks", () => {
+  it("a crash inside the intro never blocks the game (the intro is dropped and the menu stays usable)", async () => {
+    const { ErrorBoundary } = await import("../src/components/ErrorBoundary");
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const onError = vi.fn();
+    const Boom = () => { throw new Error("intro asset failed"); };
+    const { container } = render(<div><ErrorBoundary fallback={null} onError={onError}><Boom /></ErrorBoundary><nav aria-label="after">still here</nav></div>);
+    expect(onError).toHaveBeenCalled();
+    expect(container.textContent).toContain("still here");
+    spy.mockRestore();
+  });
+
+  it("a crash in a screen shows a recoverable message instead of a blank page", async () => {
+    const { ErrorBoundary } = await import("../src/components/ErrorBoundary");
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const Boom = () => { throw new Error("boom"); };
+    render(<ErrorBoundary><Boom /></ErrorBoundary>);
+    expect(screen.getByRole("alert")).toHaveTextContent(/saved progress is safe/);
+    spy.mockRestore();
+  });
+});

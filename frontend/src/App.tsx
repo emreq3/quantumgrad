@@ -16,6 +16,7 @@ import { SettingsProvider, useSettings } from "./settings";
 import { GameProvider, useGame } from "./store";
 import { UiProvider, useUi } from "./ui";
 import { useState } from "react";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 function Screen() {
   const { state, data, error } = useGame();
@@ -47,7 +48,7 @@ function Shell() {
   return (
     <div className="app">
       <a className="skip-link" href="#main" tabIndex={introActive ? -1 : 0}>Skip to content</a>
-      {introActive && <Intro onDone={finishIntro} />}
+      {introActive && <ErrorBoundary fallback={null} onError={finishIntro}><Intro onDone={finishIntro} /></ErrorBoundary>}
       <header className="topbar" inert={introActive}>
         <button className="brand" onClick={brand} aria-label="QTA6 — main menu">QTA6</button>
         <span className="tagline">quantum error detection · mitigation · correction</span>
@@ -78,7 +79,7 @@ export default function App({ initialData, skipIntro }: { initialData?: Json; sk
   return (
     <SettingsProvider>
       <UiProvider skipIntro={skipIntro}>
-        <GameProvider initialData={initialData}><Shell /></GameProvider>
+        <ErrorBoundary><GameProvider initialData={initialData}><Shell /></GameProvider></ErrorBoundary>
       </UiProvider>
     </SettingsProvider>
   );
