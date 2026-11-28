@@ -1,0 +1,84 @@
+{
+ "generated": "2026-11-28T02:14:10.529Z",
+ "machine": {
+  "cpus": 4,
+  "node": "v22.23.5"
+ },
+ "build": {
+  "js": {
+   "raw": 408999,
+   "gzip": 126102
+  },
+  "css": {
+   "raw": 20544,
+   "gzip": 5611
+  },
+  "fonts_woff2": {
+   "raw": 128716,
+   "gzip": 128853
+  },
+  "fonts_woff_unused_fallback": {
+   "raw": 142736,
+   "gzip": 142365
+  },
+  "campaign_json": {
+   "raw": 3448401,
+   "gzip": 174388
+  },
+  "total": {
+   "raw": 4150384,
+   "gzip": 577928
+  },
+  "files": 21
+ },
+ "load": {
+  "desktop": {
+   "to_interactive_menu_ms": {
+    "n": 3,
+    "mean": 242,
+    "p50": 235,
+    "p95": 257,
+    "max": 257
+   },
+   "transferred_bytes_uncompressed_server": 3906155
+  },
+  "mobile_like_throttled": {
+   "to_interactive_menu_ms": {
+    "n": 3,
+    "mean": 3214,
+    "p50": 3163,
+    "p95": 3316,
+    "max": 3316
+   },
+   "transferred_bytes_uncompressed_server": 3908799
+  }
+ },
+ "runtime": {
+  "intro_frame_ms": {
+   "n": 733,
+   "mean": 16.98,
+   "p50": 16.7,
+   "p95": 16.8,
+   "max": 33.4
+  },
+  "intro_fps_mean": 58.9,
+  "intro_long_tasks_over_50ms": 0,
+  "intro_frames_over_33ms": 3,
+  "js_heap_mb_after_load": 13.4,
+  "mission_switch_ms_briefing_to_workspace": {
+   "D1": 67,
+   "M6": 141,
+   "C8": 61,
+   "O3": 53,
+   "N1": 57
+  },
+  "decoder_toggle_to_next_frame_ms_d5": {
+   "n": 40,
+   "mean": 16.51,
+   "p50": 16.7,
+   "p95": 17.2,
+   "max": 19.7
+  },
+  "js_heap_mb_after_five_missions": 13.4
+ }
+}

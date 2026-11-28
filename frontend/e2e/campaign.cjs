@@ -49,7 +49,7 @@ const { drivers, loadCampaign } = require("./drivers.cjs");
   const complete = passed === data.missions.length;
   if (complete) {
     await page.getByRole("button", { name: "Finish campaign" }).click();
-    await page.getByText("CAMPAIGN COMPLETE").waitFor();
+    await page.getByRole("heading", { name: "CAMPAIGN COMPLETE", exact: true }).waitFor();
     if (shotDir) await page.screenshot({ path: `${shotDir}/campaign_complete.png` });
     const save = JSON.parse(await page.evaluate(() => localStorage.getItem("qta6.save")));
     report.totals.completed_in_save = Object.keys(save.completed).length;

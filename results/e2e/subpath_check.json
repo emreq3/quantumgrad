@@ -1,0 +1,29 @@
+{
+ "generated": "2026-11-28T02:20:28.691Z",
+ "base": "http://127.0.0.2:4200/quantumgrad/",
+ "played_A1_under_subpath": true,
+ "reload_keeps_progress": true,
+ "fonts_loaded": [
+  [
+   "Orbitron",
+   true
+  ],
+  [
+   "Rajdhani",
+   true
+  ],
+  [
+   "Inter",
+   true
+  ],
+  [
+   "JetBrains Mono",
+   false
+  ]
+ ],
+ "requests_outside_prefix": [],
+ "failed_requests": [],
+ "page_errors": [],
+ "distinct_urls_served": 11,
+ "ok": true
+}

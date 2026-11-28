@@ -1,0 +1,60 @@
+name: Deploy static game (GitHub Pages)
+
+# Deployment is kept separate from CI (ci.yml). It builds the production bundle, runs the type check and the frontend tests,
+# and publishes ONLY that validated build. GitHub Pages must be enabled once by a repository admin:
+#   Settings -> Pages -> Build and deployment -> Source: "GitHub Actions"
+# Until then the automatic trigger is skipped (the repository variable PAGES_ENABLED is not "true") so pushes do not fail.
+# After enabling Pages, set the repository variable PAGES_ENABLED=true (Settings -> Secrets and variables -> Actions -> Variables)
+# or run this workflow manually with "Run workflow".
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.PAGES_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Frontend tests
+        run: npm test
+      - name: Production build (relative base: works under /quantumgrad/)
+        run: npm run build
+      - name: Verify the static campaign is bundled
+        run: test -s dist/data/campaign.json && test -s dist/index.html
+      - run: touch dist/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

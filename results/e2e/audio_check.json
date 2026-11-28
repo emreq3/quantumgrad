@@ -1,0 +1,11 @@
+{
+ "generated": "2026-11-28T02:20:27.349Z",
+ "contexts_created": 1,
+ "state_during_intro": "running",
+ "audio_clock_advances": true,
+ "sample_rate": 44100,
+ "muted_after_toggle": true,
+ "unmuted_after_second_toggle": true,
+ "contexts_total_after_toggles": 1,
+ "page_errors": []
+}

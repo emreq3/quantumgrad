@@ -46,3 +46,23 @@ jobs:
         run: npm test
       - name: Production build
         run: npm run build
+
+  browser:
+    # Real-browser audits against the production build: full 29-mission playthrough, keyboard-only play, responsive overflow at four
+    # viewport sizes, axe-core accessibility scan, Web Audio execution and sub-path (GitHub Pages) loading.
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Browser audits
+        run: npm run e2e

@@ -1,0 +1,60 @@
+{
+ "generated": "2026-11-28T02:19:44.502Z",
+ "results": [
+  {
+   "name": "A1 completed with the keyboard only (menu → map → briefing → measure → result)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "a lattice error target can be toggled on with Enter",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Ctrl+Z undoes the last toggle from the keyboard",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "a correction was selected, submitted and evaluated with the keyboard only (Enter and Space both work)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "opening a dialog moves focus into it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Tab stays trapped inside the dialog",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Escape closes the dialog and focus returns to the control that opened it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "the intro can be skipped with Escape",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "after the intro, keyboard focus is placed on the main content",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "on a normal page load the first Tab stop is the 'Skip to content' link",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "activating the skip link moves focus to the main content",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}
