@@ -25,7 +25,9 @@ from ..core.rng import stream
 from ..correction.manual import (class_probabilities, enumerate_corrections, evaluate_correction,
                                  sample_code_capacity_instance, sample_instance)
 from ..correction.repetition import run_with_recovery, run_single_error
-from ..correction.surface import geometry, run_memory
+from ..correction.surface import build_experiment, geometry, run_memory
+from ..game.engine import _units
+from ..game.solvability import mission_issues
 from ..detection.evaluate import (ProtectedCircuit, build_protected, evaluate_protected, force_t_gate)
 from ..detection.faults import FaultLocation, classify_exact, enumerate_locations, syndrome_of_fault
 from ..game import feedback as fb
@@ -36,7 +38,7 @@ from ..game.scoring import Component, higher_better, lower_better, score_from_co
 from ..mitigation.experiments import (Strategy, evaluate_strategy, make_task, prepare_task_data)
 from ..noise.aer_builder import build_aer_noise_model
 from ..noise.profiles import PROFILES, NoiseProfile, drifted
-from ..optimization.pareto import Candidate, Objective, dominated_by, normalized_regret, pareto_front
+from ..optimization.pareto import Candidate, Objective, dominated_by, normalized_regret, pareto_front, relative_regret
 from ..optimization.strategies import regret as score_regret
 from ..statistics.intervals import wilson_interval
 
@@ -280,12 +282,12 @@ def detection_table(cfg: dict, m: dict) -> tuple[dict, dict, dict]:
         fps = o["postselected_fidelity"]
         conds = [cond("valid", "All checks valid for the actual circuit", o["validity"]["checks_valid"]),
                  cond("budget", f"Within budget (<= {cap_anc} ancillas, <= {cap_gates} extra two-qubit gates)", within)]
-        if o["n_checks"] > 0 or cfg.get("no_worse_than_baseline"):
-            if fps is not None:
-                gain = fps - b["unprotected_fidelity"] if cfg.get("no_worse_than_baseline") is None else fps - b["unprotected_fidelity"]
-                conds.append(cond("gain", (f"Fidelity not below the unprotected circuit" if cfg.get("no_worse_than_baseline") else
-                                           f"Fidelity beats the unprotected circuit by > {cfg['min_gain']}"),
-                                  gain >= -1e-9 if cfg.get("no_worse_than_baseline") else gain > cfg["min_gain"]))
+        # The improvement condition is ALWAYS evaluated, including for the zero-check (unprotected) configuration:
+        # an earlier version skipped it when no checks were placed, so "do nothing" won the improvement missions.
+        gain = (fps - b["unprotected_fidelity"]) if fps is not None else float("-inf")
+        conds.append(cond("gain", (f"Fidelity not below the unprotected circuit" if cfg.get("no_worse_than_baseline") else
+                                   f"Fidelity beats the unprotected circuit by > {cfg['min_gain']}"),
+                          gain >= -1e-9 if cfg.get("no_worse_than_baseline") else gain > cfg["min_gain"]))
         conds.append(cond("acceptance", f"Acceptance >= {cfg['min_acceptance']}", o["acceptance"] >= cfg["min_acceptance"]))
         if cfg.get("target_fidelity") is not None:
             conds.append(cond("target", f"Post-selected fidelity >= {cfg['target_fidelity']}", fps is not None and fps >= cfg["target_fidelity"]))
@@ -442,7 +444,9 @@ def build_mitigation_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
               "credits": credit_cost({"shots": o["resources"]["calibration_shots"] + o["resources"]["pilot_shots"] + o["resources"]["raw_shots"]})}
     ui = {"dims": cfg["dims"], "total_shots": cfg["total"], "dim_labels": {"readout": "Readout calibration", "cal": "Calibration share (%)",
                                                                            "scales": "Noise scale factors", "extrap": "Extrapolation", "alloc": "Shot allocation"},
-          "ideal": meta["ideal"], "curve": meta["curve"], "unmitigated": base, "profile": cfg["profile"]}
+          "ideal": meta["ideal"], "curve": meta["curve"], "unmitigated": base, "profile": cfg["profile"],
+          "readout_profile": {"p01": prof.ro01, "p10": prof.ro10, "note": "assignment probabilities of this SYNTHETIC noise profile: P(read 1 | prepared 0) and P(read 0 | prepared 1)"},
+          "task": {"n": cfg["task"]["n"], "depth": cfg["task"]["depth"]}}
     ref = {"front": sorted(front), "best_mse_key": min((k for k, o in out.items() if o["feasible"]), key=lambda k: out[k]["summary"]["mse"]),
            "winning_keys": sorted(k for k, o in out.items() if o.get("success"))}
     return ui, out, ref
@@ -491,7 +495,8 @@ def build_decoding_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
             vectors.append({"mission": m["id"], "instance": pub["id"], "mode": cfg["mode"], "chosen": s, "expected": {
                 "valid": r["valid"], "clears_syndrome": r["clears_syndrome"], "logically_correct": r["logically_correct"],
                 "path_cost": r["path_cost"], "success": r["success"], "score": r["score"]}})
-    ui = {"instances": insts_ui, "graph": cfg["graph"], "mode": cfg["mode"], "d": cfg["d"], "p": cfg["p"], "rounds": cfg.get("rounds", 1)}
+    ui = {"instances": insts_ui, "graph": cfg["graph"], "mode": cfg["mode"], "d": cfg["d"], "p": cfg["p"], "rounds": cfg.get("rounds", 1),
+          "model": NOISE_MODELS["code_capacity" if cfg["graph"] == "code_capacity" else "phenomenological"]}
     if cfg["graph"] == "code_capacity":
         ui["geometry"] = geometry(cfg["d"])
     return ui, {}, {"instances": refs, "test_vectors": vectors}
@@ -509,7 +514,9 @@ def correction_rows(p: float, shots: int, distances=(3, 5, 7), seed: int = 4) ->
                    "wilson95": list(r.estimate.wilson), "clopper_pearson95": list(r.estimate.exact),
                    "upper_if_zero": r.upper_bound_if_zero, "physical_qubits": r.active_qubits, "rounds": r.rounds,
                    "qubit_rounds": r.qubit_rounds, "decode_us_per_shot": r.decode_us_per_shot, "seed": seed,
-                   "per_round_model_estimate": r.per_round_model_estimate, "result_kind": "monte_carlo"}
+                   "per_round_model_estimate": r.per_round_model_estimate, "result_kind": "monte_carlo",
+                   # deterministic decoder-workload proxy (size of the matching graph); wall-clock decode time is machine dependent
+                   "matching_edges": build_experiment(d, d, p).matching.num_edges, "matching_detectors": build_experiment(d, d, p).matching.num_detectors}
     return rows
 
 
@@ -524,12 +531,14 @@ def build_distance_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
                  cond("target", f"Logical failure <= {cfg['target_pl'] * 100:.1f}% (95% upper bound used)", r["wilson95"][1] <= cfg["target_pl"])]
         comps = [Component("logical failure", r["p_logical"], lower_better(r["p_logical"], 0.0, 0.03), 0.5, "statistical", "Monte Carlo; Wilson interval shown"),
                  Component("qubit-rounds", r["qubit_rounds"], lower_better(r["qubit_rounds"], 0, 700), 0.3, "exact"),
-                 Component("decoder time", r["decode_us_per_shot"], lower_better(r["decode_us_per_shot"], 0, 60), 0.2, "statistical", "median-like mean over batch; machine dependent")]
+                 Component("decoder workload (matching-graph edges)", r["matching_edges"], lower_better(r["matching_edges"], 0, 2500), 0.2, "exact",
+                           "deterministic proxy for decoding effort; the measured wall-clock decode time is shown separately and is machine dependent")]
         sc = score_from_components(comps)
         outcomes[str(d)] = r | {"conditions": conds, "success": all(c["met"] for c in conds), "score": sc["score"], "score_breakdown": sc,
                                 "within_budget": feas[d], "best_feasible_distance": best_d,
                                 "explanation": fb.distance_feedback(d, r["p_logical"], r["physical_qubits"], best_d)}
-    return {"distances": cfg["distances"], "p": cfg["p"], "qubit_budget": cfg["qubit_budget"], "target_pl": cfg["target_pl"], "shots": size["dist_shots"]}, outcomes, {"best_feasible_distance": best_d}
+    return {"distances": cfg["distances"], "p": cfg["p"], "qubit_budget": cfg["qubit_budget"], "target_pl": cfg["target_pl"], "shots": size["dist_shots"],
+            "model": NOISE_MODELS["circuit_level"], "rounds_rule": "d rounds for distance d (rounds scale with the distance in this mission)"}, outcomes, {"best_feasible_distance": best_d}
 
 
 # =================================================================================================
@@ -593,7 +602,10 @@ def build_drift_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
             src = true_after[k] if bought else true_t[k]
             mse = src["summary"]["mse"]
             ref_best = best_after if bought else best_true
-            reg_ratio = (mse - ref_best) / ref_best
+            # relative regret with a floor so that a near-zero best MSE cannot make the ratio explode; the absolute
+            # regret is exported as well and both are reported
+            abs_regret = mse - ref_best
+            reg_ratio = relative_regret(mse, ref_best, REGRET_MSE_FLOOR)
             extra = {"shots": cal_cost, "calibration_refresh": 1} if bought else {}
             credits = credit_cost({"shots": total, **({"calibration_refresh": 1} if bought else {})})
             dom = dominated_by(Candidate(k, {"mse": mse, "gates": src["resources"]["two_qubit_gates"]}), cands, objs)
@@ -601,7 +613,8 @@ def build_drift_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
                      cond("not_dominated", "Not dominated under the true noise", not dom)]
             outcomes[f"{k}#{'fresh' if bought else 'stale'}"] = {
                 "key": k, "bought_calibration": bought, "estimated_summary": old_t[k]["summary"], "true_summary": src["summary"],
-                "true_resources": src["resources"], "regret_ratio": reg_ratio, "conditions": conds, "success": all(c["met"] for c in conds),
+                "true_resources": src["resources"], "regret_ratio": reg_ratio, "absolute_regret_mse": abs_regret, "best_mse_reference": ref_best,
+                "units": {"shots": total, **({"calibration_refresh": 1} if bought else {})}, "conditions": conds, "success": all(c["met"] for c in conds),
                 "score": round(100 * max(0.0, 1 - reg_ratio), 1), "score_breakdown": {"score": round(100 * max(0.0, 1 - reg_ratio), 1),
                     "components": [{"name": "1 - regret ratio", "value": reg_ratio, "weight": 1.0, "exactness": "statistical"}],
                     "weights_are": "pedagogical"},
@@ -615,7 +628,7 @@ def build_drift_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
     ui = {"strategies": [{"key": k, "label": k, "estimated": old_t[k]["summary"], "gates": old_t[k]["resources"]["two_qubit_gates"]} for k in keys],
           "calibration_cost_shots": cal_cost, "total_shots": total, "drift_factor": cfg["drift"], "estimated_best": best_old_key}
     ref = {"best_true_mse": best_true, "best_true_after_calibration_mse": best_after, "robust_key": robust_key, "stale_best_key": best_old_key,
-           "stale_best_true_regret": (true_t[best_old_key]["summary"]["mse"] - best_true) / best_true}
+           "stale_best_true_regret": (true_t[best_old_key]["summary"]["mse"] - best_true) / max(best_true, REGRET_MSE_FLOOR)}
     return ui, outcomes, ref
 
 
@@ -687,7 +700,9 @@ def build_joint_mission(m: dict, size: dict, integrated: bool = False) -> tuple[
                                       "detection needs, leaving fewer for the lab; a larger code distance spends more qubits and qubit-rounds.",
                         "math": "raw detection shots = ceil(2000 / kappa); shots_total = detection + mitigation; credits = pedagogical price list.",
                         "refs": ["research/12_optimization_strategies.md", "research/13_benchmarking_framework.md"]}
-                rows[f"{dk}#{sname}#{t}" + (f"#{d}" if d else "")] = {"explanation": expl,
+                plan_units = {"ancilla_qubits": k_anc, "extra_two_qubit_gates": dobj["extra_two_qubit_gates"], "shots": shots,
+                              **({"qubit_rounds": cor[d]["qubit_rounds"]} if d else {})}
+                rows[f"{dk}#{sname}#{t}" + (f"#{d}" if d else "")] = {"explanation": expl, "units": plan_units,
                     "detection_key": dk, "mitigation": sname, "mitigation_total": t, "distance": d, "feasible": feas,
                     "detection": {"fidelity": dobj["postselected_fidelity"], "acceptance": dobj["acceptance"], "ancillas": k_anc,
                                   "extra_two_qubit_gates": dobj["extra_two_qubit_gates"], "raw_shots": det_shots},
@@ -725,6 +740,24 @@ def build_integrated_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
     return build_joint_mission(m, size, integrated=True)
 
 
+# The three decoding models are NOT scientifically interchangeable; the interface names which one is in play.
+NOISE_MODELS = {
+    "code_capacity": {"id": "code_capacity", "label": "Code-capacity model",
+                      "description": "One round, perfect syndrome measurements, independent errors on data qubits only. The simplest textbook model; "
+                                     "it ignores measurement errors and gate faults.",
+                      "decodes": "bit-flip (X) errors of a Z-basis memory, through the Z-type stabilizers"},
+    "phenomenological": {"id": "phenomenological", "label": "Phenomenological model",
+                         "description": "Several rounds; data-qubit errors AND measurement errors. Defects live in space and time, so a flipped "
+                                        "measurement creates two defects in consecutive rounds. Still no gate-level faults.",
+                         "decodes": "the same logical question as the code-capacity model, with measurement noise"},
+    "circuit_level": {"id": "circuit_level", "label": "Full circuit-level model",
+                      "description": "Noise on every gate, reset and measurement of the actual syndrome-extraction circuit (Stim), decoded with a graphlike "
+                                     "approximation of the detector error model. Used in the Distance Decision mission and the benchmarks, not in the manual decoder.",
+                      "decodes": "logical memory failure of a full circuit-level experiment"},
+}
+
+REGRET_MSE_FLOOR = 1e-6  # MSE below this is numerically indistinguishable from zero for the budgets used here
+
 BUILDERS = {"experiment": build_experiment_mission, "repetition": build_repetition_mission, "detection": build_detection_mission,
             "diagnosis": build_diagnosis_mission, "mitigation": build_mitigation_mission, "decoding": build_decoding_mission,
             "distance": build_distance_mission, "optimization": build_optimization_mission, "drift": build_drift_mission,
@@ -742,6 +775,9 @@ def build_campaign(profile: str = "standard", only: list[str] | None = None, pro
         ui, outcomes, ref = BUILDERS[m["kind"]](m, size)
         vectors += ref.pop("test_vectors", [])
         elapsed = time.perf_counter() - t0
+        for o in outcomes.values():  # every executed action exports the resource units it consumes (single source of truth)
+            if o.get("feasible") is not False and "units" not in o:
+                o["units"] = _units({"kind": m["kind"]}, o)
         entry = {k: v for k, v in m.items() if k != "config"}
         entry["noise"] = noise_info(m["noise_profile"])
         entry["provenance"] = {"kind": "precomputed", "result_kinds": sorted({o.get("result_kind") for o in outcomes.values() if o.get("result_kind")} or {"exact_numerical"}),
@@ -750,8 +786,12 @@ def build_campaign(profile: str = "standard", only: list[str] | None = None, pro
         missions.append(entry)
         if progress:
             progress(m["id"], elapsed, len(outcomes))
+    issues = {m["id"]: mission_issues(m) for m in missions}
+    issues = {k: v for k, v in issues.items() if v}
+    if issues and profile == "standard" and not only:
+        raise RuntimeError(f"unsolvable or inconsistent missions: {issues}")  # build-time gate: never ship an unwinnable mission
     return {"schema": DATA_SCHEMA_VERSION, "generator": {"qta6": __version__, "profile": profile, "source_revision": git_revision(),
-                                                          "software": software_versions()},
+                                                          "software": software_versions(), "solvability_issues": issues},
             "notice": "All results were produced by running the QTA6 scientific engine (precomputed, not live). Noise profiles are synthetic game scenarios.",
             "districts": DISTRICTS, "missions": missions, "glossary": GLOSSARY, "test_vectors": vectors,
             "state_machine": {k.value: sorted(t.value for t in v) for k, v in TRANSITIONS.items()},

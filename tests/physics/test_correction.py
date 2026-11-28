@@ -133,3 +133,17 @@ def test_instances_are_reproducible():
     a = sample_instance(3, 1, 0.08, "data_only", seed=5)
     b = sample_instance(3, 1, 0.08, "data_only", seed=5)
     assert a.events == b.events and a.hidden_logical_flip == b.hidden_logical_flip
+
+
+@pytest.mark.parametrize("d", [3, 5, 7])
+def test_stabilizer_types_in_geometry_match_first_round_detectors(d):
+    """Z-type stabilizers (CX data->ancilla) are exactly the ones with first-round detectors in a Z-memory experiment."""
+    import stim
+    from qta6.correction.surface import geometry
+    g = geometry(d)
+    c = stim.Circuit.generated("surface_code:rotated_memory_z", distance=d, rounds=d)
+    first = {(v[0], v[1]) for v in c.get_detector_coordinates().values() if v[2] == 0}
+    z = {(q["x"], q["y"]) for q in g["measure_qubits"] if q["type"] == "Z"}
+    x = {(q["x"], q["y"]) for q in g["measure_qubits"] if q["type"] == "X"}
+    assert z == first and not (z & x) and len(z) == len(x) == (d * d - 1) // 2
+    assert all(q["type"] in ("X", "Z") for q in g["measure_qubits"])

@@ -209,3 +209,33 @@ def test_integrated_mission_has_baselines_and_scope_statement():
     for r in rows.values():
         by.setdefault(r["detection"]["ancillas"], []).append(r["detection"]["raw_shots"])
     assert min(by[3]) > min(by[1])
+
+
+def test_save_schema_v2_migrates_v1_and_rejects_corrupt_values(tmp_path: Path):
+    from qta6.game.engine import SAVE_SCHEMA, Progress as P
+    assert SAVE_SCHEMA == "qta6.save/2"
+    legacy = {"schema": "qta6.save/1", "completed": {"A1": {"best_score": 55.5, "attempts": 2}}, "difficulty": "advanced", "tutorial_done": True}
+    p = P.from_json(legacy)  # safe migration: nothing is lost, the failure counter starts empty
+    assert p.completed["A1"]["best_score"] == 55.5 and p.failures == {} and p.difficulty == "advanced"
+    assert p.to_json()["schema"] == "qta6.save/2"
+    assert P.from_json(p.to_json()).to_json() == p.to_json()
+    for bad in ({"schema": "qta6.save/9", "completed": {}},
+                {"schema": "qta6.save/2", "completed": {"A1": {"best_score": float("nan"), "attempts": 1}}},
+                {"schema": "qta6.save/2", "completed": {"A1": {"best_score": -1, "attempts": 1}}},
+                {"schema": "qta6.save/2", "completed": {"A1": {"best_score": True, "attempts": 1}}},
+                {"schema": "qta6.save/2", "completed": {}, "failures": {"A1": "x"}}, []):
+        with pytest.raises(ValueError):
+            P.from_json(bad)  # type: ignore[arg-type]
+    assert P.from_json({"schema": "qta6.save/2", "completed": {}, "difficulty": "godlike"}).difficulty == "beginner"
+
+
+def test_failed_attempts_are_counted():
+    import json as _json
+    from qta6.game.engine import Game as G, Progress as P, State as S
+    data = _json.loads((Path(__file__).resolve().parents[2] / "frontend" / "public" / "data" / "campaign.json").read_text())
+    g = G(data, P())
+    g.open_menu(); g.select_mission("A1"); g.begin()
+    loser = next(k for k, o in g.missions["A1"]["outcomes"].items() if not o["success"])
+    g.evaluate_action(loser)
+    assert g.finish() == S.MISSION_FAILURE
+    assert g.progress.failures == {"A1": 1} and "A1" not in g.progress.completed

@@ -169,8 +169,21 @@ def geometry(distance: int) -> dict:
     for inst in c.flattened():
         if inst.name in ("MR", "MRX", "MRY"):
             ancilla_ids.update(t.value for t in inst.targets_copy())
+    # stabilizer type from the CX direction of the generated circuit: data -> ancilla (ancilla is the CX target)
+    # measures a Z-type stabilizer, ancilla -> data (ancilla is the control) an X-type stabilizer
+    cx_target, cx_control = set(), set()
+    for inst in c.flattened():
+        if inst.name == "CX":
+            t = inst.targets_copy()
+            cx_control.update(t[i].value for i in range(0, len(t), 2))
+            cx_target.update(t[i].value for i in range(1, len(t), 2))
     for q, xy in coords.items():
-        (meas if q in ancilla_ids else data).append({"id": q, "x": xy[0], "y": xy[1]})
+        rec = {"id": q, "x": xy[0], "y": xy[1]}
+        if q in ancilla_ids:
+            rec["type"] = "Z" if (q in cx_target and q not in cx_control) else "X" if (q in cx_control and q not in cx_target) else "?"
+            meas.append(rec)
+        else:
+            data.append(rec)
     return {"distance": distance, "data_qubits": sorted(data, key=lambda r: r["id"]),
             "measure_qubits": sorted(meas, key=lambda r: r["id"]),
             "detector_coordinates": {k: list(v) for k, v in c.get_detector_coordinates().items()},

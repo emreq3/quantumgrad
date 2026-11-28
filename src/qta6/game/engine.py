@@ -18,7 +18,8 @@ from ..correction.manual import DecodingInstance, GraphEdge, evaluate_correction
 from ..core.resources import ResourceError
 from .economy import MissionWallet
 
-SAVE_SCHEMA = "qta6.save/1"
+SAVE_SCHEMA = "qta6.save/2"
+LEGACY_SAVE_SCHEMAS = ("qta6.save/1",)  # migrated on load (v2 only adds the per-mission failure counter)
 
 
 class State(str, Enum):
@@ -50,6 +51,13 @@ TRANSITIONS: dict[State, set[State]] = {
 }
 
 
+DIFFICULTIES = ("beginner", "intermediate", "advanced")
+
+
+def _finite_nonneg(x: Any) -> bool:
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and x == x and x not in (float("inf"),) and x >= 0
+
+
 class InvalidAction(ValueError):
     """Raised for actions that are not allowed in the current state or violate mission rules."""
 
@@ -59,18 +67,31 @@ class Progress:
     completed: dict[str, dict] = field(default_factory=dict)  # mission id -> {"best_score": float, "attempts": int}
     difficulty: str = "beginner"
     tutorial_done: bool = False
+    failures: dict[str, int] = field(default_factory=dict)  # mission id -> number of failed attempts (v2)
 
     def to_json(self) -> dict:
-        return {"schema": SAVE_SCHEMA, "completed": self.completed, "difficulty": self.difficulty, "tutorial_done": self.tutorial_done}
+        return {"schema": SAVE_SCHEMA, "completed": self.completed, "difficulty": self.difficulty, "tutorial_done": self.tutorial_done,
+                "failures": self.failures}
 
     @classmethod
     def from_json(cls, d: dict) -> "Progress":
-        if d.get("schema") != SAVE_SCHEMA:
-            raise ValueError(f"unsupported save schema {d.get('schema')!r}; expected {SAVE_SCHEMA!r}")
-        comp = d.get("completed", {})
-        if not isinstance(comp, dict) or any(not isinstance(v, dict) or "best_score" not in v or "attempts" not in v for v in comp.values()):
+        if not isinstance(d, dict):
             raise ValueError("malformed save data")
-        return cls(completed=comp, difficulty=d.get("difficulty", "beginner"), tutorial_done=bool(d.get("tutorial_done", False)))
+        schema = d.get("schema")
+        if schema not in (SAVE_SCHEMA, *LEGACY_SAVE_SCHEMAS):
+            raise ValueError(f"unsupported save schema {schema!r}; expected {SAVE_SCHEMA!r}")
+        comp = d.get("completed", {})
+        if not isinstance(comp, dict):
+            raise ValueError("malformed save data")
+        for v in comp.values():
+            if not isinstance(v, dict) or not _finite_nonneg(v.get("best_score")) or not _finite_nonneg(v.get("attempts")):
+                raise ValueError("malformed save data")
+        fails = d.get("failures", {}) if schema == SAVE_SCHEMA else {}
+        if not isinstance(fails, dict) or any(not _finite_nonneg(v) for v in fails.values()):
+            raise ValueError("malformed save data")
+        diff = d.get("difficulty", "beginner")
+        return cls(completed=comp, difficulty=diff if diff in DIFFICULTIES else "beginner", tutorial_done=bool(d.get("tutorial_done", False)),
+                   failures={k: int(v) for k, v in fails.items()})
 
     def save(self, path: Path) -> None:
         path.write_text(json.dumps(self.to_json(), indent=1))
@@ -246,6 +267,8 @@ class Game:
             return self.state
         score = float(self.last_result.get("score") or 0.0)
         rec = self.progress.completed.get(self.current, {"best_score": 0.0, "attempts": 0})
+        if not ok:
+            self.progress.failures[self.current] = self.progress.failures.get(self.current, 0) + 1
         rec["attempts"] += 1
         if ok:
             rec["best_score"] = max(rec["best_score"], score)
@@ -278,7 +301,13 @@ class Game:
 
 
 def _units(m: dict, out: dict) -> dict[str, float]:
-    """Resource units an action consumes (priced by ``economy.credit_cost``)."""
+    """Resource units an action consumes (priced by ``economy.credit_cost``).
+
+    Exported outcomes carry their own ``units`` (single source of truth, also used by the browser); the per-kind
+    rules below are the fallback used when the exporter builds that field.
+    """
+    if "units" in out:
+        return dict(out["units"])
     kind = m["kind"]
     if kind == "detection" or kind == "optimization":
         return {"ancilla_qubits": out["ancilla_qubits"], "extra_two_qubit_gates": out["extra_two_qubit_gates"]}

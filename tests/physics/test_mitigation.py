@@ -191,3 +191,19 @@ def test_adaptive_allocation_is_unbiased_and_not_worse_than_uniform(task):
     orc = evaluate_strategy(td, Strategy("o", scales=(1, 3, 5), allocation="oracle"), 20000, 400, seed=3)
     assert orc.summary.variance < uni.summary.variance  # the oracle (uses true sigma) is the reference
     assert ada.example_allocation[0] > ada.example_allocation[2]  # noisier (more amplified) points get fewer shots
+
+
+def test_richardson_coefficients_for_scales_1_3_5_are_independent_of_other_scale_sets():
+    """Phase 4 audit: coefficients and variance factors are recomputed per scale set (never reused from (1,2,3))."""
+    from qta6.mitigation.zne import extrapolate, richardson_coefficients
+    # (1,3):   gamma = (3/2, -1/2), sum gamma^2 = 2.5
+    g2 = richardson_coefficients([1, 3])
+    assert g2 == pytest.approx([1.5, -0.5]) and float((g2**2).sum()) == pytest.approx(2.5)
+    # (1,3,5): gamma = (15/8, -5/4, 3/8), sum gamma^2 = 167/32 = 5.21875 (NOT 19, which belongs to (1,2,3))
+    g3 = richardson_coefficients([1, 3, 5])
+    assert g3 == pytest.approx([15 / 8, -5 / 4, 3 / 8]) and float(g3.sum()) == pytest.approx(1.0)
+    assert float((g3**2).sum()) == pytest.approx(167 / 32)
+    assert float((richardson_coefficients([1, 2, 3]) ** 2).sum()) == pytest.approx(19.0)
+    # exact for polynomials of degree <= m-1 evaluated at zero noise
+    xs = [1, 3, 5]
+    assert extrapolate(xs, [2 + 0.3 * x - 0.05 * x * x for x in xs])["value"] == pytest.approx(2.0)

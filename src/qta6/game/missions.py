@@ -136,7 +136,7 @@ MISSIONS: list[dict] = [
     _m("M3", "sunset_bay", 3, "Zero Noise", "intermediate", "mitigation", "mitigation",
        "Gate noise biases the result. Run deliberately noisier copies of the circuit and extrapolate back to zero noise.",
        "Zero-noise extrapolation trades a lower bias for a higher variance.",
-       "gate_dominated", 60, {"shots": 40000},
+       "gate_dominated", 90, {"shots": 40000},
        ["Choose noise scale factors and the extrapolation method"], ["Total shots fixed at 40000"],
        ["Reduce the absolute bias below half of the unmitigated bias"], ["M1"],
        {"task": {"n": 3, "depth": 2, "seed": 4}, "profile": "gate_dominated", "total": 40000,

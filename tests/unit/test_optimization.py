@@ -74,3 +74,13 @@ def test_robust_choice_trades_mean_for_spread_and_regret():
     assert robust_choice([t1, t2], ["a", "b"], risk_aversion=0.0) == "a"
     assert robust_choice([t1, t2], ["a", "b"], risk_aversion=1.0) == "b"
     assert regret("a", t2) == pytest.approx(0.20) and regret("b", t2) == 0.0
+
+
+def test_relative_regret_is_finite_when_the_best_loss_is_zero():
+    import math
+    from qta6.optimization.pareto import relative_regret
+    assert relative_regret(0.002, 0.001) == pytest.approx(1.0)
+    assert relative_regret(0.001, 0.001) == 0.0
+    assert math.isfinite(relative_regret(1e-4, 0.0)) and relative_regret(1e-4, 0.0) == pytest.approx(100.0)  # floor 1e-6
+    with pytest.raises(ValueError):
+        relative_regret(1.0, 0.5, floor=0.0)

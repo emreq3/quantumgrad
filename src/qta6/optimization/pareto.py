@@ -97,3 +97,14 @@ def normalized_regret(chosen: Candidate, front: Sequence[Candidate], objectives:
 
 def dominated_by(chosen: Candidate, cands: Sequence[Candidate], objectives: Sequence[Objective]) -> list[str]:
     return [c.id for c in cands if c is not chosen and dominates(c, chosen, objectives)]
+
+
+def relative_regret(value: float, best: float, floor: float = 1e-6) -> float:
+    """Relative regret ``(value - best) / max(best, floor)`` of a minimized loss (e.g. MSE).
+
+    The floor keeps the ratio finite and meaningful when the best achievable loss is numerically zero (a plain
+    ratio would explode or divide by zero); callers should also report the absolute regret ``value - best``.
+    """
+    if floor <= 0:
+        raise ValueError("floor must be positive")
+    return (value - best) / max(best, floor)
