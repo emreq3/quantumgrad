@@ -56,7 +56,7 @@ const { loadData, fullSave, openMission, attachIssues } = require("./common.cjs"
     await record(page, `${vpName}: hint dialog`, vp, { dialogOpen: await page.getByRole("dialog").count() });
     await page.keyboard.press("Escape");
     await page.getByRole("button", { name: /Exit/ }).click();
-    await page.goto(base); await page.getByRole("button", { name: "Settings", exact: true }).click(); await page.getByRole("heading", { name: "Settings" }).waitFor();
+    await page.goto(base); await page.getByRole("button", { name: "Settings", exact: true }).click(); await page.getByRole("heading", { name: "Settings", level: 2 }).waitFor();
     await record(page, `${vpName}: settings`, vp);
     await page.goto(base); await page.getByRole("button", { name: "Quantum Codex", exact: true }).click(); await page.waitForSelector(".katex", { state: "attached" });
     await record(page, `${vpName}: codex`, vp, { mathml: await page.locator(".katex-mathml math").count() });
