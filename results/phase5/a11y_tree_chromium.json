@@ -20,9 +20,9 @@
    "controls": 15,
    "controlsUnder44px": 6,
    "smallExamples": [
-    "a \"Skip to content\" 144x40",
-    "button \"QTA6 — main menu\" 75x36",
-    "button \"Map\" 73x36"
+    "a \"Skip to content\" 146x40",
+    "button \"QTA6 — main menu\" 67x36",
+    "button \"Map\" 79x36"
    ],
    "pageOverflow": 0,
    "focus": {
@@ -127,9 +127,9 @@
    "unnamedControls": 0,
    "duplicateIds": 0,
    "dialogsUnnamed": 0,
-   "liveRegions": 2,
-   "controls": 7,
-   "controlsUnder44px": 6,
+   "liveRegions": 1,
+   "controls": 46,
+   "controlsUnder44px": 34,
    "smallExamples": [
     "a \"Skip to content\" 144x40",
     "button \"QTA6 — main menu\" 75x36",
@@ -176,7 +176,7 @@
    "smallExamples": [],
    "pageOverflow": 0,
    "focus": {
-    "tag": "a",
+    "tag": "button",
     "outlineWidth": 3,
     "outlineStyle": "solid"
    }
@@ -261,10 +261,12 @@
    "unnamedControls": 0,
    "duplicateIds": 0,
    "dialogsUnnamed": 0,
-   "liveRegions": 2,
-   "controls": 7,
-   "controlsUnder44px": 0,
-   "smallExamples": [],
+   "liveRegions": 1,
+   "controls": 46,
+   "controlsUnder44px": 1,
+   "smallExamples": [
+    "input \"Always skip the intro\" 24x24"
+   ],
    "pageOverflow": 0
   },
   {
@@ -302,7 +304,7 @@
    "smallExamples": [],
    "pageOverflow": 0,
    "focus": {
-    "tag": "button",
+    "tag": "a",
     "outlineWidth": 3,
     "outlineStyle": "solid"
    }
@@ -387,10 +389,12 @@
    "unnamedControls": 0,
    "duplicateIds": 0,
    "dialogsUnnamed": 0,
-   "liveRegions": 2,
-   "controls": 7,
-   "controlsUnder44px": 0,
-   "smallExamples": [],
+   "liveRegions": 1,
+   "controls": 46,
+   "controlsUnder44px": 1,
+   "smallExamples": [
+    "input \"Always skip the intro\" 24x24"
+   ],
    "pageOverflow": 0
   },
   {

@@ -49,6 +49,7 @@ const { loadCampaign } = require("./drivers.cjs");
     await go("O3"); await scan("optimization");
     await go("N1"); await scan("N1 stage 1");
     for (const [name, label] of [["codex", "Quantum Codex"], ["settings", "Settings"], ["credits", "Credits"], ["sandbox", "Sandbox"]]) { await page.goto(base); await page.getByRole("button", { name: label, exact: true }).click(); await scan(name); }
+    await page.goto(base); await page.getByRole("button", { name: "Quick Demo", exact: true }).click(); await page.getByRole("heading", { name: "Quick Demo", level: 2 }).waitFor(); await scan("quick demo hub");
     await ctx.close();
   }
   fs.mkdirSync(path.dirname(outJson), { recursive: true });

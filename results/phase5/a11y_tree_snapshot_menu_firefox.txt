@@ -1,0 +1,26 @@
+- link "Skip to content":
+  - /url: "#main"
+- banner:
+  - button "QTA6 — main menu": QTA6
+  - text: quantum error detection · mitigation · correction
+  - button "Map"
+  - button "Open the Quantum Codex"
+  - button "Open settings"
+  - switch "Sound effects and music"
+- main:
+  - 'heading "QTA6 — Quantum City: Main menu" [level=1]'
+  - img "QTA6"
+  - navigation "Main menu":
+    - button "Continue"
+    - button "Quick Demo"
+    - button "New campaign"
+    - button "Sandbox"
+    - button "Settings"
+  - status: 29 / 29 missions completed
+  - navigation "More":
+    - button "Quantum Codex"
+    - button "Research and benchmarks"
+    - button "Credits"
+- contentinfo:
+  - text: "Science fiction with real simulations: noise models are synthetic and campaign results are replayed from precomputed runs (live only in the Sandbox)."
+  - button "About and credits"

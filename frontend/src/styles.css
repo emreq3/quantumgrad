@@ -78,10 +78,14 @@ details > summary { cursor:pointer; min-height:36px; display:flex; align-items:c
 .topbar { display:flex; align-items:center; gap:14px; padding:8px 20px; background:#0b1020e0; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20; backdrop-filter:blur(8px); }
 .topbar .brand { font-family:var(--font-display); font-weight:900; letter-spacing:.14em; color:var(--pink); background:none; border:none; padding:4px 6px; min-height:36px; }
 .topbar .spacer { flex:1; } .topbar .tagline { color:var(--muted); font-size:.82rem; }
-@media (max-width:700px) { .topbar .tagline { display:none; } .topbar { padding:6px 10px; } .hud { position:static; } .hud h2 { font-size:1.15rem; } }
+@media (max-width:700px) { .topbar .tagline { display:none; } .topbar { padding:6px 10px; } }
 .hud { position:sticky; top:52px; z-index:15; background:linear-gradient(180deg,#0f1534f2,#0c1230f2); border:1px solid var(--line-2); border-radius:14px; padding:10px 14px; margin:8px 0 12px; box-shadow:0 8px 30px #0008; backdrop-filter:blur(6px); }
+/* a sticky HUD would cover the circuit and lattice targets on phones and on short (landscape) screens: it only sticks when there is room */
+@media (max-width:700px), (max-height:560px) { .hud { position:static; } }
+@media (max-height:560px) { .topbar { position:static; } }
 .hud-top { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
 .hud h2 { margin:0; font-size:1.35rem; } .hud .objective { color:var(--peach); font-size:.9rem; flex-basis:100%; }
+@media (max-width:700px) { .hud h2 { font-size:1.15rem; } }
 .hud .tools { margin-left:auto; display:flex; gap:6px; }
 .res { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
 .res-item { background:var(--panel-2); border:1px solid var(--line-2); border-radius:10px; padding:3px 10px; display:flex; flex-direction:column; min-width:96px; position:relative; }
@@ -221,4 +225,4 @@ html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-
 .tab[aria-selected="true"] .muted,.tab.on .muted { color:inherit; }
 .path { overflow-wrap:anywhere; word-break:break-all; }
 /* Touch: every control at least 44 x 44 CSS px on touch devices and narrow screens (WCAG 2.2 asks for 24 px at AA; 44 px is the common touch guideline) */
-@media (pointer:coarse), (max-width:700px) { button, .skip-link, .tab, summary { min-height:44px; } .topbar .brand { min-height:44px; } button.small { min-height:44px; } button.link { min-height:44px; display:inline-flex; align-items:center; } }
+@media (pointer:coarse), (max-width:700px) { button, .skip-link, .tab, summary { min-height:44px; } .topbar .brand { min-height:44px; } button.small { min-height:44px; } button.link { min-height:44px; display:inline-flex; align-items:center; } input[type=range], select { min-height:44px; } input[type=checkbox], input[type=radio] { width:24px; height:24px; } }

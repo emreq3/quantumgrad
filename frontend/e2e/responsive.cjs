@@ -37,6 +37,7 @@ const VIEWPORTS = [[320, 568], [360, 800], [390, 844], [430, 932], [768, 1024], 
     await btn().click();
   };
   for (const [w, h] of VIEWPORTS) {
+    process.stderr.write(`viewport ${w}x${h}\n`);
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: w <= 1024, isMobile: w <= 1024 && browsers.name !== "firefox" });
     const page = await ctx.newPage();
     const errs = [];
@@ -63,6 +64,7 @@ const VIEWPORTS = [[320, 568], [360, 800], [390, 844], [430, 932], [768, 1024], 
     for (const [name, label] of [["codex", "Quantum Codex"], ["settings", "Settings"], ["credits", "Credits"], ["sandbox", "Sandbox"]]) {
       await page.goto(base); await page.getByRole("button", { name: label, exact: true }).click(); await record(name);
     }
+    await page.goto(base); await page.getByRole("button", { name: "Quick Demo", exact: true }).click(); await page.getByRole("heading", { name: "Quick Demo", level: 2 }).waitFor(); await record("quick demo hub");
     if (errs.length) rows.push({ viewport: `${w}x${h}`, screen: "page errors", pageErrors: errs });
     await ctx.close();
   }

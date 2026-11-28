@@ -22,7 +22,7 @@ const { loadData, fullSave, openMission, attachIssues } = require("./common.cjs"
   };
   const structure = (page) => page.evaluate(() => {
     const q = (s) => [...document.querySelectorAll(s)];
-    const name = (e) => (e.getAttribute("aria-label") || e.getAttribute("aria-labelledby") && document.getElementById(e.getAttribute("aria-labelledby"))?.textContent || e.textContent || e.getAttribute("title") || "").trim();
+    const name = (e) => (e.getAttribute("aria-label") || e.getAttribute("aria-labelledby") && document.getElementById(e.getAttribute("aria-labelledby"))?.textContent || (e.labels && e.labels[0] && e.labels[0].textContent) || e.textContent || e.getAttribute("title") || "").trim();
     const visible = (e) => { const r = e.getBoundingClientRect(); const cs = getComputedStyle(e); return r.width > 0 && r.height > 0 && cs.visibility !== "hidden"; };
     const ids = q("[id]").map((e) => e.id); const dup = ids.filter((x, i) => ids.indexOf(x) !== i);
     const ctrls = q("button, a[href], input, select, textarea, [role=button], [role=tab], [role=switch]").filter(visible);
