@@ -1,11 +1,11 @@
 # Scientific validation and testing report
 
-Run locally on the recorded machine (`docs/environment.md`); **CI status is not claimed here** (see the repository's Actions tab).
+Run locally on the recorded machine (`docs/environment.md`); **CI status is not claimed here** (see the repository's Actions tab). Phase 4 additions — solvability of all 29 missions, browser-level audits, scientific regression against committed results — are in [`campaign_validation.md`](campaign_validation.md), [`browser_test_report.md`](browser_test_report.md) and [`phase4_scientific_audit.md`](phase4_scientific_audit.md).
 
 | Suite | Count | Result |
 |---|---|---|
-| Python (`pytest`, 5 s) | 152 | 152 passed, 0 failed, 0 skipped |
-| Frontend (`vitest`) | 22 | 22 passed |
+| Python (`pytest`, 6 s) | 206 | 206 passed, 0 failed, 0 skipped (Phase 3: 152) |
+| Frontend (`vitest`) | 99 | 99 passed (Phase 3: 22) |
 | TypeScript type check, production build | — | pass |
 | Smoke benchmark / standard benchmark / data export | — | executed (see `results/`, `docs/benchmark_results.md`) |
 | End-to-end (player action → validation → simulation → evaluation → accounting → score → feedback → state) | all three pillars + integrated | executed: `tests/integration/test_api_and_pipeline.py` (live API), `tests/gameplay/test_game_engine.py` (campaign), Vitest app tests, and a real-browser run (Chromium via Playwright) that played A1, D1, M3, C3 and opened N1 with no console errors |

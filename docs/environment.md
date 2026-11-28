@@ -19,7 +19,7 @@ python -m qta6.cli doctor            # prints versions and runs three tiny end-t
 ```
 
 ```bash
-cd frontend && npm install           # use `npm ci` for an exact lockfile install
+cd frontend && npm ci                # exact lockfile install (npm install also works)
 npm run dev                          # http://127.0.0.1:5173 (proxies /api to :8000)
 ```
 
@@ -39,3 +39,24 @@ cd frontend && npm run typecheck && npm test && npm run build
 ```
 
 Python 3.12 is used because it satisfies every pinned dependency; later versions were not tested for the full lock file. The container's default `python` may be a different version — activate `.venv` first.
+
+## Clean-environment verification (Phase 4)
+
+The uncertainty recorded in Phase 3 ("a clean install from `requirements-lock.txt` was not repeated") was resolved: the committed tree (`git archive`, no `.venv`, no `node_modules`) was unpacked into an empty directory and installed from scratch.
+
+| Step | Result |
+|---|---|
+| `python3.12 -m venv .venv-clean` (Python 3.12.3) | ok |
+| `pip install -r requirements-lock.txt` | **ok, 24 s** (qiskit 2.6.2, qiskit-aer 0.18.4, qiskit-paulice 0.3, stim 1.16.0, PyMatching 2.4.0) |
+| `pip install -e . --no-deps` + imports | ok |
+| `python -m qta6.cli doctor` | all three end-to-end checks ok |
+| `pytest` | **205 passed** (the tree at that commit; 206 now with the CORS test) |
+| `python -m qta6.cli benchmark --profile smoke`, `export --profile smoke` | complete (3.47 MB data, schema-validated) |
+| `npm ci` (Node 22.23.5, npm 10.9.9) | ok, 0 vulnerabilities reported |
+| `npm run typecheck`, `npm test`, `npm run build` | pass; 89 tests at that commit (99 now); built in 149 ms |
+
+No scientific library version was changed in Phase 4. New frontend dependencies: `@fontsource/{orbitron,rajdhani,inter,jetbrains-mono}` (runtime, OFL-1.1), `axe-core` and `playwright` (dev only).
+
+## Browser tooling
+
+`npm run build && npm run e2e` runs the six Playwright audits against `vite preview` (needs Chromium: `npx playwright install chromium`, already present in the cloud container). `npm run e2e:perf` adds the timing measurements. CI installs Chromium with `--with-deps`.

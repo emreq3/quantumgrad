@@ -20,7 +20,7 @@ The same mission supports several strategies; the best one depends on the noise 
 | Circuit Harbor | optimization | limited qubits, calibration drift, Pareto efficiency, shared budgets |
 | Nexus Central | integrated | one shared budget for detection + mitigation + correction |
 
-A lightweight SVG city map and mission cards replace any 3-D world in this phase.
+Quantum City is presented as an interactive 2D/2.5D SVG map with six districts (see [`art_direction.md`](art_direction.md)); the narrative layer, characters and the six-stage finale are described in [`narrative_design.md`](narrative_design.md). Counts of "meet all goals" are the actions that are both successful and affordable inside the mission budget ([`campaign_validation.md`](campaign_validation.md)).
 
 ## Missions (29)
 
@@ -30,10 +30,10 @@ A lightweight SVG city map and mission cards replace any 3-D world in this phase
 | A2 | The Invisible Phase | academy | tutorial | beginner | experiment | 18 executed actions (9 meet all goals) |
 | A3 | Entanglement Failure | academy | tutorial | beginner | experiment | 27 executed actions (15 meet all goals) |
 | A4 | Protect the Message | academy | tutorial | beginner | repetition | 16 executed actions (7 meet all goals) |
-| D1 | Sentinel Deployment | neon labs | detection | beginner | detection | 16 executed actions (15 meet all goals) |
+| D1 | Sentinel Deployment | neon labs | detection | beginner | detection | 16 executed actions (14 meet all goals) |
 | D2 | The Ancilla Budget | neon labs | detection | intermediate | detection | 16 executed actions (2 meet all goals) |
 | D3 | Hidden Fault | neon labs | detection | intermediate | diagnosis | 1 diagnosis |
-| D4 | T-Gate Crisis | neon labs | detection | advanced | detection | 32 executed actions (22 meet all goals) |
+| D4 | T-Gate Crisis | neon labs | detection | advanced | detection | 32 executed actions (20 meet all goals) |
 | D5 | Protection Paradox | neon labs | detection | intermediate | detection | 16 executed actions (1 meet all goals) |
 | D6 | Fidelity Under Pressure | neon labs | detection | advanced | detection | 16 executed actions (1 meet all goals) |
 | M1 | Corrupted Readout | sunset bay | mitigation | beginner | mitigation | 6 executed actions (3 meet all goals) |

@@ -30,10 +30,13 @@ Generated with `python scripts/license_audit.py` (reads installed package metada
 
 | Package | Version | License | Role |
 |---|---|---|---|
-| react, react-dom | 19.3.1 | MIT | UI (runtime dependencies; the only ones shipped) |
+| react, react-dom | 19.3.1 | MIT | UI |
+| @fontsource/orbitron, rajdhani, inter, jetbrains-mono | 5.3.0 each | **OFL-1.1** (font software; the package wrappers are MIT) | bundled latin web fonts — shipped in `dist/` |
 | vite, @vitejs/plugin-react | 8.4.0 / 6.3.0 | MIT | build |
 | typescript | 7.0.2 | Apache-2.0 | type check |
 | vitest, jsdom, @testing-library/* | 5.1.2 / 31.0.1 / — | MIT | tests |
+| axe-core | 4.14.1 | **MPL-2.0** (file-level copyleft; used unmodified as a dev-time test tool, not shipped) | accessibility scan |
+| playwright | 1.63.0 | Apache-2.0 | browser audits (dev only) |
 
 Licenses of *transitive* npm dependencies were not exhaustively enumerated; only the direct dependencies above were checked.
 
@@ -46,4 +49,4 @@ Licenses of *transitive* npm dependencies were not exhaustively enumerated; only
 
 ## Assets
 
-No third-party game art, fonts, audio or Grand Theft Auto assets. The interface uses system fonts and inline SVG; the QTA6 colours are plain hex values. Screenshots in `docs/screenshots/` were captured from this project's own UI.
+No third-party game art, audio or Grand Theft Auto assets. Artwork is original procedural SVG and audio is synthesised at run time; the only bundled third-party assets are the four OFL-licensed font families listed above. Full inventory: [`asset_manifest.md`](asset_manifest.md). Screenshots in `docs/screenshots/` were captured from this project's own UI.
