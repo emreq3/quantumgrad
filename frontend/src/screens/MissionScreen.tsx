@@ -37,9 +37,9 @@ export function MissionScreen() {
   const askRestart = () => (history.length > 0 ? setConfirm("restart") : restart());
   return (
     <div>
-      <header className="hud" role="region" aria-label="Mission status">
+      <section className="hud" aria-label="Mission status">
         <div className="hud-top">
-          <span className="chip" style={{ borderColor: art?.color, color: art?.color }}>{dist?.name}</span>
+          <span className="chip" style={{ borderColor: art?.color }}>{dist?.name}</span>
           <h2>{mission.id} · {mission.title}</h2>
           <Difficulty d={mission.difficulty} />
           <span className="chip" aria-label={`attempt ${attempts}`}>attempt {attempts}</span>
@@ -54,7 +54,7 @@ export function MissionScreen() {
           <div className="objective"><Icon name="star" /> Objective: {mission.success_conditions.join(" · ")}</div>
         </div>
         <ResourceBar />
-      </header>
+      </section>
       <p className="muted small" style={{ margin: "0 0 8px" }}><strong style={{ color: who.color }}>{who.name}:</strong> {nar?.brief}</p>
       <div aria-live="assertive">{notice && <p className="notice" role="alert">{notice}</p>}</div>
       {W ? <W /> : <p className="notice">No workspace for mission kind “{mission.kind}”.</p>}

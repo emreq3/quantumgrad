@@ -119,7 +119,7 @@ export function DetectionWorkspace() {
           </Panel>
         )}
         <Panel title="Your runs">
-          <div className="tbl-wrap"><table className="tbl"><thead><tr><th>#</th><th>sentinels</th><th>mode</th><th>F post-sel.</th><th>κ</th><th>extra 2q</th>{optimization && <th>Pareto</th>}<th>score</th></tr></thead>
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Your runs (scrollable)"><table className="tbl"><thead><tr><th>#</th><th>sentinels</th><th>mode</th><th>F post-sel.</th><th>κ</th><th>extra 2q</th>{optimization && <th>Pareto</th>}<th>score</th></tr></thead>
             <tbody>
               {history.map((h) => (
                 <tr key={h.n}><td>{h.n}</td><td>{(h.outcome.targets ?? []).join(",") || "none"}</td><td>{h.outcome.mode}</td>

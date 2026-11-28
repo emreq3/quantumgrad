@@ -22,9 +22,11 @@ function openMission(id: string, completed: string[] | "all" = "all") {
   localStorage.setItem("qta6.save", JSON.stringify(save(completed)));
   boot();
   fireEvent.click(screen.getByRole("button", { name: /Continue Campaign/ }));
-  fireEvent.click(screen.getAllByLabelText(new RegExp(`^mission ${id} `))[0]);
+  fireEvent.click(missionBtn(id)[0]);
   fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
 }
+const missionBtn = (id: string) => Array.from(document.querySelectorAll<HTMLElement>(`[data-mission="${id}"]`));
+const qubit = (q: number) => screen.getByLabelText(new RegExp(`toggle sentinel on qubit ${q}$`));
 const toggleEdges = (ids: number[]) => ids.forEach((id) => fireEvent.click(document.querySelector(`[data-edge="${id}"]`)!));
 
 describe("navigation and menu", () => {
@@ -35,7 +37,7 @@ describe("navigation and menu", () => {
     expect(screen.queryByRole("button", { name: /Continue Campaign/ })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /New Game/ }));
     expect(screen.getByRole("heading", { name: "Quantum City", level: 2 })).toBeInTheDocument();
-    fireEvent.click(screen.getAllByLabelText(/^mission A1 /)[0]);
+    fireEvent.click(missionBtn("A1")[0]);
     expect(screen.getByText("Scientific problem")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
     expect(screen.getByText("Experiment bench")).toBeInTheDocument();
@@ -62,7 +64,8 @@ describe("navigation and menu", () => {
   it("locked missions cannot be opened and the map has a keyboard-reachable list of districts", () => {
     boot();
     fireEvent.click(screen.getByRole("button", { name: /New Game/ }));
-    for (const b of screen.getAllByLabelText(/^mission D1 /)) expect(b).toBeDisabled();
+    expect(missionBtn("D1").length).toBeGreaterThan(0);
+    for (const b of missionBtn("D1")) expect(b).toBeDisabled();
     const districts = screen.getAllByRole("button", { name: /missions completed/ });
     expect(districts).toHaveLength(6);
     for (const d of districts) expect(d.getAttribute("tabindex")).toBe("0");
@@ -92,7 +95,7 @@ describe("mission workspaces", () => {
     localStorage.setItem("qta6.save", JSON.stringify(save([])));
     boot();
     fireEvent.click(screen.getByRole("button", { name: /Continue Campaign|New Game/ }));
-    fireEvent.click(screen.getAllByLabelText(/^mission A1 /)[0]);
+    fireEvent.click(missionBtn("A1")[0]);
     fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
     fireEvent.click(screen.getByRole("button", { name: "10000" }));
     fireEvent.click(screen.getByRole("button", { name: /Measure/ }));
@@ -121,8 +124,8 @@ describe("mission workspaces", () => {
   it("D1: before the run only costs are shown; after the run the four fidelity baselines are labelled and acceptance is stated", () => {
     openMission("D1");
     expect(screen.queryByText(/Before and after/)).not.toBeInTheDocument();
-    fireEvent.click(screen.getByLabelText("toggle sentinel on qubit 0"));
-    fireEvent.click(screen.getByLabelText("toggle sentinel on qubit 2"));
+    fireEvent.click(qubit(0));
+    fireEvent.click(qubit(2));
     expect(screen.getByText(/extra 2-qubit gates \(cost preview\)/)).toBeInTheDocument();
     expect(screen.queryByText("acceptance κ (shots kept)")).not.toBeInTheDocument(); // not leaked before running
     fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
@@ -135,7 +138,7 @@ describe("mission workspaces", () => {
 
   it("D1: an over-budget selection cannot be run", () => {
     openMission("D1");
-    for (const q of [0, 1, 2, 3]) fireEvent.click(screen.getByLabelText(`toggle sentinel on qubit ${q}`));
+    for (const q of [0, 1, 2, 3]) fireEvent.click(qubit(q));
     expect(screen.getByRole("button", { name: /Run experiment/ })).toBeDisabled();
     expect(screen.getByText(/Over the ancilla budget/)).toBeInTheDocument();
   });
@@ -145,7 +148,7 @@ describe("mission workspaces", () => {
     const m = mission("D5");
     const worse = Object.values<any>(m.outcomes).find((o) => o.feasible && o.n_checks > 0 && o.postselected_fidelity <= o.baseline_fidelity);
     expect(worse, "D5 must contain a configuration where protection hurts").toBeTruthy();
-    for (const q of worse.targets) fireEvent.click(screen.getByLabelText(`toggle sentinel on qubit ${q}`));
+    for (const q of worse.targets) fireEvent.click(qubit(q));
     fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
     expect(screen.getByText(/Negative result:/)).toBeInTheDocument();
   });
@@ -397,7 +400,7 @@ describe("shell, settings and sandbox", () => {
   it("the HUD announces resources and updates the actual wallet after spending", () => {
     openMission("D1");
     expect(screen.getByLabelText(/Ancillas: 3 left of 3/)).toBeInTheDocument();
-    fireEvent.click(screen.getByLabelText("toggle sentinel on qubit 0"));
+    fireEvent.click(qubit(0));
     fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
     expect(screen.getByLabelText(/Ancillas: 2 left of 3/)).toBeInTheDocument();
   });

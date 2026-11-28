@@ -19,7 +19,6 @@ export function MainMenu() {
     <div className="menu-wrap">
       <CityBackdrop />
       <div className="menu-panel">
-        <h1 className="sr-only">QTA6 — Quantum City</h1>
         <Logo className="logo" />
         <div className="sub" aria-hidden="true">QUANTUM CITY</div>
         <nav className="menu-list" aria-label="Main menu">

@@ -116,7 +116,7 @@ function MissionList({ missions, onStart, objectiveId }: { missions: Json[]; onS
         const cur = objectiveId === m.id;
         return (
           <li key={m.id}>
-            <button className={`mission-btn ${rec ? "done" : ""} ${cur ? "current" : ""}`} disabled={!open} onClick={() => onStart(m)} aria-label={`mission ${m.id} ${m.title}`}>
+            <button className={`mission-btn ${rec ? "done" : ""} ${cur ? "current" : ""}`} disabled={!open} onClick={() => onStart(m)} data-mission={m.id}>
               <span><strong>{m.id} · {m.title}</strong><br /><span className="muted small">{m.pillar}</span></span>
               <span style={{ textAlign: "right" }}>
                 <Difficulty d={m.difficulty} /><br />

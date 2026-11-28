@@ -28,7 +28,7 @@ export const CAST: Record<CharacterId, Character> = {
             "Every calibration shot is a signal shot you do not get. Spend wisely."],
     campaign: ["Nice. You noticed that a clever method can lose to doing nothing. That is not a failure, that is calibration.", "The bay is reading clean. Take the estimates north to Quantum Core."],
     hair: "curls", glasses: false },
-  ndiaye: { id: "ndiaye", name: "Axel Ndiaye", title: "Quantum Core decoder engineer", district: "quantum_core", color: "#8B5CF6", accent: "#00E5FF",
+  ndiaye: { id: "ndiaye", name: "Axel Ndiaye", title: "Quantum Core decoder engineer", district: "quantum_core", color: "#B69CFF", accent: "#00E5FF",
     style: "Terse; loves puzzles; will not say the answer first.", specialty: "Surface-code syndromes, matching decoders and logical errors.",
     intro: ["The Core keeps the city's logical memory. Physical qubits fail all the time; the code only needs us to find the pattern.",
             "Defects come in pairs, or they escape through a boundary. Connect them. Then check the logical qubit — a quiet alarm is not the same as a saved qubit."],
@@ -53,7 +53,7 @@ export const DISTRICT_ART: Record<string, DistrictArt> = {
   academy: { id: "academy", tagline: "Warm evening light over the campus where every engineer starts.", color: "#FFC3A0", accent: "#FF8A45", character: "valcourt", arc: "Learn to read noisy measurements." },
   neon_labs: { id: "neon_labs", tagline: "Laboratory towers humming in cyan and violet.", color: "#00E5FF", accent: "#8B5CF6", character: "vale", arc: "Detect faults you cannot see." },
   sunset_bay: { id: "sunset_bay", tagline: "A pink-and-orange waterfront of measurement stations.", color: "#FF2D95", accent: "#FF8A45", character: "castellanos", arc: "Recover clean estimates from corrupted readings." },
-  quantum_core: { id: "quantum_core", tagline: "Server towers behind a lattice of stabilizers.", color: "#8B5CF6", accent: "#00E5FF", character: "ndiaye", arc: "Protect a logical qubit by decoding syndromes." },
+  quantum_core: { id: "quantum_core", tagline: "Server towers behind a lattice of stabilizers.", color: "#B69CFF", accent: "#00E5FF", character: "ndiaye", arc: "Protect a logical qubit by decoding syndromes." },
   circuit_harbor: { id: "circuit_harbor", tagline: "Neon cargo cranes and a very strict ledger.", color: "#FF8A45", accent: "#00E5FF", character: "brandt", arc: "Spend limited qubits, gates and shots wisely." },
   nexus_central: { id: "nexus_central", tagline: "The downtown tower that ties the network together.", color: "#FF6B8B", accent: "#FFC3A0", character: "tessaly", arc: "Restore the whole network on one budget." },
 };

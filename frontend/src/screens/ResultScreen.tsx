@@ -95,7 +95,7 @@ export function ResultScreen({ success }: { success: boolean }) {
           <ProvenanceBadge kind={last.result_kind} />
         </Panel>
         <Panel title="Comparison with baselines">
-          {lines.length ? <div className="tbl-wrap"><table className="tbl"><tbody>{lines.map((l) => <tr key={l.label}><th scope="row">{l.label}</th><td className="mono">{l.value}</td></tr>)}</tbody></table></div> : <p className="muted">No separate baseline applies to this mission type.</p>}
+          {lines.length ? <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Baseline comparison (scrollable)"><table className="tbl"><tbody>{lines.map((l) => <tr key={l.label}><th scope="row">{l.label}</th><td className="mono">{l.value}</td></tr>)}</tbody></table></div> : <p className="muted">No separate baseline applies to this mission type.</p>}
           <h4>Resources used</h4>
           <p className="mono small">{spent.length ? spent.map(([k, v]) => `${k.replace(/_/g, " ")}: ${v}`).join(" · ") : "none"}{wallet ? ` · credits: ${wallet.usedCredits.toFixed(1)} of ${wallet.credits}` : ""}</p>
         </Panel>

@@ -78,7 +78,7 @@ export function Intro({ onDone }: { onDone: () => void }) {
           <div className="gate">
             <StudioEmblem animate={false} className="emblem-sm" />
             <p className="caption small muted">{STUDIO_NAME} PRESENTS</p>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", letterSpacing: ".2em" }}>QTA6 · QUANTUM CITY</h1>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", letterSpacing: ".2em" }}>QTA6 · QUANTUM CITY</h2>
             <p className="muted small">A 12-second opening. Sound is optional and starts only when you choose it; the game is fully playable without it.</p>
             <div className="row" style={{ justifyContent: "center" }}>
               <button className="primary" autoFocus onClick={() => void start(true)}><Icon name="volume" /> Start with sound</button>

@@ -64,7 +64,7 @@ export function CircuitView({ gates, nData, nAncilla = 0, selected = [], onToggl
 
   return (
     <div className="circuit-scroll" tabIndex={0} aria-label={`Quantum circuit with ${nData} data qubits${nAncilla ? ` and ${nAncilla} ancillas` : ""}; scroll horizontally for later gates`} role="group">
-      <svg className="circuit" viewBox={`0 0 ${W} ${H}`} width={W} height={H} role="img" aria-label="quantum circuit diagram">
+      <svg className="circuit" viewBox={`0 0 ${W} ${H}`} width={W} height={H} role="group" aria-label="quantum circuit diagram">
         <text x={PAD_L} y={12} fontSize={10} fill="#B4BBDD">time →</text>
         {regions.map((r) => r.wires.map((w) => (
           <rect key={`${r.ancilla}-${w}`} x={PAD_L + r.from * GATE_W + 2} y={y(w) - 19} width={(r.to - r.from + 1) * GATE_W - 4} height={38} rx={6} fill="#00E5FF" fillOpacity={0.09} stroke="#00E5FF" strokeDasharray="5 4" strokeOpacity={0.8}>
@@ -78,9 +78,10 @@ export function CircuitView({ gates, nData, nAncilla = 0, selected = [], onToggl
               <line x1={PAD_L - 8} x2={W - 10} y1={y(q)} y2={y(q)} stroke={anc ? "#00E5FF" : "#6b7399"} strokeWidth={1.5} />
               <g className={interactive ? "edge-target" : undefined} onClick={() => interactive && onToggle!(q)} tabIndex={interactive ? 0 : undefined}
                  onKeyDown={(e) => { if (interactive && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onToggle!(q); } }}
-                 role={interactive ? "button" : undefined} aria-label={anc ? `ancilla ${q - nData}` : `toggle sentinel on qubit ${q}`} aria-pressed={interactive ? sel : undefined}>
+                 role={interactive ? "button" : undefined} aria-label={anc ? `ancilla ${q - nData}` : `q${q}: toggle sentinel on qubit ${q}`} aria-pressed={interactive ? sel : undefined}>
                 <rect className="hit" x={4} y={y(q) - 15} width={52} height={30} rx={7} fill={sel ? "#FF2D95" : anc ? "#0e2a33" : "#1a2040"} stroke={sel ? "#FF2D95" : anc ? "#00E5FF" : "#3A4488"} strokeWidth={interactive ? 1.5 : 1} />
-                <text x={30} y={y(q) + 5} textAnchor="middle" fill={sel ? "#12081f" : "#F1F5F9"} fontSize={12} fontFamily="JetBrains Mono, monospace">{anc ? `a${q - nData}` : `q${q}`}{sel ? " ◉" : ""}</text>
+                <text x={30} y={y(q) + 5} textAnchor="middle" fill={sel ? "#12081f" : "#F1F5F9"} fontSize={12} fontFamily="JetBrains Mono, monospace">{anc ? `a${q - nData}` : `q${q}`}</text>
+                {sel && <path d={`M44 ${y(q)}l4 4 8-9`} stroke="#12081f" strokeWidth={2.6} fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" />}
               </g>
               {hot && <text x={W - 8} y={y(q) - 8} textAnchor="end" fontSize={10} fill="#FF2D95">FIRED</text>}
             </g>

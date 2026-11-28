@@ -77,7 +77,7 @@ const RES_LABEL: Record<string, string> = { ancilla_qubits: "Ancillas", extra_tw
 
 /** HUD resource strip. The wallet in the game store is the only source of truth; the highlight is cosmetic. */
 export function ResourceBar() {
-  const { wallet, lastSpend, mission } = useGame();
+  const { wallet, lastSpend, mission, last } = useGame();
   const prev = useRef<{ n: number }>({ n: 0 });
   const [bump, setBump] = useState<{ n: number; keys: string[] } | null>(null);
   useEffect(() => {
@@ -90,18 +90,21 @@ export function ResourceBar() {
   }, [lastSpend, wallet]);
   if (!wallet) return null;
   const caps = Object.entries(wallet.caps).filter(([k]) => k !== "credits");
-  const item = (k: string, label: string, used: number, cap: number, fmt: (x: number) => string, spend?: number) => (
+  const item = (k: string, label: string, used: number, cap: number, fmt: (x: number) => string, spend?: number, footprint = false) => (
     <div key={k} className={`res-item ${bump?.keys.includes(k) ? "bump" : ""}`} data-resource={k}>
       <span className="rl">{label}</span>
-      <span className="rv" aria-label={`${label}: ${fmt(cap - used)} left of ${fmt(cap)}`}>{fmt(cap - used)} <span className="muted">/ {fmt(cap)}</span></span>
-      <span className="meter" aria-hidden="true"><i style={{ width: `${Math.max(0, Math.min(100, ((cap - used) / (cap || 1)) * 100))}%` }} /></span>
+      <span className="rv" aria-label={footprint ? `${label}: ${fmt(used)} of ${fmt(cap)}` : `${label}: ${fmt(cap - used)} left of ${fmt(cap)}`}>{footprint ? fmt(used) : fmt(cap - used)} <span className="muted">/ {fmt(cap)}</span></span>
+      <span className="meter" aria-hidden="true"><i style={{ width: `${Math.max(0, Math.min(100, ((footprint ? used : cap - used) / (cap || 1)) * 100))}%` }} /></span>
       {bump?.keys.includes(k) && spend !== undefined && spend > 0 && <span className="spend" aria-hidden="true">−{fmt(spend)}</span>}
     </div>
   );
   return (
     <div className="res" role="group" aria-label="Resources">
       {item("credits", "Quantum credits", wallet.usedCredits, wallet.credits, (x) => x.toFixed(1), lastSpend?.credits)}
-      {caps.map(([k, v]) => item(k, RES_LABEL[k] ?? k.replace(/_/g, " "), wallet.used[k] ?? 0, v, (x) => String(Math.round(x * 100) / 100), lastSpend?.units[k]))}
+      {caps.map(([k, v]) => k === "physical_qubits" && mission?.kind === "integrated"
+        // qubits are a footprint (peak), not a consumable: show the executed plan's footprint against the cap
+        ? item(k, "Peak qubits (footprint)", last?.totals?.qubits ?? 0, v, (x) => String(Math.round(x * 100) / 100), undefined, true)
+        : item(k, RES_LABEL[k] ?? k.replace(/_/g, " "), wallet.used[k] ?? 0, v, (x) => String(Math.round(x * 100) / 100), lastSpend?.units[k]))}
       {mission?.ui?.rounds > 1 && <div className="res-item"><span className="rl">Syndrome rounds</span><span className="rv">{mission.ui.rounds}</span></div>}
       {mission?.ui?.n && <div className="res-item"><span className="rl">Core qubits</span><span className="rv">{mission.ui.n}</span></div>}
     </div>
@@ -145,7 +148,7 @@ export function ScoreBreakdown({ sb }: { sb?: Json }) {
   return (
     <details>
       <summary>Why this score? (weights are game-design choices, not physical constants)</summary>
-      <div className="tbl-wrap"><table className="tbl"><thead><tr><th>component</th><th>value</th><th>weight</th><th>contribution</th><th>kind</th></tr></thead>
+      <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Score breakdown (scrollable)"><table className="tbl"><thead><tr><th>component</th><th>value</th><th>weight</th><th>contribution</th><th>kind</th></tr></thead>
         <tbody>
           {sb.components.map((c: Json) => (
             <tr key={c.name}><td title={c.note}>{c.name}</td><td className="mono">{typeof c.value === "number" ? c.value.toPrecision(4) : "n/a"}</td>

@@ -14,7 +14,8 @@ export function UiProvider({ children, skipIntro = false }: { children: ReactNod
   const open = useCallback((o: Exclude<Overlay, null>) => setOverlay(o), []);
   const close = useCallback(() => setOverlay(null), []);
   const playIntro = useCallback(() => { setOverlay(null); setIntro(true); }, []);
-  const finishIntro = useCallback(() => { markIntroSeen(); setIntro(false); }, []);
+  // after the opening, keyboard focus moves to the main content (the intro overlay that held it is gone)
+  const finishIntro = useCallback(() => { markIntroSeen(); setIntro(false); requestAnimationFrame(() => document.getElementById("main")?.focus()); }, []);
   const value = useMemo(() => ({ overlay, open, close, introActive, playIntro, finishIntro }), [overlay, open, close, introActive, playIntro, finishIntro]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

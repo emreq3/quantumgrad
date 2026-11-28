@@ -110,7 +110,7 @@ export function MitigationWorkspace() {
           <button className="primary" disabled={state !== "strategy_configuration"} onClick={() => run(key)}><Icon name="play" /> Run experiment</button>
         </Panel>
         <Panel title="Noise amplification (saved, exact)">
-          <div className="tbl-wrap"><table className="tbl"><caption className="sr-only">Executed noise-scaled circuits</caption>
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Noise amplification (scrollable)"><table className="tbl"><caption className="sr-only">Executed noise-scaled circuits</caption>
             <thead><tr><th>scale λ</th><th>depth</th><th>2q gates</th><th>⟨O⟩ noisy</th><th>⟨O⟩ with readout error</th><th>|error| vs ideal</th></tr></thead>
             <tbody>{Object.keys(curve).map((s) => <tr key={s}><td>{s}</td><td>{curve[s].depth}</td><td>{curve[s].two_qubit_gates}</td><td className="mono">{f3(curve[s].exact_noisy, 4)}</td><td className="mono">{f3(curve[s].exact_observed, 4)}</td><td className="mono">{f3(Math.abs(curve[s].exact_noisy - ui.ideal), 4)}</td></tr>)}</tbody></table></div>
           <p className="muted small">Larger λ folds the circuit (U (U†U)^k) so gate noise grows while the ideal result stays the same; the error grows with λ, which is what the extrapolation exploits.</p>
@@ -147,7 +147,7 @@ export function MitigationWorkspace() {
           <p className="muted small">Mean squared error over {base.n} independent trials with the same total budget.</p>
         </Panel>
         <Panel title="Your runs">
-          <div className="tbl-wrap"><table className="tbl"><thead><tr><th>#</th><th>setting</th><th>MSE ratio</th><th>bias</th><th>variance</th></tr></thead>
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Your runs (scrollable)"><table className="tbl"><thead><tr><th>#</th><th>setting</th><th>MSE ratio</th><th>bias</th><th>variance</th></tr></thead>
             <tbody>{history.map((h) => <tr key={h.n}><td>{h.n}</td><td className="mono">{h.key}</td><td>{f3(h.outcome.mse_ratio, 2)}</td><td>{f3(h.outcome.summary?.bias, 4)}</td><td>{f3(h.outcome.summary?.variance, 5)}</td></tr>)}</tbody></table></div>
         </Panel>
       </div>

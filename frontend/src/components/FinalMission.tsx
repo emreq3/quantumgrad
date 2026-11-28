@@ -35,8 +35,8 @@ export function RestorationBoard({ last }: { last: Json }) {
   const restored = SUBSYSTEMS.filter((s) => met(s.id)).length;
   return (
     <Panel title="Network status" accent={restored === 3 ? "success" : restored > 0 ? "warning" : "failure"}>
-      <svg viewBox="0 0 480 170" width="100%" style={{ maxWidth: 640 }} role="img" aria-label={`City network: ${restored} of 3 subsystems restored`}>
-        <rect width="480" height="170" fill="#0a0f28" rx="10" />
+      <svg viewBox="0 0 480 190" width="100%" style={{ maxWidth: 640 }} role="img" aria-label={`City network: ${restored} of 3 subsystems restored`}>
+        <rect width="480" height="190" fill="#0a0f28" rx="10" />
         {SUBSYSTEMS.map((s, i) => {
           const ok = met(s.id), x = 30 + i * 150;
           return (
@@ -97,7 +97,7 @@ export function FinalMission() {
 
         {stage === 1 && (
           <>
-            <div className="tbl-wrap"><table className="tbl" aria-label="Detection options">
+            <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Detection options (scrollable)"><table className="tbl" aria-label="Detection options">
               <thead><tr><th></th><th>sentinels</th><th>post-selected F (exact)</th><th>acceptance κ</th><th>extra 2q gates</th><th>raw shots ⌈2000/κ⌉</th></tr></thead>
               <tbody>{dkeys.map((k) => { const o = ui.detection_options[k]; return (
                 <tr key={k}><td><input type="radio" name="det" aria-label={`${o.ancillas} sentinels on qubits ${o.targets.join(",") || "none"}`} checked={dk === k} onChange={() => setDk(k)} /></td>
@@ -120,7 +120,7 @@ export function FinalMission() {
 
         {stage === 3 && (
           <>
-            <div className="tbl-wrap"><table className="tbl" aria-label="Code distances"><thead><tr><th></th><th>distance</th><th>physical qubits</th><th>logical failure p_L (95 % Wilson)</th><th>qubit-rounds</th></tr></thead>
+            <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Plan summary (scrollable)"><table className="tbl" aria-label="Code distances"><thead><tr><th></th><th>distance</th><th>physical qubits</th><th>logical failure p_L (95 % Wilson)</th><th>qubit-rounds</th></tr></thead>
               <tbody>{ui.distances.map((d: number) => { const r = rows[String(d)]; return (
                 <tr key={d}><td><input type="radio" name="dist" aria-label={`distance ${d}`} checked={dist === d} onChange={() => setDist(d)} /></td><td>d = {d}</td><td>{r.physical_qubits}</td>
                   <td className="mono">{f3(r.p_logical, 4)} [{f3(r.wilson95[0], 4)}, {f3(r.wilson95[1], 4)}]</td><td>{r.qubit_rounds}</td></tr>); })}</tbody></table></div>
@@ -130,7 +130,7 @@ export function FinalMission() {
 
         {stage === 4 && (
           <>
-            <div className="tbl-wrap"><table className="tbl"><tbody>
+            <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Code distances (scrollable)"><table className="tbl"><tbody>
               <tr><th scope="row">1 · Detection</th><td>{opt.ancillas} sentinels on [{opt.targets.join(",") || "—"}]</td></tr>
               <tr><th scope="row">2 · Mitigation</th><td>{mit}, {tot} shots</td></tr>
               <tr><th scope="row">3 · Logical memory</th><td>distance {dist}</td></tr>
@@ -167,7 +167,7 @@ export function FinalMission() {
         )}
 
         <div className="row" style={{ justifyContent: "space-between" }}>
-          <button onClick={back} disabled={stage === 0 || stage === 5 || state !== "strategy_configuration"}>← Back</button>
+          {stage < 5 ? <button onClick={back} disabled={stage === 0 || state !== "strategy_configuration"}>← Back</button> : <span />}
           {stage < 4 && <button className="primary" onClick={next}>Continue →</button>}
         </div>
       </Panel>

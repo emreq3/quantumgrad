@@ -279,20 +279,37 @@ export function MapBlocks({ d }: { d: MapDistrict }) {
   return <g>{blocks.map((b, i) => <g key={i}><rect x={b.x} y={b.y - b.h} width={b.w} height={b.h} fill="#0b0a1e" stroke={d.color} strokeWidth="1" opacity=".95" /><path d={`M${b.x} ${b.y - b.h}l5 -5h${b.w}l-5 5z`} fill={d.color} opacity=".55" />{b.lit && <rect x={b.x + 3} y={b.y - b.h + 4} width={Math.max(3, b.w - 8)} height="3" fill={d.accent} className="twinkle" style={{ animationDelay: `${(i * 0.3).toFixed(1)}s` }} />}</g>)}</g>;
 }
 
+const LAND = "M90 40 Q600 14 1110 42 Q1162 130 1150 300 Q1168 460 1122 560 Q1044 642 930 636 Q846 628 786 650 Q712 596 640 644 Q560 694 470 642 Q400 608 340 640 Q222 678 130 592 Q58 500 74 330 Q54 160 90 40Z";
 export function MapSea() {
   return (
     <>
       <defs>
-        <linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0b1830" /><stop offset="1" stopColor="#1a0f3d" /></linearGradient>
-        <linearGradient id="landG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1b1445" /><stop offset="1" stopColor="#0f0c2c" /></linearGradient>
+        <linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0b1b3a" /><stop offset=".6" stopColor="#1a1250" /><stop offset="1" stopColor="#3a1560" /></linearGradient>
+        <linearGradient id="landG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1c1648" /><stop offset="1" stopColor="#0f0c2c" /></linearGradient>
+        <radialGradient id="sunG" cx=".85" cy=".08" r=".7"><stop offset="0" stopColor="#FF8A45" stopOpacity=".5" /><stop offset="1" stopColor="#FF8A45" stopOpacity="0" /></radialGradient>
+        <pattern id="gridP" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#3a4488" strokeWidth=".5" opacity=".35" /></pattern>
       </defs>
-      <rect width="1200" height="680" fill="url(#seaG)" />
-      {Array.from({ length: 16 }, (_, i) => <rect key={i} className="shimmer" style={{ animationDelay: `${i * 0.4}s` }} x={(i * 211) % 1100} y={640 - (i % 3) * 14 - 6} width={50 + (i % 5) * 20} height="2" fill="#FF8A45" opacity=".35" />)}
-      <path d="M-10 20H1210V560Q1100 640 950 650Q800 665 650 640Q480 625 360 650Q200 670 -10 640Z" fill="url(#landG)" stroke="#3a4488" strokeWidth="2" />
-      <path d="M-10 640Q200 670 360 650Q480 625 650 640Q800 665 950 650Q1100 640 1210 560V585Q1100 664 950 674Q800 690 650 664Q480 650 360 674Q200 692 -10 664Z" fill="#FFC3A0" opacity=".35" />
-      <g stroke="#3a4488" strokeWidth="14" fill="none" strokeLinecap="round" opacity=".9"><path d="M-10 300H1210" /><path d="M400 20V640" /><path d="M740 20V640" /><path d="M-10 160Q300 110 600 200T1210 170" strokeWidth="9" /></g>
-      <g stroke="#FF2D95" strokeWidth="2" fill="none" strokeDasharray="14 12" opacity=".7"><path d="M-10 300H1210" /><path d="M400 20V640" /><path d="M740 20V640" /></g>
-      <g stroke="#00E5FF" strokeWidth="6" opacity=".55"><path d="M360 296V304M440 296V304M700 296V304M780 296V304" /></g>
+      <rect width="1200" height="680" fill="url(#seaG)" /><rect width="1200" height="680" fill="url(#sunG)" />
+      {Array.from({ length: 22 }, (_, i) => <path key={i} className="shimmer" style={{ animationDelay: `${(i * 0.37).toFixed(2)}s` }} d={`M${(i * 157) % 1150} ${(i * 61) % 30 + 650 - (i % 4) * 24} q10 -5 20 0 t20 0`} stroke={i % 3 ? "#8B5CF6" : "#00E5FF"} strokeWidth="1.6" fill="none" opacity=".5" />)}
+      {/* shoreline: beach, foam, land */}
+      <path d={LAND} fill="none" stroke="#FFC3A0" strokeWidth="26" opacity=".28" strokeLinejoin="round" />
+      <path d={LAND} fill="none" stroke="#FF8A45" strokeWidth="9" opacity=".35" strokeLinejoin="round" />
+      <path d={LAND} fill="url(#landG)" stroke="#3a4488" strokeWidth="2" />
+      <path d={LAND} fill="url(#gridP)" />
+      <path d={LAND} fill="none" stroke="#F1F5F9" strokeWidth="1.5" strokeDasharray="3 9" opacity=".5" transform="translate(-4 4)" />
+      {/* canal with bridges */}
+      <path d="M62 300H1160" stroke="#0e2a5a" strokeWidth="38" fill="none" /><path d="M62 300H1160" stroke="#00E5FF" strokeWidth="2" fill="none" strokeDasharray="2 16" opacity=".7" />
+      {/* avenues, ring road */}
+      <g stroke="#3a4488" strokeWidth="14" fill="none" strokeLinecap="round"><path d="M400 30V282M400 318V630" /><path d="M740 30V282M740 318V640" /><path d="M96 120Q360 96 600 176T1130 150" strokeWidth="9" /><path d="M110 500Q360 470 600 560T1110 520" strokeWidth="9" /></g>
+      <g stroke="#FF2D95" strokeWidth="2" fill="none" strokeDasharray="14 12" opacity=".75"><path d="M400 30V282M400 318V630" /><path d="M740 30V282M740 318V640" /><path d="M96 120Q360 96 600 176T1130 150" /><path d="M110 500Q360 470 600 560T1110 520" /></g>
+      {[400, 740].map((x) => <g key={x}><rect x={x - 22} y="280" width="44" height="40" fill="#241a5c" stroke="#00E5FF" strokeWidth="2" rx="3" /><path d={`M${x - 22} 288H${x + 22}M${x - 22} 312H${x + 22}`} stroke="#00E5FF" strokeWidth="1.4" />{[-16, 0, 16].map((dx) => <circle key={dx} cx={x + dx} cy="284" r="2.4" fill="#FFC3A0" className="twinkle" />)}</g>)}
+      <g><path d="M96 296H200M96 304H200" stroke="#FFC3A0" strokeWidth="1.2" opacity=".5" /><path d="M1000 296H1130M1000 304H1130" stroke="#FFC3A0" strokeWidth="1.2" opacity=".5" /></g>
+      {/* harbour piers and marina boats */}
+      <g fill="#241a5c" stroke="#FF8A45" strokeWidth="1.5"><rect x="850" y="632" width="14" height="40" /><rect x="900" y="636" width="14" height="36" /><rect x="950" y="630" width="14" height="42" /><rect x="1000" y="624" width="14" height="40" /></g>
+      <g fill="#F1F5F9" opacity=".85">{[[190, 628], [250, 640], [310, 636], [150, 612]].map(([x, y], i) => <path key={i} d={`M${x} ${y}l12 0l-4 -10l-8 -2z`} />)}</g>
+      <g><Palm x={116} y={216} s={0.36} /><Palm x={96} y={420} s={0.34} flip /><Palm x={1128} y={200} s={0.34} flip /><Palm x={1118} y={420} s={0.36} /><Palm x={560} y={36} s={0.28} /></g>
+      <text x="40" y="668" fontSize="12" fill="#FFC3A0" opacity=".7" fontFamily="Rajdhani, sans-serif" fontWeight="600" letterSpacing="3">QUANTUM BAY</text>
+      <text x="1010" y="270" fontSize="11" fill="#00E5FF" opacity=".7" fontFamily="Rajdhani, sans-serif" fontWeight="600" letterSpacing="3">NEON CANAL</text>
     </>
   );
 }

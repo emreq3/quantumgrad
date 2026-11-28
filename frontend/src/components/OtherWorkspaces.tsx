@@ -177,7 +177,7 @@ export function DriftWorkspace() {
         <Panel title="1 · Estimated noise: strategies ranked on LAST WEEK's calibration" accent="purple">
           <label className="radio"><input type="checkbox" checked={fresh} onChange={() => setFresh(!fresh)} />
             Buy a fresh calibration (costs {ui.calibration_cost_shots} of {ui.total_shots} shots plus credits; the rest is spent on the actual run)</label>
-          <div className="tbl-wrap"><table className="tbl"><caption className="sr-only">Candidate strategies ranked on the stale calibration</caption><thead><tr><th>strategy</th><th>estimated MSE (stale data)</th><th>2q gates</th><th></th></tr></thead>
+          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Candidate strategies (scrollable)"><table className="tbl"><caption className="sr-only">Candidate strategies ranked on the stale calibration</caption><thead><tr><th>strategy</th><th>estimated MSE (stale data)</th><th>2q gates</th><th></th></tr></thead>
             <tbody>{ui.strategies.map((s: Json) => (
               <tr key={s.key}><td>{s.key.replace(/\|5\|/g, " ").replace(/\|/g, " · ")}</td><td className="mono">{f3(s.estimated.mse, 5)}</td><td>{s.gates}</td>
                 <td><button className="small" disabled={state !== "strategy_configuration"} onClick={() => run(`${s.key}#${fresh ? "fresh" : "stale"}`)}>Run on today's device</button></td></tr>))}

@@ -135,7 +135,7 @@ export function DecoderWorkspace() {
       <div>
         <Panel title={`${mode === "reproduce" ? "Reproduce the alarm pattern" : "Decode"} — distance ${ui.d} rotated surface code, instance ${insts.indexOf(inst) + 1}/${insts.length}`} accent="purple">
           {model && <div className="row"><span className="badge uncertain" title={model.description}>model: {model.label}</span><span className="muted small">{model.description}</span></div>}
-          <div className="svgbox">
+          <div className="svgbox" tabIndex={0} role="region" aria-label="Decoding lattice (scrollable)">
             <svg viewBox={`0 0 ${lay.W} ${lay.H}`} width={lay.W} height={lay.H} role="group" aria-label="Decoding lattice. Each circle is one possible error; press Enter to toggle your correction on it.">
               {lay.plaquettes.map((p, i) => (
                 <g key={i}>
@@ -183,7 +183,7 @@ export function DecoderWorkspace() {
                     {mw && <circle cx={g.x} cy={g.y} r={R_HIT - 2} fill="none" stroke="#FF8A45" strokeWidth={3} strokeDasharray="3 3" />}
                     <circle className="hit" cx={g.x} cy={g.y} r={R_HIT} fill={on ? "#00E5FF" : "#0B1020"} fillOpacity={on ? 0.28 : 0.55} stroke={on ? "#00E5FF" : "#6b7399"} strokeWidth={on ? 3 : 1.5} />
                     <circle cx={g.x} cy={g.y} r={on ? 8 : 5} fill={on ? "#00E5FF" : "#B4BBDD"} />
-                    {on && <text x={g.x} y={g.y + 4} textAnchor="middle" fontSize={11} fontWeight={700} fill="#0B1020">✕</text>}
+                    {on && <path d={`M${g.x - 4} ${g.y - 4}l8 8M${g.x + 4} ${g.y - 4}l-8 8`} stroke="#0B1020" strokeWidth={2.4} strokeLinecap="round" aria-hidden="true" />}
                     {e.obs ? <circle cx={g.x} cy={g.y} r={R_HIT + 4} fill="none" stroke="#FFC857" strokeWidth={1.5} strokeDasharray="2 3" /> : null}
                     <title>{`${label(e)} · weight ${e.weight.toFixed(2)}`}</title>
                   </g>
