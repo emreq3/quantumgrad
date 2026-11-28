@@ -31,6 +31,8 @@ export function CircuitView({ gates, nData, nAncilla = 0, selected = [], onToggl
           <g key={q}>
             <line x1={PAD_L - 8} x2={W - 10} y1={y(q)} y2={y(q)} stroke={anc ? "var(--cyan)" : "#6b7399"} strokeWidth={1.5} />
             <g className={onToggle && !anc ? "qlabel clickable" : "qlabel"} onClick={() => onToggle && !anc && onToggle(q)}
+               tabIndex={onToggle && !anc ? 0 : undefined}
+               onKeyDown={(e) => { if (onToggle && !anc && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onToggle(q); } }}
                role={onToggle && !anc ? "button" : undefined} aria-label={anc ? `ancilla ${q - nData}` : `toggle sentinel on qubit ${q}`} aria-pressed={sel}>
               <rect x={4} y={y(q) - 13} width={50} height={26} rx={6} fill={sel ? "var(--pink)" : anc ? "#0e2a33" : "#1a2040"} stroke={sel ? "var(--pink)" : anc ? "var(--cyan)" : "#3a4170"} />
               <text x={29} y={y(q) + 5} textAnchor="middle" fill="#fff" fontSize={12}>{anc ? `a${q - nData}` : `q${q}`}</text>

@@ -55,7 +55,8 @@ export function DecoderWorkspace() {
               const on = chosen.includes(e.id);
               const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
               return (
-                <g key={e.id} className={canPlay ? "edge clickable" : "edge"} onClick={() => canPlay && toggle(e.id)} role="button"
+                <g key={e.id} className={canPlay ? "edge clickable" : "edge"} onClick={() => canPlay && toggle(e.id)} role="button" tabIndex={canPlay ? 0 : -1}
+                   onKeyDown={(ev) => { if (canPlay && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); toggle(e.id); } }}
                    aria-label={`edge ${e.id} ${e.v === null ? "to boundary" : `between ${e.u} and ${e.v}`}`} aria-pressed={on}>
                   <line className="vis" x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={on ? "var(--cyan)" : e.v === null ? "#6b7399" : "#4a5280"} strokeWidth={on ? 5 : 2.5}
                         strokeDasharray={e.obs ? "6 4" : undefined} style={{ pointerEvents: "none" }} />

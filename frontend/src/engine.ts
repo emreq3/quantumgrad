@@ -4,7 +4,9 @@
 
 export type Json = any; // campaign data is schema-validated on the Python side
 
-export const SAVE_SCHEMA = "qta6.save/1";
+export const SAVE_SCHEMA = "qta6.save/2";
+export const LEGACY_SAVE_SCHEMAS = ["qta6.save/1"]; // migrated on load: v2 only adds the failure counter
+export const SAVE_KEY = "qta6.save";
 
 export type GameState =
   | "main_menu" | "district_selection" | "mission_briefing" | "strategy_configuration"
@@ -30,37 +32,86 @@ export function canGo(from: GameState, to: GameState): boolean {
   return TRANSITIONS[from].includes(to);
 }
 
+export const DIFFICULTIES = ["beginner", "intermediate", "advanced"] as const;
+export type Difficulty = (typeof DIFFICULTIES)[number];
+
 export interface Progress {
   schema: string;
   completed: Record<string, { best_score: number; attempts: number }>;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  failures: Record<string, number>;
+  difficulty: Difficulty;
   tutorial_done: boolean;
 }
 
-export const emptyProgress = (): Progress => ({ schema: SAVE_SCHEMA, completed: {}, difficulty: "beginner", tutorial_done: false });
+export const emptyProgress = (): Progress => ({ schema: SAVE_SCHEMA, completed: {}, failures: {}, difficulty: "beginner", tutorial_done: false });
 
+const MISSION_ID = /^[A-Z][0-9]{1,2}$/;
+const finiteNonNeg = (x: unknown): x is number => typeof x === "number" && Number.isFinite(x) && x >= 0;
+
+/** Strict validation + migration. Throws on anything that is not a well-formed save of a supported version. */
 export function validateProgress(raw: unknown): Progress {
   const d = raw as Json;
-  if (!d || typeof d !== "object" || d.schema !== SAVE_SCHEMA) throw new Error(`unsupported save schema ${d?.schema}`);
+  if (!d || typeof d !== "object" || Array.isArray(d)) throw new Error("malformed save data");
+  const legacy = LEGACY_SAVE_SCHEMAS.includes(d.schema);
+  if (d.schema !== SAVE_SCHEMA && !legacy) throw new Error(`unsupported save schema ${d?.schema}`);
   const comp = d.completed;
-  if (!comp || typeof comp !== "object") throw new Error("malformed save data");
-  for (const v of Object.values(comp) as Json[]) {
-    if (typeof v?.best_score !== "number" || typeof v?.attempts !== "number") throw new Error("malformed save data");
+  if (!comp || typeof comp !== "object" || Array.isArray(comp)) throw new Error("malformed save data");
+  const completed: Progress["completed"] = {};
+  for (const [id, v] of Object.entries(comp) as [string, Json][]) {
+    if (!MISSION_ID.test(id) || !finiteNonNeg(v?.best_score) || !finiteNonNeg(v?.attempts)) throw new Error("malformed save data");
+    completed[id] = { best_score: v.best_score, attempts: Math.floor(v.attempts) };
   }
-  return { schema: SAVE_SCHEMA, completed: comp, difficulty: d.difficulty ?? "beginner", tutorial_done: !!d.tutorial_done };
+  const failures: Progress["failures"] = {};
+  if (!legacy && d.failures !== undefined) {
+    if (!d.failures || typeof d.failures !== "object" || Array.isArray(d.failures)) throw new Error("malformed save data");
+    for (const [id, n] of Object.entries(d.failures)) {
+      if (!MISSION_ID.test(id) || !finiteNonNeg(n)) throw new Error("malformed save data");
+      failures[id] = Math.floor(n as number);
+    }
+  }
+  const difficulty = (DIFFICULTIES as readonly string[]).includes(d.difficulty) ? (d.difficulty as Difficulty) : "beginner";
+  return { schema: SAVE_SCHEMA, completed, failures, difficulty, tutorial_done: d.tutorial_done === true };
 }
 
-export function loadProgress(storage: Pick<Storage, "getItem"> = localStorage): Progress {
+/** localStorage can throw on access (blocked cookies, sandboxed iframes); every access goes through here. */
+export function safeStorage(): Storage | null {
   try {
-    const s = storage.getItem("qta6.save");
+    const s = window.localStorage;
+    s.getItem(SAVE_KEY); // may throw SecurityError
+    return s;
+  } catch {
+    return null;
+  }
+}
+
+export function loadProgress(storage: Pick<Storage, "getItem"> | null = safeStorage()): Progress {
+  try {
+    const s = storage?.getItem(SAVE_KEY);
     return s ? validateProgress(JSON.parse(s)) : emptyProgress();
   } catch {
-    return emptyProgress();
+    return emptyProgress(); // corrupted or unsupported data never crashes the game
   }
 }
 
-export function saveProgress(p: Progress, storage: Pick<Storage, "setItem"> = localStorage): void {
-  try { storage.setItem("qta6.save", JSON.stringify(p)); } catch { /* storage unavailable: progress is kept in memory only */ }
+/** Union of two saves: no completion or best score is ever lost (used for multi-tab and safe writes). */
+export function mergeProgress(a: Progress, b: Progress): Progress {
+  const completed = { ...a.completed };
+  for (const [id, r] of Object.entries(b.completed)) {
+    const c = completed[id];
+    completed[id] = c ? { best_score: Math.max(c.best_score, r.best_score), attempts: Math.max(c.attempts, r.attempts) } : r;
+  }
+  const failures = { ...a.failures };
+  for (const [id, n] of Object.entries(b.failures)) failures[id] = Math.max(failures[id] ?? 0, n);
+  return { ...a, completed, failures, tutorial_done: a.tutorial_done || b.tutorial_done };
+}
+
+export function saveProgress(p: Progress, storage: Pick<Storage, "getItem" | "setItem"> | null = safeStorage(), replace = false): void {
+  try {
+    if (!storage) return; // progress stays in memory only
+    let out = p;
+    if (!replace) { try { const cur = storage.getItem(SAVE_KEY); if (cur) out = mergeProgress(p, validateProgress(JSON.parse(cur))); } catch { /* overwrite unreadable data */ } }
+    storage.setItem(SAVE_KEY, JSON.stringify(out));
+  } catch { /* quota or privacy mode: keep playing without persistence */ }
 }
 
 export function isUnlocked(progress: Progress, mission: Json): boolean {
@@ -125,7 +176,9 @@ export function evaluateCorrection(edges: Edge[], events: number[], chosen: numb
 // ---- action keys -----------------------------------------------------------------------------------
 export const keyOf = (parts: (string | number)[]) => parts.join("|");
 
+/** Resource units an executed action consumes. Exported outcomes carry their own `units` (single source of truth). */
 export function outcomeUnits(mission: Json, out: Json): Record<string, number> {
+  if (out.units) return { ...out.units };
   switch (mission.kind) {
     case "detection": case "optimization": return { ancilla_qubits: out.ancilla_qubits, extra_two_qubit_gates: out.extra_two_qubit_gates };
     case "experiment": return { shots: out.shots };
@@ -140,7 +193,14 @@ export const CREDIT_PRICES: Record<string, number> = {
   ancilla_qubits: 4.0, extra_two_qubit_gates: 0.5, shots: 0.002, qubit_rounds: 0.1, physical_qubits: 0.5, calibration_refresh: 5.0,
 };
 
-export const creditCost = (units: Record<string, number>) =>
-  Object.entries(units).reduce((s, [k, v]) => s + (CREDIT_PRICES[k] ?? 0) * v, 0);
+export function creditCost(units: Record<string, number>): number {
+  let total = 0;
+  for (const [k, v] of Object.entries(units)) {
+    if (!(k in CREDIT_PRICES)) throw new Error(`resource '${k}' has no price`); // no hidden free resources
+    if (!Number.isFinite(v) || v < 0) throw new Error(`invalid quantity for '${k}'`);
+    total += CREDIT_PRICES[k] * v;
+  }
+  return Math.round(total * 1e6) / 1e6;
+}
 
 export const popcount = (x: number) => x.toString(2).split("1").length - 1;
