@@ -1,179 +1,179 @@
 {
  "base": "http://127.0.0.1:4173/",
- "started": "2026-11-28T02:19:29.672Z",
+ "started": "2026-11-28T02:38:01.832Z",
  "missions": {
   "A1": {
    "kind": "experiment",
    "status": "PASS",
-   "ms": 284,
+   "ms": 254,
    "banner": "MISSION COMPLETE"
   },
   "A2": {
    "kind": "experiment",
    "status": "PASS",
-   "ms": 271,
+   "ms": 237,
    "banner": "MISSION COMPLETE"
   },
   "A3": {
    "kind": "experiment",
    "status": "PASS",
-   "ms": 275,
+   "ms": 222,
    "banner": "MISSION COMPLETE"
   },
   "A4": {
    "kind": "repetition",
    "status": "PASS",
-   "ms": 346,
+   "ms": 341,
    "banner": "MISSION COMPLETE"
   },
   "D1": {
    "kind": "detection",
    "status": "PASS",
-   "ms": 244,
+   "ms": 225,
    "banner": "MISSION COMPLETE"
   },
   "D2": {
    "kind": "detection",
    "status": "PASS",
-   "ms": 281,
+   "ms": 271,
    "banner": "MISSION COMPLETE"
   },
   "D3": {
    "kind": "diagnosis",
    "status": "PASS",
-   "ms": 331,
+   "ms": 312,
    "banner": "MISSION COMPLETE"
   },
   "D4": {
    "kind": "detection",
    "status": "PASS",
-   "ms": 300,
+   "ms": 269,
    "banner": "MISSION COMPLETE"
   },
   "D5": {
    "kind": "detection",
    "status": "PASS",
-   "ms": 235,
+   "ms": 234,
    "banner": "MISSION COMPLETE"
   },
   "D6": {
    "kind": "detection",
    "status": "PASS",
-   "ms": 326,
+   "ms": 333,
    "banner": "MISSION COMPLETE"
   },
   "M1": {
    "kind": "mitigation",
    "status": "PASS",
-   "ms": 234,
+   "ms": 253,
    "banner": "MISSION COMPLETE"
   },
   "M2": {
    "kind": "mitigation",
    "status": "PASS",
-   "ms": 284,
+   "ms": 222,
    "banner": "MISSION COMPLETE"
   },
   "M3": {
    "kind": "mitigation",
    "status": "PASS",
-   "ms": 250,
+   "ms": 205,
    "banner": "MISSION COMPLETE"
   },
   "M4": {
    "kind": "mitigation",
    "status": "PASS",
-   "ms": 209,
+   "ms": 211,
    "banner": "MISSION COMPLETE"
   },
   "M5": {
    "kind": "mitigation",
    "status": "PASS",
-   "ms": 201,
+   "ms": 236,
    "banner": "MISSION COMPLETE"
   },
   "M6": {
    "kind": "mitigation",
    "status": "PASS",
-   "ms": 341,
+   "ms": 334,
    "banner": "MISSION COMPLETE"
   },
   "C1": {
    "kind": "repetition",
    "status": "PASS",
-   "ms": 358,
+   "ms": 339,
    "banner": "MISSION COMPLETE"
   },
   "C2": {
    "kind": "decoding",
    "status": "PASS",
-   "ms": 595,
+   "ms": 597,
    "banner": "MISSION COMPLETE"
   },
   "C3": {
    "kind": "decoding",
    "status": "PASS",
-   "ms": 582,
+   "ms": 571,
    "banner": "MISSION COMPLETE"
   },
   "C4": {
    "kind": "decoding",
    "status": "PASS",
-   "ms": 549,
+   "ms": 546,
    "banner": "MISSION COMPLETE"
   },
   "C5": {
    "kind": "decoding",
    "status": "PASS",
-   "ms": 486,
+   "ms": 409,
    "banner": "MISSION COMPLETE"
   },
   "C6": {
    "kind": "distance",
    "status": "PASS",
-   "ms": 235,
+   "ms": 260,
    "banner": "MISSION COMPLETE"
   },
   "C7": {
    "kind": "decoding",
    "status": "PASS",
-   "ms": 424,
+   "ms": 435,
    "banner": "MISSION COMPLETE"
   },
   "C8": {
    "kind": "decoding",
    "status": "PASS",
-   "ms": 694,
+   "ms": 704,
    "banner": "MISSION COMPLETE"
   },
   "O1": {
    "kind": "optimization",
    "status": "PASS",
-   "ms": 241,
+   "ms": 221,
    "banner": "MISSION COMPLETE"
   },
   "O2": {
    "kind": "drift",
    "status": "PASS",
-   "ms": 216,
+   "ms": 183,
    "banner": "MISSION COMPLETE"
   },
   "O3": {
    "kind": "optimization",
    "status": "PASS",
-   "ms": 224,
+   "ms": 183,
    "banner": "MISSION COMPLETE"
   },
   "O4": {
    "kind": "joint",
    "status": "PASS",
-   "ms": 253,
+   "ms": 193,
    "banner": "MISSION COMPLETE"
   },
   "N1": {
    "kind": "integrated",
    "status": "PASS",
-   "ms": 745,
+   "ms": 694,
    "banner": "NETWORK RESTORED"
   }
  },
@@ -184,7 +184,7 @@
   "passed": 29,
   "failed": 0,
   "campaign_complete_screen": true,
-  "seconds": 12.122
+  "seconds": 11.49
  },
- "finished": "2026-11-28T02:19:41.794Z"
+ "finished": "2026-11-28T02:38:13.322Z"
 }

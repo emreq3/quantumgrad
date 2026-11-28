@@ -405,3 +405,33 @@ describe("shell, settings and sandbox", () => {
     expect(screen.getByLabelText(/Ancillas: 2 left of 3/)).toBeInTheDocument();
   });
 });
+
+describe("hidden answers are not rendered through the ordinary interface before they are earned", () => {
+  beforeEach(() => { localStorage.clear(); sessionStorage.clear(); });
+  const text = () => document.body.textContent ?? "";
+
+  it("D3: the injected fault is not in the page until a diagnosis is submitted", () => {
+    openMission("D3");
+    const ref = mission("D3").reference;
+    expect(text()).not.toContain(ref.hidden_fault_id);
+    expect(screen.queryByText("Revealed")).not.toBeInTheDocument();
+  });
+
+  it("C3/C5: the true error and the MWPM solution are only shown after submission", () => {
+    openMission("C5");
+    expect(text()).not.toMatch(/MWPM chose edges|Exact class posterior|Logical trap:/);
+    expect(screen.queryByRole("button", { name: /MWPM correction/ })).not.toBeInTheDocument();
+  });
+
+  it("O3/N1: Pareto status, dominating candidates and reference baselines appear only after running", () => {
+    openMission("O3");
+    expect(text()).not.toMatch(/dominated by|Pareto-efficient: /);
+    expect(text()).not.toContain("score_breakdown");
+  });
+
+  it("N1: the reference plans and success counts are not rendered during planning", () => {
+    openMission("N1");
+    expect(text()).not.toMatch(/Best enumerated|Random feasible plan|Greedy sequential/);
+    expect(text()).not.toMatch(/36 of|successful plans/);
+  });
+});

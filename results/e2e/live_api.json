@@ -1,0 +1,18 @@
+{
+ "generated": "2026-11-28T02:39:01.132Z",
+ "sandbox_online": true,
+ "detection": {
+  "ms": 120,
+  "has": true
+ },
+ "mitigation": {
+  "ms": 332,
+  "has": true
+ },
+ "correction": {
+  "ms": 266,
+  "has": true
+ },
+ "page_errors": [],
+ "ok": true
+}

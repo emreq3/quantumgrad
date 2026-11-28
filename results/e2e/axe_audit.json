@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-28T02:20:23.681Z",
+ "generated": "2026-11-28T02:38:48.244Z",
  "tool": "axe-core 4.14.1",
  "report": [
   {
@@ -225,7 +225,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 14
+     "nodes": 9
     }
    ]
   },
@@ -452,7 +452,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 14
+     "nodes": 9
     }
    ]
   }
