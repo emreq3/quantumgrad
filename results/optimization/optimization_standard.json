@@ -3,7 +3,7 @@
   "benchmark": "optimization",
   "profile": "standard",
   "qta6": "0.1.0",
-  "source_revision": "712e423+dirty",
+  "source_revision": "ca36e31",
   "software": {
    "python": "3.12.3",
    "qiskit": "2.6.2",
@@ -25,7 +25,7 @@
    "platform": "Linux-6.18.44-fc-v880-x86_64-with-glibc2.39"
   },
   "result_kind": "exact_numerical + monte_carlo (see per-row kind)",
-  "seconds": 8.496778450999955
+  "seconds": 9.111081227999875
  },
  "pareto_fronts": {
   "detection": {
@@ -409,19 +409,19 @@
      "id": "3",
      "p_logical": 0.006575,
      "qubit_rounds": 51,
-     "latency": 0.15754537499788057
+     "latency": 0.17032089999702293
     },
     {
      "id": "5",
      "p_logical": 0.003325,
      "qubit_rounds": 245,
-     "latency": 1.3637423499972101
+     "latency": 1.5246364249946964
     },
     {
      "id": "7",
      "p_logical": 0.001425,
      "qubit_rounds": 679,
-     "latency": 4.567620249997617
+     "latency": 5.147298449992377
     }
    ],
    "front": [

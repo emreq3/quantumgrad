@@ -3,7 +3,7 @@
   "benchmark": "detection",
   "profile": "standard",
   "qta6": "0.1.0",
-  "source_revision": "712e423+dirty",
+  "source_revision": "ca36e31",
   "software": {
    "python": "3.12.3",
    "qiskit": "2.6.2",
@@ -25,7 +25,7 @@
    "platform": "Linux-6.18.44-fc-v880-x86_64-with-glibc2.39"
   },
   "result_kind": "exact_numerical + monte_carlo (see per-row kind)",
-  "seconds": 19.017952695000076,
+  "seconds": 19.41734407900003,
   "base_profile": {
    "name": "gate_dominated",
    "category": "synthetic",
