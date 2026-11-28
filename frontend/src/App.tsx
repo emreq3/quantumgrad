@@ -3,20 +3,19 @@ import { ConfirmDialog } from "./components/common";
 import type { Json } from "./engine";
 import { Briefing } from "./screens/Briefing";
 import { CampaignComplete } from "./screens/Complete";
-import { Codex } from "./screens/Codex";
-import { Credits } from "./screens/Credits";
 import { Intro } from "./screens/Intro";
 import { MainMenu } from "./screens/MainMenu";
 import { MapScreen } from "./screens/MapScreen";
-import { MissionScreen } from "./screens/MissionScreen";
 import { ResultScreen } from "./screens/ResultScreen";
-import { Sandbox } from "./screens/Sandbox";
-import { SettingsScreen } from "./screens/Settings";
 import { SettingsProvider, useSettings } from "./settings";
 import { GameProvider, useGame } from "./store";
 import { UiProvider, useUi } from "./ui";
+import { Codex, Credits, MissionScreen, Sandbox, SettingsScreen } from "./screens/lazy";
 import { useEffect, useState } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+
+// Parts that are not needed to show the title screen load on demand (src/screens/lazy.tsx): the mission workspaces when the first mission begins,
+// and the Codex, Sandbox, Settings and Credits when opened. KaTeX has its own lazy chunk (src/math).
 
 function Screen() {
   const { state, data, error } = useGame();

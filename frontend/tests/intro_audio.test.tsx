@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
 import { SynthAudio } from "../src/audio/synth";
@@ -73,7 +73,7 @@ describe("opening intro", () => {
     vi.stubGlobal("AudioContext", class extends FakeCtx { constructor() { super(); ctx = this; } });
     boot();
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: /Turn sound on/ })); });
-    expect(ctx.state).toBe("running");
+    await waitFor(() => expect(ctx?.state).toBe("running")); // the sound content is a lazily loaded chunk, so the context appears a moment after the click
     expect(JSON.parse(localStorage.getItem("qta6.settings")!).muted).toBe(false);
     expect(introDialog()).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Sound on/ })).toBeDisabled();
@@ -91,12 +91,12 @@ describe("opening intro", () => {
     expect(screen.getByRole("navigation", { name: "Main menu" })).toBeInTheDocument();
   });
 
-  it("'Always skip the intro' is honoured and the intro can be replayed from Settings", () => {
+  it("'Always skip the intro' is honoured and the intro can be replayed from Settings", async () => {
     localStorage.setItem("qta6.settings", JSON.stringify({ ...DEFAULT_SETTINGS, introAuto: "skip" }));
     boot();
     expect(introDialog()).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Settings" }));
-    fireEvent.click(screen.getByRole("button", { name: /Replay intro/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /Replay intro/ }));
     expect(introDialog()).toBeInTheDocument();
   });
 

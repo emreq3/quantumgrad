@@ -1,6 +1,7 @@
 // Audio lifecycle and composition checks against a fake Web Audio API. (Sound quality is measured offline: docs/phase5_audio_audit.md.)
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { buildChain, MASTER_CAP, scheduleAll, SynthAudio, TRACKS, trackSeconds } from "../src/audio/synth";
+import { buildChain, MASTER_CAP, scheduleAll, SynthAudio } from "../src/audio/synth";
+import { TRACKS, trackSeconds } from "../src/audio/tracks";
 import { SFX, SFX_NAMES } from "../src/audio/sfx";
 import { DEFAULTS, MAXIMUM } from "../src/audio/lab";
 import { makeRig } from "../src/audio/voices";

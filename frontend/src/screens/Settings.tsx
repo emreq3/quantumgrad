@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Icon } from "../art";
 import { ConfirmDialog, Details, Panel } from "../components/common";
 import { SFX_NAMES } from "../audio/sfx";
-import { TRACKS, trackSeconds, type TrackId } from "../audio/synth";
+import { TRACKS, trackSeconds, type TrackId } from "../audio/tracks";
 import { useEffect } from "react";
 import { useSettings } from "../settings";
 import { useGame } from "../store";

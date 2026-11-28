@@ -79,6 +79,7 @@ export function CircuitView({ gates, nData, nAncilla = 0, selected = [], onToggl
               <g className={interactive ? "edge-target" : undefined} onClick={() => interactive && onToggle!(q)} tabIndex={interactive ? 0 : undefined}
                  onKeyDown={(e) => { if (interactive && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onToggle!(q); } }}
                  role={interactive ? "button" : undefined} aria-label={anc ? `ancilla ${q - nData}` : `q${q}: toggle sentinel on qubit ${q}`} aria-pressed={interactive ? sel : undefined}>
+                {interactive && <rect x={0} y={y(q) - 22} width={60} height={44} fill="transparent" />}{/* 44 px touch target around the 30 px label */}
                 <rect className="hit" x={4} y={y(q) - 15} width={52} height={30} rx={7} fill={sel ? "#FF2D95" : anc ? "#0e2a33" : "#1a2040"} stroke={sel ? "#FF2D95" : anc ? "#00E5FF" : "#3A4488"} strokeWidth={interactive ? 1.5 : 1} />
                 <text x={30} y={y(q) + 5} textAnchor="middle" fill={sel ? "#12081f" : "#F1F5F9"} fontSize={12} fontFamily="JetBrains Mono, monospace">{anc ? `a${q - nData}` : `q${q}`}</text>
                 {sel && <path d={`M44 ${y(q)}l4 4 8-9`} stroke="#12081f" strokeWidth={2.6} fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" />}

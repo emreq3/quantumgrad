@@ -6,7 +6,9 @@ const fs = require("fs");
 const path = require("path");
 const { drivers, loadCampaign } = require("./drivers.cjs");
 
-const VIEWPORTS = [[390, 844], [768, 1024], [1280, 720], [1920, 1080]];
+// Phone, tablet and desktop sizes, including small phones (320x568), large phones (430x932), mobile landscape (844x390), tablet portrait/landscape.
+// Touch is EMULATED (hasTouch, and isMobile where the engine supports it); this is not a test on physical devices.
+const VIEWPORTS = [[320, 568], [360, 800], [390, 844], [430, 932], [768, 1024], [1024, 768], [844, 390], [1280, 720], [1366, 768], [1920, 1080]];
 (async () => {
   const base = process.argv[2] || "http://127.0.0.1:4173/";
   const outJson = process.argv[3] || "../results/e2e/responsive_audit.json";
@@ -35,7 +37,7 @@ const VIEWPORTS = [[390, 844], [768, 1024], [1280, 720], [1920, 1080]];
     await btn().click();
   };
   for (const [w, h] of VIEWPORTS) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+    const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: w <= 1024, isMobile: w <= 1024 && browsers.name !== "firefox" });
     const page = await ctx.newPage();
     const errs = [];
     page.on("pageerror", (e) => errs.push(String(e)));

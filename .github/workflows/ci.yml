@@ -48,9 +48,16 @@ jobs:
         run: npm run build
 
   browser:
-    # Real-browser audits against the production build: full 29-mission playthrough, keyboard-only play, responsive overflow at four
-    # viewport sizes, axe-core accessibility scan, Web Audio execution and sub-path (GitHub Pages) loading.
+    # Real-browser audits against the production build, in three engines (Playwright's Chromium, Firefox and WebKit builds; "WebKit" is
+    # not Safari): full 29-mission playthrough, Quick Demo, math rendering, keyboard-only play, responsive overflow, axe-core scan,
+    # Web Audio lifecycle and sub-path (GitHub Pages) loading. Where an engine cannot run an audit (e.g. no audio device) the audit
+    # records that it was not observable instead of passing silently.
+    name: browser (${{ matrix.browser }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
     defaults:
       run:
         working-directory: frontend
@@ -62,7 +69,46 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
       - run: npm run build
       - name: Browser audits
         run: npm run e2e
+        env:
+          QTA6_BROWSER: ${{ matrix.browser }}
+
+  cross-platform:
+    # Smoke checks on Windows and macOS: what is reported about those systems is exactly what these jobs show.
+    name: smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install package and dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - run: python -m qta6.cli doctor
+      - name: Unit and physics tests
+        run: pytest -o addopts="" -q -p no:warnings tests/unit tests/physics
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Frontend install, type check, tests and production build
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build

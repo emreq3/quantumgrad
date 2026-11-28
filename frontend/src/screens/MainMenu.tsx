@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CityBackdrop, Icon, Logo } from "../art";
 import { ConfirmDialog } from "../components/common";
 import { useSettings } from "../settings";
 import { useGame } from "../store";
 import { useUi } from "../ui";
+import { warmOverlays } from "./lazy";
 
 /** Title screen. One dominant action; the campaign state is one short line; no installation text and no disclaimers in the way of playing. */
 export function MainMenu() {
@@ -11,6 +12,7 @@ export function MainMenu() {
   const { open } = useUi();
   const { sfx } = useSettings();
   const [confirmNew, setConfirmNew] = useState(false);
+  useEffect(() => { warmOverlays(); }, []);
   const done = Object.keys(progress.completed).length;
   const hasSave = done > 0 || Object.keys(progress.failures).length > 0;
   const total = data?.missions.length ?? 29;

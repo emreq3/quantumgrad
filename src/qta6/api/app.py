@@ -8,14 +8,18 @@ from __future__ import annotations
 
 import os
 import secrets
+import threading
 import time
 from collections import OrderedDict
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Literal
 
 import numpy as np
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
 from .. import DATA_SCHEMA_VERSION, __version__
@@ -31,7 +35,10 @@ from ..noise.profiles import PROFILES
 from ..optimization.pareto import Candidate, Objective, pareto_front
 from ..scenarios.build import _strategy_from_choice, profile_obj
 
-MAX_BODY = 200_000
+MAX_BODY = 200_000  # bytes; larger request bodies are refused with 413 before they are parsed
+# Live evaluations are CPU-bound (the worst allowed correction request takes about 6 s on the reference machine). At most this many run at the
+# same time; further requests get an immediate 503 with Retry-After instead of queueing behind them. Override with QTA6_API_MAX_CONCURRENT.
+MAX_CONCURRENT = max(1, int(os.environ.get("QTA6_API_MAX_CONCURRENT", str(min(4, max(2, os.cpu_count() or 2))))))
 
 
 class PayloadIn(BaseModel):
@@ -130,6 +137,31 @@ def create_app(data_path: Path | None = None) -> FastAPI:
                 and request.headers.get("origin") in ALLOWED_ORIGINS):
             response.headers["Access-Control-Allow-Private-Network"] = "true"
         return response
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request, exc: RequestValidationError):  # noqa: ANN001
+        """422 with location, message and type only. The default handler echoes the rejected *input*, which crashes the response encoder
+        (a 500) when the input is NaN or Infinity (JSON allows neither as output), so a malformed number could turn a refusal into a server error."""
+        errors = [{"loc": [str(x) if not isinstance(x, int) else x for x in e.get("loc", ())], "msg": str(e.get("msg", "")), "type": str(e.get("type", ""))} for e in exc.errors()]
+        return JSONResponse({"detail": errors}, status_code=422)
+
+    @app.middleware("http")
+    async def limit_body(request, call_next):  # noqa: ANN001
+        length = request.headers.get("content-length")
+        if length is not None and length.isdigit() and int(length) > MAX_BODY:
+            return JSONResponse({"detail": f"request body too large (limit {MAX_BODY} bytes)"}, status_code=413)
+        return await call_next(request)
+
+    slots = threading.BoundedSemaphore(MAX_CONCURRENT)
+
+    @contextmanager
+    def slot():
+        if not slots.acquire(blocking=False):
+            raise HTTPException(503, "busy: too many live evaluations are running; retry shortly", headers={"Retry-After": "2"})
+        try:
+            yield
+        finally:
+            slots.release()
+
     path = data_path or Path(os.environ.get("QTA6_DATA", DEFAULT_OUT))
     state: dict[str, Any] = {"data": None}
     experiments: "OrderedDict[str, dict]" = OrderedDict()
@@ -184,8 +216,9 @@ def create_app(data_path: Path | None = None) -> FastAPI:
         t0 = time.perf_counter()
         qc = random_clifford_payload(PayloadSpec(n, req.payload.depth, req.payload.seed))
         try:
-            pc = build_protected(qc, len(req.checks), prof, targets=req.checks or None, t_count=req.t_count, t_seed=req.t_seed)
-            res = evaluate_protected(pc, prof).to_dict()
+            with slot():
+                pc = build_protected(qc, len(req.checks), prof, targets=req.checks or None, t_count=req.t_count, t_seed=req.t_seed)
+                res = evaluate_protected(pc, prof).to_dict()
         except ValueError as e:
             raise HTTPException(422, str(e)) from e
         prov = Provenance("live", "paulice+aer_density_matrix", ResultKind.EXACT_NUMERICAL, prof.name, prof.category,
@@ -196,6 +229,10 @@ def create_app(data_path: Path | None = None) -> FastAPI:
     def mitigation(req: MitigationIn) -> dict:
         prof = profile_obj(req.profile)
         t0 = time.perf_counter()
+        with slot():
+            return _mitigation(req, prof, t0)
+
+    def _mitigation(req: MitigationIn, prof, t0: float) -> dict:  # noqa: ANN001
         task = make_task(req.n, req.depth, req.seed)
         td = prepare_task_data(task, prof, scales=sorted(set(req.scales) | {1}))
         choice = {"readout": req.readout, "cal": str(req.cal_percent), "scales": ",".join(map(str, sorted(set(req.scales)))),
@@ -213,7 +250,8 @@ def create_app(data_path: Path | None = None) -> FastAPI:
     @app.post("/api/correction/evaluate")
     def correction(req: CorrectionIn) -> dict:
         t0 = time.perf_counter()
-        r = run_memory(req.distance, req.rounds, req.p, req.shots, req.seed, req.basis)
+        with slot():
+            r = run_memory(req.distance, req.rounds, req.p, req.shots, req.seed, req.basis)
         prov = Provenance("live", "stim+pymatching", ResultKind.MONTE_CARLO, "circuit_depolarizing", "synthetic", req.model_dump(),
                           seed=req.seed, n_samples=req.shots, resources={"qubit_rounds": r.qubit_rounds}, runtime_s=time.perf_counter() - t0)
         return remember(prov, r.to_dict())

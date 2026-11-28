@@ -18,13 +18,14 @@ const cheapestWin = (id: string) => {
 };
 
 function boot() { render(<App initialData={data} skipIntro />); }
-function openMission(id: string, completed: string[] | "all" = "all") {
+async function openMission(id: string, completed: string[] | "all" = "all") {
   localStorage.setItem("qta6.save", JSON.stringify(save(completed)));
   boot();
   fireEvent.click(screen.getByRole("button", { name: /^(Continue|Play)$/ }));
   selectDistrictOf(id);
   fireEvent.click(missionBtn(id)[0]);
   fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
+  await screen.findByRole("region", { name: "Mission status" }); // the mission workspaces are a lazily loaded chunk
 }
 /** The map lists one district at a time: open the district that holds the mission. */
 function selectDistrictOf(id: string) {
@@ -38,7 +39,7 @@ const toggleEdges = (ids: number[]) => ids.forEach((id) => fireEvent.click(docum
 describe("navigation and menu", () => {
   beforeEach(() => { localStorage.clear(); sessionStorage.clear(); });
 
-  it("a first visit offers Play but not Continue; then menu → map → briefing → mission works", () => {
+  it("a first visit offers Play but not Continue; then menu → map → briefing → mission works", async () => {
     boot();
     expect(screen.queryByRole("button", { name: /Continue/ })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /^Play$/ }));
@@ -47,7 +48,7 @@ describe("navigation and menu", () => {
     expect(screen.getByRole("heading", { name: "Objective" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "How to play" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
-    expect(screen.getByText("Experiment bench")).toBeInTheDocument();
+    expect(await screen.findByText("Experiment bench")).toBeInTheDocument();
   });
 
   it("Continue appears only when valid saved progress exists; corrupt data is ignored", () => {
@@ -108,13 +109,13 @@ describe("navigation and menu", () => {
 describe("mission workspaces", () => {
   beforeEach(() => { localStorage.clear(); sessionStorage.clear(); });
 
-  it("A1: measuring spends the shot budget (HUD) and shows counts; success shows the result screen", () => {
+  it("A1: measuring spends the shot budget (HUD) and shows counts; success shows the result screen", async () => {
     localStorage.setItem("qta6.save", JSON.stringify(save([])));
     boot();
     fireEvent.click(screen.getByRole("button", { name: /^(Continue|Play)$/ }));
     fireEvent.click(missionBtn("A1")[0]);
     fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
-    fireEvent.click(screen.getByRole("button", { name: "10000" }));
+    fireEvent.click(await screen.findByRole("button", { name: "10000" }));
     fireEvent.click(screen.getByRole("button", { name: /Measure/ }));
     expect(screen.getByText(/Measured counts \(Qiskit Aer\)/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Shots: 2000 left of 12000/)).toBeInTheDocument();
@@ -125,8 +126,8 @@ describe("mission workspaces", () => {
     expect(screen.getByText(/Unlocked/)).toBeInTheDocument();
   });
 
-  it("a failed mission shows an evidence-based explanation and allows a retry with a fresh budget", () => {
-    openMission("D1");
+  it("a failed mission shows an evidence-based explanation and allows a retry with a fresh budget", async () => {
+    await openMission("D1");
     fireEvent.click(screen.getByRole("button", { name: /^Execute$/ })); // zero sentinels: no gain, so the goal is not met
     expect(screen.getByText(/Goal not met/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "End attempt" }));
@@ -138,8 +139,8 @@ describe("mission workspaces", () => {
     expect(screen.getByLabelText(/Quantum credits: 60\.0 left of 60\.0/)).toBeInTheDocument();
   });
 
-  it("D1: before the run only costs are shown; after the run the four fidelity baselines are labelled and acceptance is stated", () => {
-    openMission("D1");
+  it("D1: before the run only costs are shown; after the run the four fidelity baselines are labelled and acceptance is stated", async () => {
+    await openMission("D1");
     expect(screen.queryByText(/Before and after/)).not.toBeInTheDocument();
     fireEvent.click(qubit(0));
     fireEvent.click(qubit(2));
@@ -155,8 +156,8 @@ describe("mission workspaces", () => {
     expect(screen.getByRole("img", { name: /Of 500 raw shots/ })).toBeInTheDocument();
   });
 
-  it("D1: a sentinel beyond the ancilla budget cannot be placed, and says why", () => {
-    openMission("D1");
+  it("D1: a sentinel beyond the ancilla budget cannot be placed, and says why", async () => {
+    await openMission("D1");
     for (const q of [0, 1, 2]) fireEvent.click(qubit(q));
     expect(screen.getByText(/Sentinels/).parentElement).toHaveTextContent("3 / 3");
     fireEvent.click(qubit(3)); // the fourth is refused
@@ -167,8 +168,8 @@ describe("mission workspaces", () => {
     expect(screen.getByText(/Sentinels/).parentElement).toHaveTextContent("2 / 3");
   });
 
-  it("D5: the negative result is stated plainly when protection does not help", () => {
-    openMission("D5");
+  it("D5: the negative result is stated plainly when protection does not help", async () => {
+    await openMission("D5");
     const m = mission("D5");
     const worse = Object.values<any>(m.outcomes).find((o) => o.feasible && o.n_checks > 0 && o.postselected_fidelity <= o.baseline_fidelity);
     expect(worse, "D5 must contain a configuration where protection hurts").toBeTruthy();
@@ -177,8 +178,8 @@ describe("mission workspaces", () => {
     expect(screen.getByText(/Negative result:/)).toBeInTheDocument();
   });
 
-  it("M3: the zero-noise chart separates measured points from the fitted model and names the model", () => {
-    openMission("M3");
+  it("M3: the zero-noise chart separates measured points from the fitted model and names the model", async () => {
+    await openMission("M3");
     fireEvent.change(screen.getByLabelText("Noise scale factors"), { target: { value: "1,3,5" } });
     fireEvent.change(screen.getByLabelText("Extrapolation"), { target: { value: "richardson" } });
     fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
@@ -188,16 +189,16 @@ describe("mission workspaces", () => {
     expect(screen.getByText("MSE (repeated trials)")).toBeInTheDocument();
   });
 
-  it("M2: the calibration slider snaps to executed configurations and the budget split is charged in full", () => {
-    openMission("M2");
+  it("M2: the calibration slider snaps to executed configurations and the budget split is charged in full", async () => {
+    await openMission("M2");
     fireEvent.change(screen.getByLabelText("Calibration share (%)"), { target: { value: "5" } });
     expect(screen.getByText(/snaps to one of the 6 settings that were really simulated/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     expect(screen.getByLabelText(/Shots: 0 left of 8000/)).toBeInTheDocument();
   });
 
-  it("C3: lattice edges toggle from mouse and keyboard, undo works and submission separates the three verdicts", () => {
-    openMission("C3");
+  it("C3: lattice edges toggle from mouse and keyboard, undo works and submission separates the three verdicts", async () => {
+    await openMission("C3");
     const ref = mission("C3").reference.instances[0];
     const first = ref.mwpm_edges[0];
     const el = document.querySelector(`[data-edge="${first}"]`)!;
@@ -215,15 +216,15 @@ describe("mission workspaces", () => {
     expect(screen.getByRole("button", { name: /Hide the MWPM correction/ })).toBeInTheDocument();
   });
 
-  it("C3: states which decoding model is in play and labels X and Z stabilizers", () => {
-    openMission("C3");
+  it("C3: states which decoding model is in play and labels X and Z stabilizers", async () => {
+    await openMission("C3");
     expect(screen.getByText(/model: Code-capacity model/)).toBeInTheDocument();
     expect(screen.getByText(/Z-type stabilizer \(decoded here\)/)).toBeInTheDocument();
     expect(screen.getByText(/X-type stabilizer/)).toBeInTheDocument();
   });
 
-  it("C5: a correction that clears the syndrome but flips the logical qubit is NOT presented as a success", () => {
-    openMission("C5");
+  it("C5: a correction that clears the syndrome but flips the logical qubit is NOT presented as a success", async () => {
+    await openMission("C5");
     const m = mission("C5");
     const ref = m.reference.instances[0];
     toggleEdges(ref.syndrome_clearing_but_logically_wrong_example);
@@ -233,14 +234,14 @@ describe("mission workspaces", () => {
     expect(screen.queryByText(/Syndrome cleared and the logical qubit preserved/)).not.toBeInTheDocument();
   });
 
-  it("C7: the phenomenological model is named and time-like edges are offered", () => {
-    openMission("C7");
+  it("C7: the phenomenological model is named and time-like edges are offered", async () => {
+    await openMission("C7");
     expect(screen.getByText(/model: Phenomenological model/)).toBeInTheDocument();
     expect(document.querySelectorAll('[aria-label^="measurement error edge"]').length).toBeGreaterThan(0);
   });
 
-  it("C6: reports the interval and warns when few failures were observed", () => {
-    openMission("C6");
+  it("C6: reports the interval and warns when few failures were observed", async () => {
+    await openMission("C6");
     expect(screen.getByText(/model: Full circuit-level model/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Simulate d = 7" })); // 97 qubits exceed the 60-qubit budget: refused, nothing charged
     expect(screen.getByRole("alert")).toHaveTextContent(/physical qubits budget/);
@@ -250,16 +251,16 @@ describe("mission workspaces", () => {
     expect(screen.getByText(/Logical failure rate/)).toBeInTheDocument();
   });
 
-  it("O2: spending is charged and the hidden true noise is only revealed after execution", () => {
-    openMission("O2");
+  it("O2: spending is charged and the hidden true noise is only revealed after execution", async () => {
+    await openMission("O2");
     expect(screen.queryByText(/Hidden TRUE/)).not.toBeInTheDocument();
     fireEvent.click(screen.getAllByRole("button", { name: /Run on today's device/ })[0]);
     expect(screen.getByText(/Hidden TRUE \(drifted\) noise/)).toBeInTheDocument();
     expect(screen.getByText("absolute regret (MSE)")).toBeInTheDocument();
   });
 
-  it("A4: choosing the right recovery restores the logical state", () => {
-    openMission("A4");
+  it("A4: choosing the right recovery restores the logical state", async () => {
+    await openMission("A4");
     fireEvent.click(screen.getAllByText("flip q0")[0]);
     expect(screen.getByText(/Goal met/)).toBeInTheDocument();
   });
@@ -291,8 +292,8 @@ describe("N1 — the integrated final mission", () => {
     expect([outs.length, outs.filter((o) => o.feasible).length, outs.filter((o) => o.success).length]).toEqual([768, 512, 36]);
   });
 
-  it("walks through all stages, executes a winning plan once, charges the wallet and restores every subsystem", () => {
-    openMission("N1");
+  it("walks through all stages, executes a winning plan once, charges the wallet and restores every subsystem", async () => {
+    await openMission("N1");
     const { key, row } = planKey(true);
     expect(screen.getByText(/Stage 1 — Inspect the crisis/)).toBeInTheDocument();
     walk(row);
@@ -314,8 +315,8 @@ describe("N1 — the integrated final mission", () => {
     expect(screen.getByText(/Random feasible plan/)).toBeInTheDocument();
   });
 
-  it("an unsuccessful plan gives the alternate ending, shows which subsystem failed and can be retried", () => {
-    openMission("N1", data.missions.map((m: any) => m.id).filter((id: string) => id !== "N1"));
+  it("an unsuccessful plan gives the alternate ending, shows which subsystem failed and can be retried", async () => {
+    await openMission("N1", data.missions.map((m: any) => m.id).filter((id: string) => id !== "N1"));
     const { row } = planKey(false);
     walk(row);
     fireEvent.click(screen.getByRole("button", { name: /Continue/ }));
@@ -330,8 +331,8 @@ describe("N1 — the integrated final mission", () => {
     expect(JSON.parse(localStorage.getItem("qta6.save")!).completed.N1).toBeUndefined();
   });
 
-  it("an over-budget plan cannot be executed", () => {
-    openMission("N1");
+  it("an over-budget plan cannot be executed", async () => {
+    await openMission("N1");
     const m = mission("N1");
     const bad = Object.values<any>(m.outcomes).find((o) => !o.feasible);
     walk(bad);
@@ -344,20 +345,20 @@ describe("N1 — the integrated final mission", () => {
 describe("shell, settings and sandbox", () => {
   beforeEach(() => { localStorage.clear(); sessionStorage.clear(); vi.restoreAllMocks(); });
 
-  it("Quantum Codex lists the glossary and the key distinctions", () => {
+  it("Quantum Codex lists the glossary and the key distinctions", async () => {
     boot();
     fireEvent.click(screen.getByRole("button", { name: "Quantum Codex" }));
-    expect(screen.getByRole("heading", { name: "Quantum Codex" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Quantum Codex" })).toBeInTheDocument();
     expect(screen.getByText("Pareto front")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("tab", { name: "Research mode" }));
     expect(screen.getByText("Mitigation is not correction")).toBeInTheDocument();
   });
 
-  it("the sandbox explains that it is unavailable and does not send requests while no API is reachable", () => {
+  it("the sandbox explains that it is unavailable and does not send requests while no API is reachable", async () => {
     const f = vi.spyOn(globalThis, "fetch");
     boot();
     fireEvent.click(screen.getByRole("button", { name: /Sandbox/ }));
-    expect(screen.getAllByText(/Live sandbox unavailable/).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText(/Live sandbox unavailable/)).length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Run live" })).toBeDisabled();
     expect(f.mock.calls.filter((c) => String(c[0]).includes("/api/")).length).toBeLessThanOrEqual(1); // at most the single startup probe
   });
@@ -371,7 +372,7 @@ describe("shell, settings and sandbox", () => {
     });
     boot();
     fireEvent.click(screen.getByRole("button", { name: /Sandbox/ }));
-    fireEvent.change(screen.getByLabelText("API base URL"), { target: { value: "http://127.0.0.1:8000" } });
+    fireEvent.change(await screen.findByLabelText("API base URL"), { target: { value: "http://127.0.0.1:8000" } });
     fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
     expect(await screen.findByText(/live computation via the Python API/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Run live" }));
@@ -379,20 +380,20 @@ describe("shell, settings and sandbox", () => {
     expect(calls).toContain("POST http://127.0.0.1:8000/api/detection/evaluate");
   });
 
-  it("the campaign works with the API absent (offline) and loads its data from a relative path", () => {
+  it("the campaign works with the API absent (offline) and loads its data from a relative path", async () => {
     boot();
     fireEvent.click(screen.getByRole("button", { name: /Sandbox/ }));
-    expect(screen.getAllByText(/precomputed campaign is fully playable offline/).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText(/precomputed campaign is fully playable offline/)).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole("button", { name: /Back/ }));
     const f = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
     render(<App skipIntro />);
     expect(f).toHaveBeenCalledWith("data/campaign.json"); // no leading slash: works under a sub-path such as /quantumgrad/
   });
 
-  it("sound and display settings persist and are validated", () => {
+  it("sound and display settings persist and are validated", async () => {
     boot();
     fireEvent.click(screen.getByRole("button", { name: "Settings" }));
-    const slider = screen.getByLabelText("Master volume");
+    const slider = await screen.findByLabelText("Master volume");
     fireEvent.change(slider, { target: { value: "0.3" } });
     fireEvent.click(screen.getByRole("switch", { name: "Sound" }));
     fireEvent.change(screen.getByLabelText("Animation"), { target: { value: "reduced" } });
@@ -403,25 +404,25 @@ describe("shell, settings and sandbox", () => {
     expect(document.documentElement.dataset.text).toBe("large");
   });
 
-  it("corrupt settings fall back to safe defaults (muted, system motion)", () => {
+  it("corrupt settings fall back to safe defaults (muted, system motion)", async () => {
     localStorage.setItem("qta6.settings", JSON.stringify({ master: 9, muted: "no", motion: "wild" }));
     boot();
     fireEvent.click(screen.getByRole("button", { name: "Settings" }));
-    expect(screen.getByLabelText("Master volume")).toHaveValue("1");
+    expect(await screen.findByLabelText("Master volume")).toHaveValue("1");
     expect(screen.getByRole("switch", { name: "Sound" })).toHaveAttribute("aria-checked", "false");
   });
 
-  it("Credits states the competition, the AI assistance and that the project is not affiliated with Rockstar/GTA", () => {
+  it("Credits states the competition, the AI assistance and that the project is not affiliated with Rockstar/GTA", async () => {
     boot();
     fireEvent.click(screen.getByRole("button", { name: /Credits/ }));
-    expect(screen.getByText(/McGill University Advanced Challenge/)).toBeInTheDocument();
+    expect(await screen.findByText(/McGill University Advanced Challenge/)).toBeInTheDocument();
     expect(screen.getByText(/AI assistance disclosure/)).toBeInTheDocument();
     expect(screen.getByText(/not affiliated with, endorsed by or derived from Rockstar Games/)).toBeInTheDocument();
     expect(screen.getByText(/SIL Open Font License/)).toBeInTheDocument();
   });
 
-  it("leaving a mission with runs asks for confirmation; a dialog traps focus and closes on Escape", () => {
-    openMission("D1");
+  it("leaving a mission with runs asks for confirmation; a dialog traps focus and closes on Escape", async () => {
+    await openMission("D1");
     fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     fireEvent.click(screen.getByRole("button", { name: /Exit/ }));
     const dlg = screen.getByRole("dialog", { name: /Leave this mission/ });
@@ -431,8 +432,8 @@ describe("shell, settings and sandbox", () => {
     expect(screen.getByText("D1 · Sentinel Deployment")).toBeInTheDocument(); // still in the mission
   });
 
-  it("the HUD announces resources and updates the actual wallet after spending", () => {
-    openMission("D1");
+  it("the HUD announces resources and updates the actual wallet after spending", async () => {
+    await openMission("D1");
     expect(screen.getByLabelText(/Ancillas: 3 left of 3/)).toBeInTheDocument();
     fireEvent.click(qubit(0));
     fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
@@ -444,27 +445,27 @@ describe("hidden answers are not rendered through the ordinary interface before 
   beforeEach(() => { localStorage.clear(); sessionStorage.clear(); });
   const text = () => document.body.textContent ?? "";
 
-  it("D3: the injected fault is not in the page until a diagnosis is submitted", () => {
-    openMission("D3");
+  it("D3: the injected fault is not in the page until a diagnosis is submitted", async () => {
+    await openMission("D3");
     const ref = mission("D3").reference;
     expect(text()).not.toContain(ref.hidden_fault_id);
     expect(screen.queryByText("Revealed")).not.toBeInTheDocument();
   });
 
-  it("C3/C5: the true error and the MWPM solution are only shown after submission", () => {
-    openMission("C5");
+  it("C3/C5: the true error and the MWPM solution are only shown after submission", async () => {
+    await openMission("C5");
     expect(text()).not.toMatch(/MWPM chose edges|Exact class posterior|Logical trap:/);
     expect(screen.queryByRole("button", { name: /MWPM correction/ })).not.toBeInTheDocument();
   });
 
-  it("O3/N1: Pareto status, dominating candidates and reference baselines appear only after running", () => {
-    openMission("O3");
+  it("O3/N1: Pareto status, dominating candidates and reference baselines appear only after running", async () => {
+    await openMission("O3");
     expect(text()).not.toMatch(/dominated by|Pareto-efficient: /);
     expect(text()).not.toContain("score_breakdown");
   });
 
-  it("N1: the reference plans and success counts are not rendered during planning", () => {
-    openMission("N1");
+  it("N1: the reference plans and success counts are not rendered during planning", async () => {
+    await openMission("N1");
     expect(text()).not.toMatch(/Best enumerated|Random feasible plan|Greedy sequential/);
     expect(text()).not.toMatch(/36 of|successful plans/);
   });

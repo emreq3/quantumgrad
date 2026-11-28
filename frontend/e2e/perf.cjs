@@ -40,11 +40,11 @@ const stats = (a) => { const s = [...a].sort((x, y) => x - y); const q = (p) => 
     }
     out.load[name] = { to_interactive_menu_ms: stats(times), transferred_bytes_uncompressed_server: Math.round(bytes.reduce((a, b) => a + b, 0) / bytes.length) };
   }
-  // 3. intro frame stability (12 s film) and long tasks
+  // 3. intro frame stability (8.8 s film) and long tasks
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 } }); const page = await ctx.newPage();
     await page.addInitScript(() => { window.__frames = []; window.__long = 0; new PerformanceObserver((l) => { window.__long += l.getEntries().length; }).observe({ entryTypes: ["longtask"] }); });
-    await page.goto(base); await page.getByRole("button", { name: /Start silent/ }).click();
+    await page.goto(base); await page.getByRole("dialog", { name: /Opening sequence/ }).waitFor(); // the intro starts at once (8.8 s)
     await page.evaluate(() => { let last = performance.now(); const loop = (n) => { window.__frames.push(n - last); last = n; if (window.__frames.length < 900) requestAnimationFrame(loop); }; requestAnimationFrame(loop); });
     await page.waitForSelector(".intro", { state: "detached", timeout: 20000 });
     const fr = await page.evaluate(() => ({ f: window.__frames.slice(2), long: window.__long }));
@@ -68,7 +68,7 @@ const stats = (a) => { const s = [...a].sort((x, y) => x - y); const q = (p) => 
     }
     out.runtime.mission_switch_ms_briefing_to_workspace = sw;
     // decoder interaction on the largest lattice (C8, d=5)
-    await page.goto(base); await page.getByRole("button", { name: /^Continue$/ }).click(); await pick("C8"); await page.getByRole("button", { name: /Begin mission/ }).click();
+    await page.goto(base); await page.getByRole("button", { name: /^Continue$/ }).click(); await pick("C8"); await page.getByRole("button", { name: /Begin mission/ }).click(); await page.locator("[data-edge]").first().waitFor();
     const lat = await page.evaluate(async () => {
       const els = Array.from(document.querySelectorAll("[data-edge]")); const t = [];
       for (let k = 0; k < 40; k++) { const e = els[k % els.length]; const t0 = performance.now(); e.dispatchEvent(new MouseEvent("click", { bubbles: true })); await new Promise((r) => requestAnimationFrame(() => r())); t.push(performance.now() - t0); }

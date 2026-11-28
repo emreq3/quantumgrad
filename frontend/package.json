@@ -13,7 +13,8 @@
     "e2e:perf": "node e2e/run_all.cjs --perf",
     "math:css": "node scripts/make_katex_css.mjs",
     "audio:build": "vite build -c vite.audiolab.config.ts",
-    "audio:analyze": "npm run audio:build && node e2e/audio_analysis.cjs"
+    "audio:analyze": "npm run audio:build && node e2e/audio_analysis.cjs",
+    "fonts:css": "node scripts/make_font_css.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",

@@ -1,0 +1,1335 @@
+{
+ "generated": "2026-11-28T10:13:55.612Z",
+ "rows": [
+  {
+   "viewport": "320x568",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "320x568",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "360x800",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "390x844",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "430x932",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "768x1024",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1024x768",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "844x390",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1366x768",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "intro gate",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "main menu",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "city map",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "briefing D2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "detection (before run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "detection (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "result screen",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "mitigation (after run)",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "surface code d=3",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "surface code phenomenological",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "surface code d=5",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "optimization",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "drift",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "N1 stage 1",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "N1 stage 2",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "codex",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "settings",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "credits",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  },
+  {
+   "viewport": "1920x1080",
+   "screen": "sandbox",
+   "pageOverflow": 0,
+   "offenders": [],
+   "count": 0
+  }
+ ]
+}

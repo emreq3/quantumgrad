@@ -3,8 +3,8 @@
 // separately (vite.audiolab.config.ts) and driven by e2e/audio_analysis.cjs; it is not part of the shipped game.
 // These numbers describe the signal. They say nothing about whether the music is pleasant: that needs human listening.
 import { MUSICAL_CUES, SFX, SFX_NAMES, sfxSeconds, type SfxName } from "./sfx";
-import { buildChain, scheduleAll, TRACKS, trackSeconds, type AudioSettings } from "./synth";
-import type { TrackId } from "./tracks";
+import { buildChain, scheduleAll, type AudioSettings } from "./synth";
+import { TRACKS, trackSeconds, type TrackId } from "./tracks";
 import { makeRig } from "./voices";
 
 const SR = 44100;

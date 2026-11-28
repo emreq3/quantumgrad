@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "../art";
 import { ConfirmDialog } from "../components/common";
 import { DEMO_STEPS, type Json } from "../engine";
 import { useSettings } from "../settings";
 import { useGame } from "../store";
 import { Difficulty } from "./MapScreen";
+import { loadMissionScreen } from "./lazy";
 
 /** Quick Demo hub: six curated missions of the real campaign, in a fixed order, with progress kept apart from the campaign save. */
 export function DemoHub() {
   const { data, progress, selectMission, go, resetDemo, notice } = useGame();
   const { sfx } = useSettings();
   const [confirm, setConfirm] = useState(false);
+  useEffect(() => { void loadMissionScreen(); }, []);
   if (!data) return null;
   const byId = (id: string) => (data.missions as Json[]).find((m) => m.id === id);
   const done = DEMO_STEPS.filter((s) => s.id in progress.completed).length;

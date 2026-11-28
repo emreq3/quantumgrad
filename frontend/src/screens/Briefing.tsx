@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DistrictScene, Icon, Portrait } from "../art";
 import { Details, Panel, ProvenanceBadge, ResourceBar } from "../components/common";
 import { DISTRICT_ART, HOW_TO, KIND_MATH, MISSION_NARRATIVE, speaker } from "../content/narrative";
@@ -6,6 +6,7 @@ import { ScientificText } from "../math";
 import { useSettings } from "../settings";
 import { useGame } from "../store";
 import { Difficulty } from "./MapScreen";
+import { loadMissionScreen } from "./lazy";
 
 /** Mission briefing: Objective / Resources / How to play / Result, then "Learn more" for the science. Dialogue is short and skippable. */
 export function Briefing() {
@@ -13,6 +14,7 @@ export function Briefing() {
   const { sfx } = useSettings();
   const [more, setMore] = useState(false);
   const [skipped, setSkipped] = useState(false);
+  useEffect(() => { void loadMissionScreen(); }, []);
   if (!mission) return null;
   const nar = MISSION_NARRATIVE[mission.id];
   const who = speaker(mission.id);

@@ -6,7 +6,7 @@
  "contexts_after_opt_in": 1,
  "state_during_intro": "running",
  "audio_clock_advances": true,
- "intro_sting_voices": 20,
+ "intro_sting_voices": 0,
  "menu_music_voices_per_3s": 6,
  "menu_music_runs": true,
  "live_voices_menu": 12,

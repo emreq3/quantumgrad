@@ -1,13 +1,16 @@
 // Audio engine: one AudioContext, four gain stages (master / music / ambience / effects) into a compressor, a lookahead music scheduler
 // that plays AT MOST ONE track at a time with cross-fades, restrained interface sounds, and a strict lifecycle (suspend in a hidden tab,
 // stop on mute, close on dispose). Everything is synthesised (see voices.ts / tracks.ts); there are no audio files. Muted by default.
-import { MUSICAL_CUES, SFX, type SfxName } from "./sfx";
-import { TRACKS, trackSeconds, type Track, type TrackId } from "./tracks";
-import { makeRig, midi, type Rig } from "./voices";
+// The sound content (voices, tracks, cues: ~14 kB) is loaded with the first user gesture that enables audio, not with the title screen.
+import type { SfxName } from "./sfx";
+import type { Track, TrackId } from "./tracks";
+import type { Rig } from "./voices";
 
-export { midi } from "./voices";
 export type { SfxName } from "./sfx";
 export type { TrackId } from "./tracks";
+type Mods = { sfx: typeof import("./sfx"); tracks: typeof import("./tracks"); voices: typeof import("./voices") };
+const loadMods = async (): Promise<Mods> => { const [sfx, tracks, voices] = await Promise.all([import("./sfx"), import("./tracks"), import("./voices")]); return { sfx, tracks, voices }; };
+const LOOP_TRACKS = new Set<TrackId>(["menu", "campaign", "lab", "tension"]); // the background tracks (success and sting are one-shot cues)
 export interface AudioSettings { master: number; music: number; sfx: number; ambience: number; muted: boolean }
 
 type Ctor = typeof AudioContext;
@@ -44,6 +47,7 @@ interface Playing { id: TrackId; track: Track; bus: GainNode; rig: Rig; timer: R
 
 export class SynthAudio {
   ctx: AudioContext | null = null;
+  private mods: Mods | null = null;
   private chain: Chain | null = null;
   private sfxRig: Rig | null = null;
   private sfxSources = new Set<AudioScheduledSourceNode>();
@@ -66,9 +70,12 @@ export class SynthAudio {
     if (!C) return false;
     try {
       if (!this.ctx) {
+        this.mods ??= await loadMods();
+        const raced = this.ctx as AudioContext | null;
+        if (raced) return raced.state === "running"; // a concurrent unlock won the race
         this.ctx = new C({ latencyHint: "interactive" });
         this.chain = buildChain(this.ctx, this.settings);
-        this.sfxRig = makeRig(this.ctx, this.chain.sfx, (s) => this.regSfx(s), 1.2);
+        this.sfxRig = this.mods.voices.makeRig(this.ctx, this.chain.sfx, (s) => this.regSfx(s), 1.2);
         this.nodeCount += 14;
         this.onVis = () => { void this.onVisibility(); };
         document.addEventListener("visibilitychange", this.onVis);
@@ -107,14 +114,14 @@ export class SynthAudio {
 
   /** Play an interface sound. Dropped when muted, when the same cue fired a moment ago, or when too many voices are still sounding. */
   sfx(name: SfxName): void {
-    if (!this.ready || !this.sfxRig) return;
+    if (!this.ready || !this.sfxRig || !this.mods) return;
     const c = this.ctx!, now = c.currentTime;
     if (now - (this.lastSfx.get(name) ?? -1) < MIN_GAP_S) return; // no duplicate sounds from double events
     if (this.sfxSources.size > MAX_ACTIVE_SFX_SOURCES) return;
     this.lastSfx.set(name, now);
-    const t = now + 0.005, musical = MUSICAL_CUES[name];
+    const t = now + 0.005, musical = this.mods.sfx.MUSICAL_CUES[name];
     if (musical) { this.cue(musical); return; }
-    SFX[name as Exclude<SfxName, "success" | "sting">](this.sfxRig, t);
+    this.mods.sfx.SFX[name as Exclude<SfxName, "success" | "sting">](this.sfxRig, t);
     if (name === "failure" || name === "complete") this.duck(name === "complete" ? 3 : 1.6);
     this.nodeCount = this.sfxRig.nodes.n;
   }
@@ -130,20 +137,20 @@ export class SynthAudio {
 
   /** One-shot musical cue (success resolution, studio sting). */
   private cue(id: "success" | "sting") {
-    const c = this.ctx!, ch = this.chain!, tr = TRACKS[id];
+    const c = this.ctx!, ch = this.chain!, m = this.mods!, tr = m.tracks.TRACKS[id];
     const bus = c.createGain(); bus.gain.value = 1; bus.connect(tr.bus === "sfx" ? ch.sfx : ch.music);
     const srcs = new Set<AudioScheduledSourceNode>();
-    const rig = makeRig(c, bus, (s) => { srcs.add(s); this.regSfx(s); s.addEventListener("ended", () => srcs.delete(s)); }, 1.8);
-    if (id === "success") this.duck(trackSeconds(tr) + 0.6);
+    const rig = m.voices.makeRig(c, bus, (s) => { srcs.add(s); this.regSfx(s); s.addEventListener("ended", () => srcs.delete(s)); }, 1.8);
+    if (id === "success") this.duck(m.tracks.trackSeconds(tr) + 0.6);
     scheduleAll(rig, tr, c.currentTime + 0.01);
     this.nodeCount += rig.nodes.n;
-    const id2 = setTimeout(() => { this.timers.delete(id2); try { bus.disconnect(); } catch { /* ignore */ } }, (trackSeconds(tr) + tr.tail + 0.5) * 1000);
+    const id2 = setTimeout(() => { this.timers.delete(id2); try { bus.disconnect(); } catch { /* ignore */ } }, (m.tracks.trackSeconds(tr) + tr.tail + 0.5) * 1000);
     this.timers.add(id2);
   }
 
   /** Choose the background track (null = none). Remembered while muted/locked and started as soon as sound is available. */
   setMusic(id: TrackId | null): void {
-    this.wanted = id && TRACKS[id].kind === "loop" ? id : null;
+    this.wanted = id && LOOP_TRACKS.has(id) ? id : null;
     this.syncMusic();
   }
 
@@ -155,12 +162,12 @@ export class SynthAudio {
   }
 
   private startMusic(id: TrackId) {
-    const c = this.ctx!, ch = this.chain!, tr = TRACKS[id];
+    const c = this.ctx!, ch = this.chain!, m = this.mods!, tr = m.tracks.TRACKS[id];
     this.stopMusic(0.9); // cross-fade: the old track fades out while the new one fades in; never two tracks for long, never two schedulers
     const bus = c.createGain(); bus.gain.setValueAtTime(0.0001, c.currentTime); bus.gain.linearRampToValueAtTime(1, c.currentTime + 0.7);
     bus.connect(tr.bus === "ambience" ? ch.ambience : ch.music);
     const sources = new Set<AudioScheduledSourceNode>();
-    const rig = makeRig(c, bus, (s) => { sources.add(s); s.addEventListener("ended", () => sources.delete(s)); }, 1.8);
+    const rig = m.voices.makeRig(c, bus, (s) => { sources.add(s); s.addEventListener("ended", () => sources.delete(s)); }, 1.8);
     const p: Playing = { id, track: tr, bus, rig, timer: null, step: 0, time: c.currentTime + 0.08, sources };
     this.playing = p;
     this.pump(p);
@@ -223,5 +230,3 @@ export class SynthAudio {
   }
 }
 
-export { TRACKS, trackSeconds };
-export const NOTE_A4 = midi(69);

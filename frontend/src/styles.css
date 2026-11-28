@@ -220,3 +220,5 @@ html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-
 .explain-text p { background:var(--panel-2); padding:10px 12px; border-radius:10px; border-left:3px solid var(--violet); }
 .tab[aria-selected="true"] .muted,.tab.on .muted { color:inherit; }
 .path { overflow-wrap:anywhere; word-break:break-all; }
+/* Touch: every control at least 44 x 44 CSS px on touch devices and narrow screens (WCAG 2.2 asks for 24 px at AA; 44 px is the common touch guideline) */
+@media (pointer:coarse), (max-width:700px) { button, .skip-link, .tab, summary { min-height:44px; } .topbar .brand { min-height:44px; } button.small { min-height:44px; } button.link { min-height:44px; display:inline-flex; align-items:center; } }

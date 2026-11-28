@@ -6,7 +6,7 @@ import { ENDINGS, MISSION_NARRATIVE, speaker } from "../content/narrative";
 import type { Json } from "../engine";
 import { useSettings } from "../settings";
 import { useGame } from "../store";
-import { RestorationBoard } from "../components/FinalMission";
+import { RestorationBoard } from "../components/RestorationBoard";
 import { nextObjective } from "./MapScreen";
 
 /** Evidence-based, kind-specific comparison lines drawn only from the executed result and its mission reference. */

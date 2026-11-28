@@ -51,13 +51,14 @@ describe("Quick Demo in the app", () => {
     expect(screen.getByRole("region", { name: /Next demo step/ })).toHaveTextContent(/A2 · The Invisible Phase/);
   });
 
-  it("demo progress is stored apart from the campaign and never alters it", () => {
+  it("demo progress is stored apart from the campaign and never alters it", async () => {
     localStorage.setItem("qta6.save", JSON.stringify({ schema: "qta6.save/2", failures: {}, difficulty: "beginner", tutorial_done: false, completed: { A1: { best_score: 70, attempts: 2 } } }));
     const before = JSON.parse(localStorage.getItem("qta6.save")!);
     boot();
     fireEvent.click(screen.getByRole("button", { name: /Quick Demo/ }));
     fireEvent.click(document.querySelector('[data-mission="A2"]')!);
     fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
+    await screen.findByRole("region", { name: "Mission status" });
     // A2: the winning measurement is the X basis with enough shots
     const m = mission("A2");
     const [key] = Object.entries<any>(m.outcomes).filter(([, o]) => o.success && o.feasible !== false).sort(([a], [b]) => a.localeCompare(b))[0];

@@ -13,18 +13,23 @@ const { loadCampaign } = require("./drivers.cjs");
   const results = [];
   const check = (name, ok, detail = "") => { results.push({ name, ok, detail }); console.log(ok ? "PASS" : "FAIL", name, detail); };
   const nameOf = () => document.activeElement && (document.activeElement.getAttribute("aria-label") || document.activeElement.innerText || document.activeElement.textContent || "").trim().replace(/\s+/g, " ");
+  const probe = (page) => page.evaluate(() => { const a = document.activeElement; return { name: (a.getAttribute("aria-label") || a.innerText || a.textContent || "").trim().replace(/\s+/g, " "), edge: a.getAttribute("data-edge"), mission: a.getAttribute("data-mission") }; });
+  // Reaches a control with Tab. Chromium and WebKit wrap around at the end of the document; headless Firefox does not (focus stays on the last
+  // control), so if the target is not found going forward the search continues backwards with Shift+Tab.
   const tabTo = async (page, test, max = 120) => {
-    for (let i = 0; i < max; i++) {
-      await page.keyboard.press("Tab");
-      const info = await page.evaluate(() => { const a = document.activeElement; return { name: (a.getAttribute("aria-label") || a.innerText || a.textContent || "").trim().replace(/\s+/g, " "), edge: a.getAttribute("data-edge"), mission: a.getAttribute("data-mission"), tag: a.tagName }; });
-      if (test(info)) return info;
+    for (const key of ["Tab", "Shift+Tab"]) {
+      for (let i = 0; i < max; i++) {
+        await page.keyboard.press(key);
+        const info = await probe(page);
+        if (test(info)) return info;
+      }
     }
-    throw new Error("could not reach the target by Tab within " + max + " presses");
+    throw new Error("could not reach the target by Tab within " + max + " presses (forward and backward)");
   };
   const shiftTabTo = async (page, test, max = 120) => {
     for (let i = 0; i < max; i++) {
       await page.keyboard.press("Shift+Tab");
-      const info = await page.evaluate(() => { const a = document.activeElement; return { name: (a.getAttribute("aria-label") || a.innerText || a.textContent || "").trim().replace(/\s+/g, " ") }; });
+      const info = await probe(page);
       if (test(info)) return info;
     }
     throw new Error("could not reach the target by Shift+Tab");
@@ -44,6 +49,7 @@ const { loadCampaign } = require("./drivers.cjs");
     await tabTo(page, (i) => /^Play$/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /^Go to mission/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /Begin mission/.test(i.name)); await page.keyboard.press("Enter");
+    await page.locator(".hud").waitFor(); // the mission screen is a lazily loaded chunk; a human sees "Loading…" for a moment, a script presses Tab 500 times a second
     await tabTo(page, (i) => i.name === "10000"); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /^Measure/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /^Complete mission/.test(i.name)); await page.keyboard.press("Enter");
@@ -57,9 +63,10 @@ const { loadCampaign } = require("./drivers.cjs");
     const save = { schema: "qta6.save/2", failures: {}, difficulty: "beginner", tutorial_done: true, completed: Object.fromEntries(ids.slice(0, 18).map((id) => [id, { best_score: 70, attempts: 1 }])) };
     const page = await newPage(save);
     await tabTo(page, (i) => /^Continue$/.test(i.name)); await page.keyboard.press("Enter");
-    await tabTo(page, (i) => /^Quantum Core:/.test(i.name)); await page.keyboard.press("Enter");
+    await tabTo(page, (i) => /^Quantum Core/.test(i.name)); await page.keyboard.press("Enter");
     await tabTo(page, (i) => i.mission === "C3"); await page.keyboard.press("Enter");
     await tabTo(page, (i) => /Begin mission/.test(i.name)); await page.keyboard.press("Enter");
+    await page.locator(".hud").waitFor();
     const ref = data.missions.find((m) => m.id === "C3").reference.instances[0];
     const first = ref.mwpm_edges[0];
     await tabTo(page, (i) => i.edge === String(first), 200); await page.keyboard.press("Enter");

@@ -1,9 +1,9 @@
 {
- "browser": "chromium",
- "version": "158.0.8127.36",
+ "browser": "webkit",
+ "version": "26.6",
  "totals": {
   "screens": 66,
-  "katex": 336,
+  "katex": 207,
   "errors": 0,
   "raw": 0,
   "overflow": 0,
@@ -16,8 +16,8 @@
   {
    "viewport": "desktop",
    "label": "codex: concepts",
-   "katex": 43,
-   "mathml": 43,
+   "katex": 0,
+   "mathml": 0,
    "errors": 0,
    "rawHits": [],
    "htmlHidden": true,
@@ -280,13 +280,13 @@
   {
    "viewport": "phone",
    "label": "codex: concepts",
-   "katex": 43,
-   "mathml": 43,
+   "katex": 0,
+   "mathml": 0,
    "errors": 0,
    "rawHits": [],
    "htmlHidden": true,
    "pageOverflow": 0,
-   "wideDisplayEquations": 7,
+   "wideDisplayEquations": 0,
    "wideWithoutScroll": 0
   },
   {
@@ -544,13 +544,13 @@
   {
    "viewport": "phone-large-text",
    "label": "codex: concepts",
-   "katex": 43,
-   "mathml": 43,
+   "katex": 0,
+   "mathml": 0,
    "errors": 0,
    "rawHits": [],
    "htmlHidden": true,
    "pageOverflow": 0,
-   "wideDisplayEquations": 10,
+   "wideDisplayEquations": 0,
    "wideWithoutScroll": 0
   },
   {

@@ -7,6 +7,7 @@ import { useSettings } from "../settings";
 import { useGame } from "../store";
 import { useEffect } from "react";
 import { DemoHub } from "./DemoHub";
+import { loadMissionScreen } from "./lazy";
 
 const diffDots = (d: string) => ({ beginner: 1, intermediate: 2, advanced: 3 } as Record<string, number>)[d] ?? 1;
 export const Difficulty = ({ d }: { d: string }) => <span className="chip" title={`difficulty: ${d}`} aria-label={`difficulty ${d}`}>{"●".repeat(diffDots(d))}{"○".repeat(3 - diffDots(d))} {d}</span>;
@@ -29,7 +30,7 @@ function CampaignMap() {
   const objective = useMemo(() => (data ? nextObjective(data, progress, isUnlocked) : null), [data, progress, isUnlocked]);
   // start on the district that holds the recommended mission, so the player never has to hunt for it
   const [sel, setSel] = useState<string>(() => objective?.district ?? "academy");
-  useEffect(() => { preloadMath(); }, []);
+  useEffect(() => { preloadMath(); void loadMissionScreen(); }, []);
   if (!data) return null;
   const stats = (id: string) => {
     const ms = missions.filter((m) => m.district === id);
