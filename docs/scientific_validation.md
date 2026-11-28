@@ -4,7 +4,7 @@ Run locally on the recorded machine (`docs/environment.md`); **CI status is not 
 
 | Suite | Count | Result |
 |---|---|---|
-| Python (`pytest`, 6 s) | 206 | 206 passed, 0 failed, 0 skipped (Phase 3: 152) |
+| Python (`pytest`, 6 s) | 210 | 210 passed, 0 failed, 0 skipped (Phase 3: 152) |
 | Frontend (`vitest`) | 99 | 99 passed (Phase 3: 22) |
 | TypeScript type check, production build | — | pass |
 | Smoke benchmark / standard benchmark / data export | — | executed (see `results/`, `docs/benchmark_results.md`) |

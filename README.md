@@ -129,7 +129,7 @@ python scripts/make_figures.py && python scripts/summarize_results.py
 ```
 
 ```bash
-pytest                                              # 206 Python tests
+pytest                                              # 210 Python tests
 cd frontend && npm run typecheck && npm test        # 99 frontend tests
 cd frontend && npm run build && npm run e2e         # real-browser audits (Playwright/Chromium)
 ```
@@ -138,7 +138,7 @@ Reports: [`docs/browser_test_report.md`](docs/browser_test_report.md) (suites an
 
 ## Testing and CI
 
-206 Python and 99 frontend tests pass locally (0 failed, 0 skipped); the six browser audits pass: **29 / 29 missions completed through the UI**, 11 keyboard checks, 76 overflow-free screen/viewport combinations, 0 axe-core violations on 32 scans, audio engine running, sub-path loading. GitHub Actions ([`ci.yml`](.github/workflows/ci.yml): Python, frontend and browser jobs; [`pages.yml`](.github/workflows/pages.yml): deployment) — the status of runs is shown in the repository's Actions tab and is not asserted in this file.
+210 Python and 99 frontend tests pass locally (0 failed, 0 skipped); the six browser audits pass: **29 / 29 missions completed through the UI**, 11 keyboard checks, 76 overflow-free screen/viewport combinations, 0 axe-core violations on 32 scans, audio engine running, sub-path loading. GitHub Actions ([`ci.yml`](.github/workflows/ci.yml): Python, frontend and browser jobs; [`pages.yml`](.github/workflows/pages.yml): deployment) — the status of runs is shown in the repository's Actions tab and is not asserted in this file.
 
 ## Known limitations
 

@@ -45,8 +45,9 @@ Phase 3 store and engine: 12 of 16 failed there) and passes now.
 | D-10 | P1 | geometry test | New C7 layout drew only `rounds` layers while the data has `rounds + 1` (final readout) and again produced coincident targets | layer count from the data; collision-avoiding anchors | fixed |
 | D-11 | P3 | screenshot review | O3 showed "1000000" as a gate cap | "no cap" | fixed |
 | D-12 | P3 | review | HUD showed N1's qubit cap as "70 / 70 left" after a 57-qubit plan | footprint shown against the cap | fixed |
+| D-13 | P1 | CI (found after the push) | `pages.yml` had an unquoted step name containing `: ` → invalid YAML; GitHub rejected the whole file (a failed run with no jobs on every push). No existing test parsed the workflows | quoted the name; `tests/unit/test_workflows.py` parses every workflow and checks the Pages guard (PyYAML added as a dev dependency) | fixed |
 
-**Totals (Phase 4 WIP): 12 — P1: 2 · P2: 8 · P3: 2. All fixed before being committed.**
+**Totals (Phase 4): 13 — P1: 3 · P2: 8 · P3: 2. D-01 … D-12 were fixed before being committed; D-13 reached `main` (one failed Pages run) and was fixed in the following commit.**
 
 ## C. Remaining known issues (not defects of the delivered features)
 

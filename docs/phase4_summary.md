@@ -7,10 +7,10 @@ CI results are not recorded in this file (a commit cannot contain its own result
 
 | | Phase 3 baseline | Phase 4 |
 |---|---|---|
-| Python tests | 152 | **206** passed (0 failed, 0 skipped) |
+| Python tests | 152 | **210** passed (0 failed, 0 skipped) |
 | Frontend tests | 22 | **99** passed (0 failed, 0 skipped) |
 | Browser audits (real Chromium) | none | **6 scripts pass** (29/29 missions through the UI; 11 keyboard checks; 76 viewport checks; axe 0 violations on 32 scans; audio runs; sub-path load) + live API check |
-| Bugs found | — | **18** in the baseline (P0 0 · P1 7 · P2 10 · P3 1) + **12** in the work in progress (P1 2 · P2 8 · P3 2); **all fixed**, 0 open |
+| Bugs found | — | **18** in the baseline (P0 0 · P1 7 · P2 10 · P3 1) + **13** in the Phase 4 work (P1 3 · P2 8 · P3 2); **all fixed**, 0 open |
 | Scientific results changed | — | **0** differences in 140 035 compared values |
 | JS bundle | 278.8 kB (85.8 gzip) | 409.0 kB (126.1 gzip); menu interactive 242 ms desktop / 3.2 s throttled mobile-like |
 
@@ -53,7 +53,7 @@ CI results are not recorded in this file (a commit cannot contain its own result
 ### Engineering
 | Criterion | Status | Evidence |
 |---|---|---|
-| Python / frontend tests, type check, production build executed | PASS | 206 / 99 / pass / pass |
+| Python / frontend tests, type check, production build executed | PASS | 210 / 99 / pass / pass |
 | Browser validation executed | PASS | `browser_test_report.md` |
 | Responsive behaviour inspected | PASS | 4 viewports × 19 screens, screenshots inspected; mobile landscape and physical devices not tested |
 | Accessibility audit performed | PARTIAL | axe 0 violations, 11 keyboard checks, code review — **no formal WCAG claim, no screen-reader test** |

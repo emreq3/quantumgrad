@@ -25,6 +25,7 @@ Generated with `python scripts/license_audit.py` (reads installed package metada
 | jsonschema | 4.26.0 | MIT | data-contract validation |
 | httpx | 0.29.0 | BSD-3-Clause | API tests |
 | pytest | 9.2.0 | MIT | tests |
+| pyyaml | 6.0.3 | MIT | validates the GitHub workflow files (dev only; Phase 4) |
 
 ## Frontend (`frontend/package.json`, lockfile `package-lock.json`)
 

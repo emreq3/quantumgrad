@@ -35,6 +35,7 @@ pymatching==2.4.0
 pyparsing==3.3.3
 pytest==9.2.0
 python-dateutil==4.0.0
+pyyaml==6.0.3
 qiskit==2.6.2
 qiskit-aer==0.18.4
 qiskit-paulice==0.3

@@ -39,7 +39,7 @@ jobs:
         run: npm run typecheck
       - name: Frontend tests
         run: npm test
-      - name: Production build (relative base: works under /quantumgrad/)
+      - name: "Production build (relative base, works under /quantumgrad/)"
         run: npm run build
       - name: Verify the static campaign is bundled
         run: test -s dist/data/campaign.json && test -s dist/index.html

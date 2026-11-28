@@ -6,7 +6,7 @@ Everything here was **executed**; counts are from the runs recorded in `results/
 
 | Suite | Executed | Passed | Failed | Skipped |
 |---|---|---|---|---|
-| Python (`pytest`) | 206 | 206 | 0 | 0 |
+| Python (`pytest`) | 210 | 210 | 0 | 0 |
 | Frontend (Vitest + Testing Library, jsdom) | 99 | 99 | 0 | 0 |
 | TypeScript `npm run typecheck` | — | pass | — | — |
 | Production build `npm run build` | — | pass (JS 409 kB / 126 kB gzip) | — | — |

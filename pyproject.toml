@@ -28,7 +28,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "httpx>=0.27"]
+dev = ["pytest>=8", "httpx>=0.27", "pyyaml>=6"]
 # Optional, not required by the game: IBM/IQM specific add-ons (see docs/dependency_audit.md)
 optional = ["qiskit-addon-pna>=0.2", "qiskit-addon-slc>=0.2"]
 
