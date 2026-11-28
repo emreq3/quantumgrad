@@ -26,3 +26,7 @@ export function normalizeApiBase(v: string): string | null {
     return null;
   }
 }
+
+/** Team member names are not recorded anywhere in the repository; list them here when known (shown in Credits). */
+export const TEAM_MEMBERS: string[] = [];
+export const REPO_OWNER = "emreq3";
