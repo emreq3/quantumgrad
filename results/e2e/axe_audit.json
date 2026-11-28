@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-28T09:44:46.596Z",
+ "generated": "2026-11-28T11:08:24.933Z",
  "tool": "axe-core 4.14.1",
  "report": [
   {
@@ -89,7 +89,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 7
+     "nodes": 6
     }
    ]
   },
@@ -105,7 +105,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 23
+     "nodes": 21
     }
    ]
   },
@@ -178,12 +178,7 @@
    "screen": "codex",
    "violations": [],
    "passes": 42,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 104
-    }
-   ]
+   "incomplete": []
   },
   {
    "viewport": "1280x720",
@@ -204,6 +199,13 @@
    "screen": "sandbox",
    "violations": [],
    "passes": 44,
+   "incomplete": []
+  },
+  {
+   "viewport": "1280x720",
+   "screen": "quick demo hub",
+   "violations": [],
+   "passes": 40,
    "incomplete": []
   },
   {
@@ -265,7 +267,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 48
+     "nodes": 45
     }
    ]
   },
@@ -281,7 +283,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 59
+     "nodes": 56
     }
    ]
   },
@@ -293,7 +295,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "nodes": 11
+     "nodes": 8
     }
    ]
   },
@@ -309,7 +311,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 29
+     "nodes": 22
     }
    ]
   },
@@ -325,7 +327,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 19
+     "nodes": 18
     }
    ]
   },
@@ -341,7 +343,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 23
+     "nodes": 22
     }
    ]
   },
@@ -357,7 +359,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 46
+     "nodes": 45
     }
    ]
   },
@@ -373,7 +375,7 @@
     },
     {
      "id": "color-contrast",
-     "nodes": 66
+     "nodes": 56
     }
    ]
   },
@@ -381,19 +383,14 @@
    "viewport": "390x844",
    "screen": "codex",
    "violations": [],
-   "passes": 43,
-   "incomplete": [
-    {
-     "id": "color-contrast",
-     "nodes": 132
-    }
-   ]
+   "passes": 42,
+   "incomplete": []
   },
   {
    "viewport": "390x844",
    "screen": "settings",
    "violations": [],
-   "passes": 44,
+   "passes": 37,
    "incomplete": []
   },
   {
@@ -407,7 +404,14 @@
    "viewport": "390x844",
    "screen": "sandbox",
    "violations": [],
-   "passes": 44,
+   "passes": 37,
+   "incomplete": []
+  },
+  {
+   "viewport": "390x844",
+   "screen": "quick demo hub",
+   "violations": [],
+   "passes": 40,
    "incomplete": []
   }
  ]

@@ -263,11 +263,9 @@
    "dialogsUnnamed": 0,
    "liveRegions": 1,
    "controls": 46,
-   "controlsUnder44px": 5,
+   "controlsUnder44px": 1,
    "smallExamples": [
-    "input \"Master volume\" 320x32",
-    "input \"Music volume\" 320x32",
-    "input \"Ambience volume (laborat\" 320x32"
+    "input \"Always skip the intro\" 24x24"
    ],
    "pageOverflow": 0
   },
@@ -393,11 +391,9 @@
    "dialogsUnnamed": 0,
    "liveRegions": 1,
    "controls": 46,
-   "controlsUnder44px": 5,
+   "controlsUnder44px": 1,
    "smallExamples": [
-    "input \"Master volume\" 320x32",
-    "input \"Music volume\" 320x32",
-    "input \"Ambience volume (laborat\" 320x32"
+    "input \"Always skip the intro\" 24x24"
    ],
    "pageOverflow": 0
   },
