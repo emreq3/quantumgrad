@@ -41,7 +41,7 @@ const drivers = {
     const o = m.outcomes[key];
     for (const q of o.targets) await page.getByLabel(`toggle sentinel on qubit ${q}`).click();
     if (m.ui.modes.length > 1) await page.getByRole("radio", { name: o.mode === "safe" ? /check-compatible/ : /blindly/ }).check();
-    await page.getByRole("button", { name: /Run experiment/ }).click();
+    await page.getByRole("button", { name: /^Execute$/ }).click();
     await finishMission(page, m);
   },
   async optimization(page, m) { return drivers.detection(page, m); },
@@ -63,7 +63,7 @@ const drivers = {
         for (let s = 0; s < vals.indexOf(parts[i]); s++) await page.keyboard.press("ArrowRight");
       } else await loc.selectOption(parts[i]);
     }
-    await page.getByRole("button", { name: /Run experiment/ }).click();
+    await page.getByRole("button", { name: /^Execute$/ }).click();
     await finishMission(page, m);
   },
   async decoding(page, m) {
@@ -73,7 +73,7 @@ const drivers = {
       const edges = m.ui.mode === "reproduce" || r.mwpm_logical === r.hidden_logical_flip ? r.mwpm_edges : r.equivalent_correct_example;
       if (idx > 0) await page.getByRole("button", { name: new RegExp(`^instance ${idx + 1}`) }).click();
       for (const e of edges) await page.locator(`[data-edge="${e}"]`).click();
-      await page.getByRole("button", { name: "Submit correction" }).click();
+      await page.getByRole("button", { name: "Submit", exact: true }).click();
       await finishMission(page, m);
     }
   },
@@ -110,10 +110,13 @@ const drivers = {
     await page.getByLabel("Shots for the lab").selectOption(String(o.mitigation_total));
     await page.getByRole("button", { name: /Continue/ }).click();
     await page.getByLabel(`distance ${o.distance}`).check();
-    await page.getByRole("button", { name: /Continue/ }).click();
+    await page.getByRole("button", { name: /Continue/ }).click(); // review resources
     if (ctx.beforeExecute) await ctx.beforeExecute();
-    await page.getByRole("button", { name: /Execute integrated plan/ }).click();
-    await page.getByText(/Stage 6 — Network status/).waitFor();
+    await page.getByRole("button", { name: /Continue/ }).click(); // execute and restore
+    await page.getByRole("button", { name: /Execute and restore the network/ }).click();
+    await page.getByRole("dialog", { name: /Execute this plan/ }).getByRole("button", { name: "Execute", exact: true }).click();
+    await page.getByText(/Stage 6 — Execute and restore/).waitFor();
+    await page.getByText(/Network status/).first().waitFor();
     if (ctx.afterExecute) await ctx.afterExecute();
     await finishMission(page, m);
   },

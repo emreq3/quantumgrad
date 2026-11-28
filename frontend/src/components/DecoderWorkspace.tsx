@@ -3,7 +3,8 @@ import type { Edge, Json } from "../engine";
 import { evaluateCorrection } from "../engine";
 import { Icon } from "../art";
 import { useGame } from "../store";
-import { Metric, Panel, ResultPanel, f3 } from "./common";
+import { Details, Metric, Panel, ResultPanel, f3 } from "./common";
+import { ScientificText } from "../math";
 
 // Interactive decoding lattice. Everything drawn comes from the instance exported by the Python engine:
 //  - code-capacity instances: the rotated surface-code lattice (data qubits, Z/X stabilizer plaquettes) with one click target per data qubit;
@@ -126,6 +127,10 @@ export function DecoderWorkspace() {
   const mwpmSet = new Set<number>(res?.reference_revealed?.mwpm_edges ?? []);
   const verdict = res ? (!res.valid ? "invalid" : !res.clears_syndrome ? "remaining" : res.logically_correct === false ? "logical_failure" : "success") : null;
   const done = insts.every((i) => solved[i.id]);
+  // live status before submitting: the syndrome check is free and immediate; the logical check is only revealed on submission
+  const live = chosen.length === 0 ? "Select error edges to connect the glowing defects." : !preview.valid ? "Some selected edges do not exist in this code."
+    : preview.residual.length === 0 ? "Syndrome cleared. This is not yet a success: submit to find out whether the logical qubit survived."
+      : `${preview.residual.length} defect${preview.residual.length === 1 ? "" : "s"} still unmatched.`;
   const label = (e: Edge) => {
     const k = lay.edge[e.id].kind;
     return `${k === "time" ? "measurement error" : k === "boundary" ? "boundary data-qubit error" : "data-qubit error"} edge ${e.id}${e.v === null ? ` from stabilizer ${e.u} to the boundary` : ` between stabilizers ${e.u} and ${e.v}`}${e.obs ? ", crosses the logical operator" : ""}`;
@@ -192,30 +197,33 @@ export function DecoderWorkspace() {
             </svg>
           </div>
           <div className="legend">
-            <span><i style={{ background: "#0c3340", border: "1px solid #00E5FF" }} />Z-type stabilizer (decoded here)</span>
-            <span><i style={{ background: "#3b2a85", border: "1px solid #8B5CF6" }} />X-type stabilizer (not needed for this memory)</span>
-            <span><i style={{ background: "#FF2D95" }} />! defect (stabilizer fired)</span><span><i style={{ background: "#0f3a30", border: "1px solid #3DE0A5" }} />✓ defect resolved by your correction</span>
-            <span>✕ your correction · dashed yellow ring: on the logical operator{res ? " · dashed orange ring: MWPM" : ""}</span>
+            <span><i style={{ background: "#FF2D95" }} />! defect (an alarm fired)</span><span><i style={{ background: "#0f3a30", border: "1px solid #3DE0A5" }} />✓ defect matched by your correction</span>
+            <span>✕ your correction</span><span>dashed lines leave the lattice through a boundary</span>
           </div>
-          <details><summary>Text description of this puzzle</summary>
+          <Details title="Scientific details: stabilizer types, logical operator, text description">
+            <div className="legend">
+              <span><i style={{ background: "#0c3340", border: "1px solid #00E5FF" }} />Z-type stabilizer (decoded here)</span>
+              <span><i style={{ background: "#3b2a85", border: "1px solid #8B5CF6" }} />X-type stabilizer (not needed for this memory)</span>
+              <span>dashed yellow ring: edge on the logical operator{res ? " · dashed orange ring: MWPM" : ""}</span>
+            </div>
             <p className="small">Defects (fired stabilizers): {inst.events.map((e: number) => `#${e} at (${inst.nodes[String(e)].join(", ")})`).join("; ") || "none"}. Each possible error is listed with the stabilizers it flips:</p>
             <ul className="small">{edges.map((e) => <li key={e.id}>{label(e)} — {chosen.includes(e.id) ? "selected" : "not selected"}</li>)}</ul>
-          </details>
+          </Details>
         </Panel>
         <Panel title="Your correction">
-          <div className="metrics">
+          <div className="metrics two">
             <Metric label="errors selected" value={chosen.length} />
-            <Metric label="defects remaining (live check)" value={preview.valid ? preview.residual.length : "—"} tone={preview.residual.length === 0 && chosen.length ? "good" : undefined} />
-            <Metric label="path cost Σ ln((1−p)/p)" value={f3(preview.path_cost, 2)} />
+            <Metric label="defects remaining (live)" value={preview.valid ? preview.residual.length : "n/a"} tone={preview.residual.length === 0 && chosen.length ? "good" : undefined} />
           </div>
+          <p className="live-status" role="status">{live}</p>
           <div className="row">
             <button onClick={undo} disabled={!stack.length || !canPlay}><Icon name="undo" /> Undo</button>
-            <button onClick={clear} disabled={!chosen.length || !canPlay}>Clear selection</button>
-            <button onClick={reset} disabled={!canPlay && !res}><Icon name="reset" /> Reset puzzle</button>
-            <button className="primary" disabled={!canPlay || chosen.length === 0} onClick={submit}>Submit correction</button>
+            <button onClick={clear} disabled={!chosen.length || !canPlay}>Clear</button>
+            <button className="primary" disabled={!canPlay || chosen.length === 0} onClick={submit}>Submit</button>
+            {res && <button onClick={reset}><Icon name="reset" /> Try this puzzle again</button>}
           </div>
           <div className="row tight" role="group" aria-label="Instances">{insts.map((_, i) => <button key={i} aria-pressed={i === ix} className={`tab small ${i === ix ? "on" : ""}`} onClick={() => pickInstance(i)} aria-label={`instance ${i + 1}${solved[insts[i].id] ? " solved" : ""}`}>{solved[insts[i].id] ? "✔ " : ""}{i + 1}</button>)}</div>
-          <p className="muted small">Clearing the syndrome is checked live. Whether the logical qubit survived is a separate property, revealed only when you submit.</p>
+          <Details title="Scientific details: cost of your correction"><Metric label={String.raw`path cost $\sum_{e\in C}\ln\frac{1-p_e}{p_e}$`} value={f3(preview.path_cost, 2)} /><p className="muted small">The live check only tests the syndrome. Whether the logical qubit survived is a separate property, revealed when you submit.</p></Details>
         </Panel>
       </div>
       <div>
@@ -226,19 +234,24 @@ export function DecoderWorkspace() {
               <strong>{{ invalid: "Invalid path — some chosen edges do not exist in this code.", remaining: mode === "reproduce" ? `Alarm not reproduced — ${res.residual?.length ?? "some"} defect(s) differ.` : `Syndrome not cleared — ${res.residual?.length ?? "some"} defect(s) remain.`,
                 logical_failure: "Syndrome cleared, but the logical qubit was flipped — a logical failure.", success: mode === "reproduce" ? (res.success ? "Alarm pattern reproduced at minimum cost." : "Alarm reproduced, but with more error weight than necessary.") : "Syndrome cleared and the logical qubit preserved." }[verdict!]}</strong>
             </p>
-            <div className="metrics">
-              <Metric label="valid edges" value={res.valid ? "yes" : "no"} />
+            <div className="metrics two">
               <Metric label="syndrome cleared" value={res.clears_syndrome ? "yes" : "no"} tone={res.clears_syndrome ? "good" : "bad"} />
               <Metric label="logical state preserved" value={res.logically_correct ? "yes" : "no"} tone={res.logically_correct ? "good" : "bad"} />
-              <Metric label="your cost / MWPM cost" value={`${f3(res.path_cost, 2)} / ${f3(res.mwpm_cost, 2)}`} />
-              <Metric label="MWPM decoder" value={res.mwpm_logical_correct ? "correct" : "failed"} tone={res.mwpm_logical_correct ? "good" : "bad"} />
             </div>
-            {verdict === "logical_failure" && <p className="notice"><strong>Logical trap:</strong> every alarm is silent, yet your correction differs from the true error by a logical operator. Syndrome cancellation is not logical success.</p>}
-            <div className="row"><button onClick={() => setShowMwpm((v) => !v)} aria-pressed={showMwpm}>{showMwpm ? "Hide" : "Show"} the MWPM correction</button></div>
-            <p className="muted small">True error flipped the logical qubit: {res.reference_revealed.hidden_logical_flip ? "yes" : "no"}. MWPM chose edges [{res.reference_revealed.mwpm_edges.join(", ")}].
-              {res.reference_revealed.logical_trap && ` A syndrome-clearing but logically wrong alternative: [${res.reference_revealed.logical_trap.join(", ")}].`}
-              {res.reference_revealed.equivalent && ` An equivalent correct correction: [${res.reference_revealed.equivalent.join(", ")}].`} Any correction in the right logical class is accepted — you do not have to match MWPM.</p>
-            {res.reference_revealed.class_probabilities && <p className="muted small">Exact class posterior: logical-class 0 → {f3(res.reference_revealed.class_probabilities["0"], 3)}, class 1 → {f3(res.reference_revealed.class_probabilities["1"], 3)}.</p>}
+            {verdict === "logical_failure" && <p className="notice"><strong>Logical trap:</strong> every alarm is silent, yet your correction differs from the true error by a logical operator. A quiet syndrome is not a saved qubit.</p>}
+            <Details title="Scientific details: compare with the matching decoder">
+              <div className="metrics">
+                <Metric label="valid edges" value={res.valid ? "yes" : "no"} />
+                <Metric label="your cost / MWPM cost" value={`${f3(res.path_cost, 2)} / ${f3(res.mwpm_cost, 2)}`} />
+                <Metric label="MWPM decoder" value={res.mwpm_logical_correct ? "correct" : "failed"} tone={res.mwpm_logical_correct ? "good" : "bad"} />
+              </div>
+              <div className="row"><button onClick={() => setShowMwpm((v) => !v)} aria-pressed={showMwpm}>{showMwpm ? "Hide" : "Show"} the MWPM correction</button></div>
+              <p className="muted small">True error flipped the logical qubit: {res.reference_revealed.hidden_logical_flip ? "yes" : "no"}. MWPM chose edges [{res.reference_revealed.mwpm_edges.join(", ")}].
+                {res.reference_revealed.logical_trap && ` A syndrome-clearing but logically wrong alternative: [${res.reference_revealed.logical_trap.join(", ")}].`}
+                {res.reference_revealed.equivalent && ` An equivalent correct correction: [${res.reference_revealed.equivalent.join(", ")}].`} Any correction in the right logical class is accepted: you do not have to match MWPM.</p>
+              {res.reference_revealed.class_probabilities && <p className="muted small">Exact class posterior: logical-class 0 → {f3(res.reference_revealed.class_probabilities["0"], 3)}, class 1 → {f3(res.reference_revealed.class_probabilities["1"], 3)}.</p>}
+              <p className="muted small"><ScientificText text={String.raw`Edge weights are $w_e=\ln\frac{1-p_e}{p_e}$ under this model; matching minimises the total weight, which is the most likely error only for independent edge errors.`} /></p>
+            </Details>
           </Panel>
         )}
         {last && last.instance && <ResultPanel outcome={last} />}

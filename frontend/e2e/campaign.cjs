@@ -1,6 +1,6 @@
 // Plays the whole campaign (all 29 missions, in unlock order, from a fresh save) in a real Chromium against a served
 // production build. Usage: node e2e/campaign.cjs [baseUrl] [outJson] [shotDir]
-const { chromium } = require("playwright");
+const browsers = require("./browsers.cjs");
 const fs = require("fs");
 const { drivers, loadCampaign } = require("./drivers.cjs");
 
@@ -9,7 +9,7 @@ const { drivers, loadCampaign } = require("./drivers.cjs");
   const outJson = process.argv[3] || "../results/e2e/campaign_playthrough.json";
   const shotDir = process.argv[4] || null;
   const data = loadCampaign();
-  const browser = await chromium.launch();
+  const browser = await browsers.launch();
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await ctx.newPage();
   const issues = [];
@@ -19,7 +19,7 @@ const { drivers, loadCampaign } = require("./drivers.cjs");
   const report = { base, started: new Date().toISOString(), missions: {}, issues, totals: {} };
   const t0 = Date.now();
   await page.goto(base);
-  await page.getByRole("button", { name: /New Game/ }).click();
+  await page.getByRole("button", { name: /^Play$/ }).click();
   if (shotDir) fs.mkdirSync(shotDir, { recursive: true });
 
   for (let n = 0; n < data.missions.length; n++) {

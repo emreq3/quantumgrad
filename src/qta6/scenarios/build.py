@@ -49,13 +49,13 @@ PROFILE_SIZES = {
 
 MISSION_NOISE: dict[str, dict] = {
     "bit_flip_demo": {"category": "synthetic", "description": "Single-qubit bit-flip channel (probability 0.12) applied by Qiskit Aer."},
-    "phase_flip_demo": {"category": "synthetic", "description": "Single-qubit phase-flip channel (probability 0.25) on |+>."},
+    "phase_flip_demo": {"category": "synthetic", "description": r"Single-qubit phase-flip channel (probability $0.25$) on $|{+}\rangle$."},
     "bell_dephasing_demo": {"category": "synthetic", "description": "Bell pair created on qubits with strong dephasing during the entangling gate (T1=100 us, T2=2 us, 300 ns gate)."},
     "noiseless_logic": {"category": "analytically derived", "description": "Exact noiseless statevector logic; the only noise is the injected error."},
     "gate_dominated": {"category": "synthetic", "description": PROFILES["gate_dominated"].description},
     "gate_dominated_noisy": {"category": "synthetic", "description": "Gate-dominated profile with p2 = 2% and 1% readout error."},
     "readout_dominated": {"category": "synthetic", "description": PROFILES["readout_dominated"].description},
-    "gate_and_readout": {"category": "synthetic", "description": "Gate-dominated profile plus asymmetric readout error P(1|0)=2%, P(0|1)=6%."},
+    "gate_and_readout": {"category": "synthetic", "description": r"Gate-dominated profile plus asymmetric readout error $P(1|0)=2\%$, $P(0|1)=6\%$."},
     "gate_dominated_drift": {"category": "synthetic", "description": "Estimate = gate_dominated; true = same profile drifted x2.5 (synthetic drift)."},
     "clean": {"category": "synthetic", "description": "Noiseless environment (used for exact fault injection)."},
     "code_capacity": {"category": "analytically derived", "description": "Independent X errors on data qubits with perfect syndrome measurement (code-capacity simplification); detector structure from the real Stim circuit."},
@@ -181,8 +181,8 @@ def build_experiment_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
                                   "This measurement did not reveal the error (too few shots, or the wrong basis)."),
                         "scientific": ("A phase (Z) error leaves Z-basis probabilities unchanged; only the X basis shows it."
                                        if mode == "phase" else
-                                       "Statistical uncertainty shrinks like 1/sqrt(shots); noise may only appear in certain bases."),
-                        "math": "se = sqrt(var/N); the deviation is measured in standard errors.", "refs": ["research/02_quantum_foundations.md"]}}
+                                       r"Statistical uncertainty shrinks like $1/\sqrt{N}$ for $N$ shots; noise may only appear in certain bases."),
+                        "math": r"Standard error $\mathrm{se}=\sqrt{\mathrm{Var}/N}$; deviations are measured in units of $\mathrm{se}$.", "refs": ["research/02_quantum_foundations.md"]}}
     ui = {"bases": cfg["bases"], "shots": cfg["shots"], "runs": cfg["runs"], "mode": mode, "shot_cap": m["resources"]["caps"]["shots"]}
     return ui, outcomes, {}
 
@@ -281,16 +281,16 @@ def detection_table(cfg: dict, m: dict) -> tuple[dict, dict, dict]:
         within = o["ancilla_qubits"] <= cap_anc and o["extra_two_qubit_gates"] <= cap_gates
         fps = o["postselected_fidelity"]
         conds = [cond("valid", "All checks valid for the actual circuit", o["validity"]["checks_valid"]),
-                 cond("budget", f"Within budget (<= {cap_anc} ancillas, <= {cap_gates} extra two-qubit gates)", within)]
+                 cond("budget", rf"Within budget ($\le {cap_anc}$ ancillas, $\le {cap_gates}$ extra two-qubit gates)", within)]
         # The improvement condition is ALWAYS evaluated, including for the zero-check (unprotected) configuration:
         # an earlier version skipped it when no checks were placed, so "do nothing" won the improvement missions.
         gain = (fps - b["unprotected_fidelity"]) if fps is not None else float("-inf")
         conds.append(cond("gain", (f"Fidelity not below the unprotected circuit" if cfg.get("no_worse_than_baseline") else
-                                   f"Fidelity beats the unprotected circuit by > {cfg['min_gain']}"),
+                                   rf"Fidelity beats the unprotected circuit by more than ${cfg['min_gain']}$"),
                           gain >= -1e-9 if cfg.get("no_worse_than_baseline") else gain > cfg["min_gain"]))
-        conds.append(cond("acceptance", f"Acceptance >= {cfg['min_acceptance']}", o["acceptance"] >= cfg["min_acceptance"]))
+        conds.append(cond("acceptance", rf"Acceptance $\kappa\ge {cfg['min_acceptance']}$", o["acceptance"] >= cfg["min_acceptance"]))
         if cfg.get("target_fidelity") is not None:
-            conds.append(cond("target", f"Post-selected fidelity >= {cfg['target_fidelity']}", fps is not None and fps >= cfg["target_fidelity"]))
+            conds.append(cond("target", rf"Post-selected fidelity $F_{{\mathrm{{ps}}}}\ge {cfg['target_fidelity']}$", fps is not None and fps >= cfg["target_fidelity"]))
         if cfg.get("require_efficient"):
             cheaper = [r for r in raw.values() if r.get("feasible") and r["validity"]["checks_valid"] and r.get("postselected_fidelity") is not None
                        and r["postselected_fidelity"] >= cfg["target_fidelity"] and r["acceptance"] >= cfg["min_acceptance"]
@@ -427,25 +427,25 @@ def build_mitigation_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
         s = o["summary"]
         conds = []
         if "target_ratio" in cfg:
-            conds.append(cond("mse", f"MSE <= {cfg['target_ratio']} x the unmitigated MSE", s["mse"] <= cfg["target_ratio"] * base["mse"]))
+            conds.append(cond("mse", rf"$\mathrm{{MSE}}\le {cfg['target_ratio']}\times$ the unmitigated MSE", s["mse"] <= cfg["target_ratio"] * base["mse"]))
         if cfg.get("target") == "bias_half":
-            conds.append(cond("bias", "|bias| < half of the unmitigated |bias|", abs(s["bias"]) < 0.5 * abs(base["bias"])))
+            conds.append(cond("bias", r"$|\mathrm{bias}|<\tfrac{1}{2}|\mathrm{bias}_{\mathrm{unmit}}|$ (less than half of the unmitigated bias)", abs(s["bias"]) < 0.5 * abs(base["bias"])))
         if "baseline_alloc" in cfg:
             uni = next(v for v in out.values() if v.get("choice", {}).get("alloc") == "uniform")
             conds.append(cond("beats_uniform", "MSE below uniform allocation", s["mse"] < uni["summary"]["mse"] and o["choice"]["alloc"] != "uniform"))
         comps = [Component("MSE vs unmitigated", s["mse"], lower_better(s["mse"] / base["mse"], 0.0, 1.5), 0.6, "statistical",
                            f"{meta['trials']} independent trials, same total shots"),
-                 Component("|bias|", abs(s["bias"]), lower_better(abs(s["bias"]), 0.0, abs(base["bias"]) * 1.2 + 1e-12), 0.2, "statistical"),
+                 Component(r"$|\mathrm{bias}|$", abs(s["bias"]), lower_better(abs(s["bias"]), 0.0, abs(base["bias"]) * 1.2 + 1e-12), 0.2, "statistical"),
                  Component("variance", s["variance"], lower_better(s["variance"], 0.0, max(x["summary"]["variance"] for x in out.values() if x["feasible"])), 0.2, "statistical")]
         sc = score_from_components(comps)
         o |= {"conditions": conds, "success": all(c["met"] for c in conds), "score": sc["score"], "score_breakdown": sc,
               "on_pareto_front": key in front, "mse_best_in_space": best_mse,
-              "explanation": fb.mitigation_feedback(s, base),
+              "explanation": fb.mitigation_feedback(s, base, o.get("choice")),
               "credits": credit_cost({"shots": o["resources"]["calibration_shots"] + o["resources"]["pilot_shots"] + o["resources"]["raw_shots"]})}
     ui = {"dims": cfg["dims"], "total_shots": cfg["total"], "dim_labels": {"readout": "Readout calibration", "cal": "Calibration share (%)",
                                                                            "scales": "Noise scale factors", "extrap": "Extrapolation", "alloc": "Shot allocation"},
           "ideal": meta["ideal"], "curve": meta["curve"], "unmitigated": base, "profile": cfg["profile"],
-          "readout_profile": {"p01": prof.ro01, "p10": prof.ro10, "note": "assignment probabilities of this SYNTHETIC noise profile: P(read 1 | prepared 0) and P(read 0 | prepared 1)"},
+          "readout_profile": {"p01": prof.ro01, "p10": prof.ro10, "note": r"assignment probabilities of this SYNTHETIC noise profile: $P(\mathrm{read}\,1\mid\mathrm{prepared}\,0)$ and $P(\mathrm{read}\,0\mid\mathrm{prepared}\,1)$"},
           "task": {"n": cfg["task"]["n"], "depth": cfg["task"]["depth"]}}
     ref = {"front": sorted(front), "best_mse_key": min((k for k, o in out.items() if o["feasible"]), key=lambda k: out[k]["summary"]["mse"]),
            "winning_keys": sorted(k for k, o in out.items() if o.get("success"))}
@@ -530,7 +530,7 @@ def build_distance_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
     outcomes = {}
     for d, r in rows.items():
         conds = [cond("budget", f"Within the {cfg['qubit_budget']}-qubit budget", feas[d]),
-                 cond("target", f"Logical failure <= {cfg['target_pl'] * 100:.1f}% (95% upper bound used)", r["wilson95"][1] <= cfg["target_pl"])]
+                 cond("target", rf"Logical failure $p_L\le {cfg['target_pl'] * 100:.1f}\%$ (the 95% upper bound is used)", r["wilson95"][1] <= cfg["target_pl"])]
         comps = [Component("logical failure", r["p_logical"], lower_better(r["p_logical"], 0.0, 0.03), 0.5, "statistical", "Monte Carlo; Wilson interval shown"),
                  Component("qubit-rounds", r["qubit_rounds"], lower_better(r["qubit_rounds"], 0, 700), 0.3, "exact"),
                  Component("decoder workload (matching-graph edges)", r["matching_edges"], lower_better(r["matching_edges"], 0, 2500), 0.2, "exact",
@@ -560,10 +560,10 @@ def build_optimization_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
     for k, o in outcomes.items():
         if not o.get("feasible") or o.get("score") is None:
             continue
-        conds = [cond("feasible", f"Feasible (<= {cfg['cap_ancilla']} ancillas, valid checks)", o["within_budget"] and o["validity"]["checks_valid"]),
+        conds = [cond("feasible", rf"Feasible ($\le {cfg['cap_ancilla']}$ ancillas, valid checks)", o["within_budget"] and o["validity"]["checks_valid"]),
                  cond("efficient", "Pareto-efficient among feasible candidates", o["on_pareto_front"] and o["within_budget"])]
         if "min_fidelity" in cfg:
-            conds.append(cond("fidelity", f"Fidelity >= {cfg['min_fidelity']}", o["postselected_fidelity"] is not None and o["postselected_fidelity"] >= cfg["min_fidelity"]))
+            conds.append(cond("fidelity", rf"Fidelity $\ge {cfg['min_fidelity']}$", o["postselected_fidelity"] is not None and o["postselected_fidelity"] >= cfg["min_fidelity"]))
         o["conditions"] = conds
         o["success"] = all(c["met"] for c in conds)
         objs = [Objective("fps", "max"), Objective("kappa", "max"), Objective("extra2q", "min"), Objective("anc", "min")]
@@ -611,7 +611,7 @@ def build_drift_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
             extra = {"shots": cal_cost, "calibration_refresh": 1} if bought else {}
             credits = credit_cost({"shots": total, **({"calibration_refresh": 1} if bought else {})})
             dom = dominated_by(Candidate(k, {"mse": mse, "gates": src["resources"]["two_qubit_gates"]}), cands, objs)
-            conds = [cond("regret", "Regret <= 15% of the best achievable true MSE", reg_ratio <= 0.15),
+            conds = [cond("regret", r"Regret $\le 15\%$ of the best achievable true MSE", reg_ratio <= 0.15),
                      cond("not_dominated", "Not dominated under the true noise", not dom)]
             outcomes[f"{k}#{'fresh' if bought else 'stale'}"] = {
                 "key": k, "bought_calibration": bought, "estimated_summary": old_t[k]["summary"], "true_summary": src["summary"],
@@ -680,10 +680,10 @@ def build_joint_mission(m: dict, size: dict, integrated: bool = False) -> tuple[
                 mit_ok = mrow["mse_ratio"] <= mcfg["target_ratio"]
                 cor_ok = (cor[d]["wilson95"][1] <= cfg["correction"]["target_pl"]) if d else True
                 conds = [cond("budget", "Within the shared budget (ancillas, shots, qubits, credits)", feas),
-                         cond("detection", f"Detection fidelity >= {dcfg['min_fidelity']} with acceptance >= {dcfg['min_acceptance']}", det_ok),
-                         cond("mitigation", f"Estimation MSE <= {mcfg['target_ratio']} x unmitigated", mit_ok)]
+                         cond("detection", rf"Detection fidelity $\ge {dcfg['min_fidelity']}$ with acceptance $\ge {dcfg['min_acceptance']}$", det_ok),
+                         cond("mitigation", rf"Estimation $\mathrm{{MSE}}\le {mcfg['target_ratio']}\times$ unmitigated", mit_ok)]
                 if d:
-                    conds.append(cond("correction", f"Logical failure <= {cfg['correction']['target_pl'] * 100:.1f}%", cor_ok))
+                    conds.append(cond("correction", rf"Logical failure $p_L\le {cfg['correction']['target_pl'] * 100:.1f}\%$", cor_ok))
                 margins = [higher_better(dobj["postselected_fidelity"], 0.9, 1.0), lower_better(mrow["mse_ratio"], 0.0, 1.5)]
                 if d:
                     margins.append(lower_better(cor[d]["p_logical"], 0.0, 0.03))
@@ -700,7 +700,7 @@ def build_joint_mission(m: dict, size: dict, integrated: bool = False) -> tuple[
                 expl = {"plain": f"{len(met)} of {len(conds)} goals met." + (" Not met: " + "; ".join(unmet) + "." if unmet else " Every system is protected."),
                         "scientific": "Each task keeps its own scientific metric. The shared budget couples them: more sentinels lower the acceptance and raise the raw shots "
                                       "detection needs, leaving fewer for the lab; a larger code distance spends more qubits and qubit-rounds.",
-                        "math": "raw detection shots = ceil(2000 / kappa); shots_total = detection + mitigation; credits = pedagogical price list.",
+                        "math": r"Raw detection shots $=\lceil 2000/\kappa\rceil$ (so $1/\kappa$ is the overhead); total shots = detection + mitigation; credits follow the pedagogical price list.",
                         "refs": ["research/12_optimization_strategies.md", "research/13_benchmarking_framework.md"]}
                 plan_units = {"ancilla_qubits": k_anc, "extra_two_qubit_gates": dobj["extra_two_qubit_gates"], "shots": shots,
                               **({"qubit_rounds": cor[d]["qubit_rounds"]} if d else {})}

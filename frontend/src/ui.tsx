@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 import { introSeen, markIntroSeen, useSettings } from "./settings";
 
 export type Overlay = "codex" | "sandbox" | "settings" | "credits" | null;
-interface UiCtx { overlay: Overlay; open: (o: Exclude<Overlay, null>) => void; close: () => void; introActive: boolean; playIntro: () => void; finishIntro: () => void }
+interface UiCtx { overlay: Overlay; overlayTab: string | null; open: (o: Exclude<Overlay, null>, tab?: string) => void; close: () => void; introActive: boolean; playIntro: () => void; finishIntro: () => void }
 const Ctx = createContext<UiCtx | null>(null);
 export const useUi = (): UiCtx => { const c = useContext(Ctx); if (!c) throw new Error("useUi outside UiProvider"); return c; };
 
@@ -11,11 +11,12 @@ export function UiProvider({ children, skipIntro = false }: { children: ReactNod
   // The intro plays once per browser session (and never when the player chose to skip it); it can be replayed from Settings.
   const [introActive, setIntro] = useState<boolean>(() => !skipIntro && settings.introAuto !== "skip" && !introSeen());
   const [overlay, setOverlay] = useState<Overlay>(null);
-  const open = useCallback((o: Exclude<Overlay, null>) => setOverlay(o), []);
+  const [overlayTab, setTab] = useState<string | null>(null);
+  const open = useCallback((o: Exclude<Overlay, null>, tab?: string) => { setTab(tab ?? null); setOverlay(o); }, []);
   const close = useCallback(() => setOverlay(null), []);
   const playIntro = useCallback(() => { setOverlay(null); setIntro(true); }, []);
   // after the opening, keyboard focus moves to the main content (the intro overlay that held it is gone)
   const finishIntro = useCallback(() => { markIntroSeen(); setIntro(false); requestAnimationFrame(() => document.getElementById("main")?.focus()); }, []);
-  const value = useMemo(() => ({ overlay, open, close, introActive, playIntro, finishIntro }), [overlay, open, close, introActive, playIntro, finishIntro]);
+  const value = useMemo(() => ({ overlay, overlayTab, open, close, introActive, playIntro, finishIntro }), [overlay, overlayTab, open, close, introActive, playIntro, finishIntro]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

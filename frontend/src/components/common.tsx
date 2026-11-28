@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import type { Json } from "../engine";
 import { Icon } from "../art";
 import { researchUrl } from "../config";
+import { ScientificText } from "../math";
 import { useGame } from "../store";
 
 export function Panel({ title, children, accent, className = "" }: { title?: string; children: ReactNode; accent?: "pink" | "cyan" | "purple" | "orange" | "success" | "failure" | "warning"; className?: string }) {
@@ -13,14 +14,28 @@ export function Panel({ title, children, accent, className = "" }: { title?: str
   );
 }
 
+/** A labelled number. `label` may contain `$LaTeX$` (rendered by KaTeX); `hint` is a plain-text tooltip and is also exposed to assistive technology. */
 export function Metric({ label, value, hint, tone }: { label: string; value: ReactNode; hint?: string; tone?: "good" | "warn" | "bad" }) {
   return (
     <div className={`metric ${tone ?? ""}`} title={hint}>
       <div className="mv">{value}</div>
-      <div className="ml">{label}</div>
+      <div className="ml">{label.includes("$") ? <ScientificText text={label} /> : label}{hint && <span className="sr-only"> ({hint})</span>}</div>
     </div>
   );
 }
+
+/** Level 2 of the information architecture: everything the default (Game) view hides. Native <details>, so it is keyboard- and screen-reader-operable. */
+export function Details({ title = "Scientific details", children, open, className = "" }: { title?: string; children: ReactNode; open?: boolean; className?: string }) {
+  return (
+    <details className={`sci-details ${className}`} open={open}>
+      <summary>{title}</summary>
+      <div className="sci-body">{children}</div>
+    </details>
+  );
+}
+
+/** One short sentence under a result: what it means for the player. */
+export function OneLine({ children }: { children: ReactNode }) { return <p className="oneline">{children}</p>; }
 
 export const f3 = (x: number | null | undefined, n = 3) => (x === null || x === undefined || Number.isNaN(x) ? "n/a" : x.toFixed(n));
 
@@ -111,10 +126,10 @@ export function ResourceBar() {
   );
 }
 
-export function Explanation({ e }: { e?: Json }) {
-  const [lvl, setLvl] = useState<"plain" | "scientific" | "math" | "refs">("plain");
+export function Explanation({ e, hidePlain = false }: { e?: Json; hidePlain?: boolean }) {
+  const [lvl, setLvl] = useState<"plain" | "scientific" | "math" | "refs">(hidePlain ? "scientific" : "plain");
   if (!e) return null;
-  const tabs: ("plain" | "scientific" | "math" | "refs")[] = ["plain", "scientific", "math", "refs"];
+  const tabs = (["plain", "scientific", "math", "refs"] as const).filter((t) => !(hidePlain && t === "plain"));
   const label = { plain: "Summary", scientific: "Science", math: "Mathematics", refs: "Research" } as const;
   return (
     <div className="explain">
@@ -123,7 +138,7 @@ export function Explanation({ e }: { e?: Json }) {
       </div>
       {lvl === "refs"
         ? <p>{(e.refs ?? []).length ? (e.refs as string[]).map((r, i) => <span key={r}>{i > 0 && " · "}<a href={researchUrl(r)} target="_blank" rel="noreferrer">{r}</a></span>) : "—"}</p>
-        : <p>{e[lvl] || "—"}</p>}
+        : <div className="explain-text"><ScientificText text={e[lvl] || "—"} as="p" /></div>}
     </div>
   );
 }
@@ -136,7 +151,7 @@ export function Conditions({ items }: { items?: Json[] }) {
       {items.map((c) => (
         <li key={c.id} className={c.met ? "ok" : "bad"}>
           <Icon name={c.met ? "check" : "cross"} label={c.met ? "met" : "not met"} />
-          <span><span className="sr-only">{c.met ? "Met: " : "Not met: "}</span>{c.text}</span>
+          <span><span className="sr-only">{c.met ? "Met: " : "Not met: "}</span><ScientificText text={c.text} /></span>
         </li>
       ))}
     </ul>
@@ -151,7 +166,7 @@ export function ScoreBreakdown({ sb }: { sb?: Json }) {
       <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Score breakdown (scrollable)"><table className="tbl"><thead><tr><th>component</th><th>value</th><th>weight</th><th>contribution</th><th>kind</th></tr></thead>
         <tbody>
           {sb.components.map((c: Json) => (
-            <tr key={c.name}><td title={c.note}>{c.name}</td><td className="mono">{typeof c.value === "number" ? c.value.toPrecision(4) : "n/a"}</td>
+            <tr key={c.name}><td title={c.note}><ScientificText text={c.name} /></td><td className="mono">{typeof c.value === "number" ? c.value.toPrecision(4) : "n/a"}</td>
               <td>{c.weight}</td><td className="mono">{(c.contribution ?? 0).toFixed(1)}</td><td>{c.exactness}</td></tr>
           ))}
         </tbody></table></div>
@@ -159,7 +174,7 @@ export function ScoreBreakdown({ sb }: { sb?: Json }) {
   );
 }
 
-/** Analysis shown inside a mission after an action has been executed. */
+/** Analysis shown inside a mission after an action has been executed: verdict, goals, one plain sentence, actions; the rest is under "Scientific details". */
 export function ResultPanel({ outcome }: { outcome: Json | null }) {
   const { state, finish, continuePlaying, mission } = useGame();
   if (!outcome) return null;
@@ -167,21 +182,24 @@ export function ResultPanel({ outcome }: { outcome: Json | null }) {
   const ok = multi ? !!outcome.mission_success : !!outcome.success;
   const label = outcome.success ? "Goal met" : "Goal not met";
   return (
-    <Panel title="Scientific analysis" accent={outcome.success ? "success" : "warning"}>
+    <Panel title="Result" accent={outcome.success ? "success" : "warning"}>
       <div className="row" role="status">
         <strong className={outcome.success ? "ok" : "bad"}><Icon name={outcome.success ? "check" : "cross"} /> {label}</strong>
         {typeof outcome.score === "number" && <span className="chip">score {outcome.score}</span>}
         <ProvenanceBadge kind={outcome.result_kind} />
       </div>
       <Conditions items={outcome.conditions} />
-      <Explanation e={outcome.explanation} />
-      <ScoreBreakdown sb={outcome.score_breakdown} />
+      {outcome.explanation?.plain && <OneLine><ScientificText text={outcome.explanation.plain} /></OneLine>}
       {state === "scientific_analysis" && (
         <div className="row">
           <button onClick={continuePlaying}>Adjust strategy</button>
           <button className="primary" onClick={finish}>{multi && !ok ? "Next instance" : ok || !multi ? (outcome.success || ok ? "Complete mission" : "End attempt") : "Next"}</button>
         </div>
       )}
+      <Details title="Scientific details: why, with the mathematics">
+        <Explanation e={outcome.explanation} hidePlain />
+        <ScoreBreakdown sb={outcome.score_breakdown} />
+      </Details>
     </Panel>
   );
 }

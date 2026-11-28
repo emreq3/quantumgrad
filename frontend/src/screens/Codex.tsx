@@ -4,13 +4,15 @@ import { Portrait } from "../art";
 import { REPO_URL, researchUrl } from "../config";
 import type { Json } from "../engine";
 import { Panel } from "../components/common";
+import { EquationBlock, ScientificText } from "../math";
+import { useUi } from "../ui";
 import { useGame } from "../store";
 
 const DOCS: [string, string][] = [
   ["research/02_quantum_foundations.md", "Quantum foundations"], ["research/03_error_detection.md", "Error detection (spacetime checks)"], ["research/04_error_mitigation.md", "Error mitigation"],
   ["research/05_error_correction.md", "Error correction"], ["research/06_surface_code_decoders.md", "Surface-code decoders"], ["research/07_quantum_noise_models.md", "Noise models"],
   ["research/12_optimization_strategies.md", "Optimization strategies"], ["research/13_benchmarking_framework.md", "Benchmarking"], ["docs/scientific_engine.md", "What the engine implements"],
-  ["docs/research_corrections.md", "Corrections found during implementation"], ["docs/known_limitations.md", "Known limitations"],
+  ["docs/research_corrections.md", "Corrections found during implementation"], ["docs/known_limitations.md", "Known limitations"], ["docs/benchmark_results.md", "Benchmark results"],
 ];
 
 const DISTINCTIONS: [string, string][] = [
@@ -21,18 +23,46 @@ const DISTINCTIONS: [string, string][] = [
   ["A noise model is a model", "Every noise profile in the game is a synthetic scenario. The manual decoder uses the code-capacity and phenomenological models; the Distance Decision mission uses a full circuit-level model."],
 ];
 
+type Tab = "concepts" | "research" | "cast";
+
+function Entry({ g }: { g: Json }) {
+  return (
+    <div className="codex-entry">
+      <dt>{g.term}</dt>
+      <dd>
+        <ScientificText text={g.def} as="p" />
+        {g.tex && <EquationBlock tex={g.tex} />}
+        {g.note && <p className="small muted"><ScientificText text={g.note} /></p>}
+      </dd>
+    </div>
+  );
+}
+
+/** Quantum Codex. "Concepts" is Level 2 (plain definition + the defining equation); "Research mode" is Level 3 (assumptions, estimator details, sources). */
 export function Codex({ onClose }: { onClose: () => void }) {
   const { data } = useGame();
-  const [tab, setTab] = useState<"glossary" | "science" | "cast" | "docs">("glossary");
-  const tabs = [["glossary", "Glossary"], ["science", "Key distinctions"], ["cast", "Cast"], ["docs", "Research"]] as const;
+  const { overlayTab } = useUi();
+  const [tab, setTab] = useState<Tab>(overlayTab === "research" ? "research" : "concepts");
+  const tabs: [Tab, string][] = [["concepts", "Concepts"], ["research", "Research mode"], ["cast", "Cast"]];
+  const entries: Json[] = data?.glossary ?? [];
   return (
     <div>
       <div className="row"><button onClick={onClose}>← Back</button><h2 style={{ margin: 0 }}>Quantum Codex</h2></div>
       <div role="tablist" aria-label="Codex sections" className="row tight">
         {tabs.map(([id, label]) => <button key={id} role="tab" aria-selected={tab === id} className="tab" onClick={() => setTab(id)}>{label}</button>)}
       </div>
-      {tab === "glossary" && <Panel><dl className="glossary">{(data?.glossary ?? []).map((g: Json) => <div key={g.term}><dt>{g.term}</dt><dd>{g.def}</dd></div>)}</dl></Panel>}
-      {tab === "science" && <Panel>{DISTINCTIONS.map(([t, b]) => <div key={t}><h4>{t}</h4><p>{b}</p></div>)}</Panel>}
+      {tab === "concepts" && <Panel><dl className="glossary">{entries.filter((g) => g.level !== "research").map((g) => <Entry key={g.term} g={g} />)}</dl></Panel>}
+      {tab === "research" && (
+        <>
+          <Panel title="Assumptions and estimator details"><dl className="glossary">{entries.filter((g) => g.level === "research").map((g) => <Entry key={g.term} g={g} />)}</dl></Panel>
+          <Panel title="Key distinctions">{DISTINCTIONS.map(([t, b]) => <div key={t}><h4>{t}</h4><p>{b}</p></div>)}</Panel>
+          <Panel title="Research documents and benchmarks">
+            <p className="muted small">The research documents and the benchmark data live in the project repository (they are not bundled with the game). Links open GitHub.</p>
+            <ul>{DOCS.map(([p, t]) => <li key={p}><a href={researchUrl(p)} target="_blank" rel="noreferrer">{t}</a> <span className="muted small">({p})</span></li>)}</ul>
+            <p><a href={REPO_URL} target="_blank" rel="noreferrer">Project repository</a></p>
+          </Panel>
+        </>
+      )}
       {tab === "cast" && (
         <>
           <Panel accent="orange"><p>{WORLD.prologue}</p><p className="muted small">{WORLD.disclaimer}</p></Panel>
@@ -41,13 +71,6 @@ export function Codex({ onClose }: { onClose: () => void }) {
               <p className="small"><em>{c.style}</em></p><p className="small"><strong>Specialty:</strong> {c.specialty}</p></div>
           ))}</div>
         </>
-      )}
-      {tab === "docs" && (
-        <Panel>
-          <p className="muted small">The research documents live in the project repository (they are not bundled with the game). Links open GitHub.</p>
-          <ul>{DOCS.map(([p, t]) => <li key={p}><a href={researchUrl(p)} target="_blank" rel="noreferrer">{t}</a> <span className="muted small">({p})</span></li>)}</ul>
-          <p><a href={REPO_URL} target="_blank" rel="noreferrer">Project repository</a></p>
-        </Panel>
       )}
     </div>
   );

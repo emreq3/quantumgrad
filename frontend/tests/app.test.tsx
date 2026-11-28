@@ -21,9 +21,15 @@ function boot() { render(<App initialData={data} skipIntro />); }
 function openMission(id: string, completed: string[] | "all" = "all") {
   localStorage.setItem("qta6.save", JSON.stringify(save(completed)));
   boot();
-  fireEvent.click(screen.getByRole("button", { name: /Continue Campaign/ }));
+  fireEvent.click(screen.getByRole("button", { name: /^(Continue|Play)$/ }));
+  selectDistrictOf(id);
   fireEvent.click(missionBtn(id)[0]);
   fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
+}
+/** The map lists one district at a time: open the district that holds the mission. */
+function selectDistrictOf(id: string) {
+  const d = data.districts.find((x: any) => x.id === mission(id).district);
+  fireEvent.click(screen.getByRole("tab", { name: new RegExp(d.name) }));
 }
 const missionBtn = (id: string) => Array.from(document.querySelectorAll<HTMLElement>(`[data-mission="${id}"]`));
 const qubit = (q: number) => screen.getByLabelText(new RegExp(`toggle sentinel on qubit ${q}$`));
@@ -32,59 +38,70 @@ const toggleEdges = (ids: number[]) => ids.forEach((id) => fireEvent.click(docum
 describe("navigation and menu", () => {
   beforeEach(() => { localStorage.clear(); sessionStorage.clear(); });
 
-  it("a first visit offers New Game but not Continue; then menu → map → briefing → mission works", () => {
+  it("a first visit offers Play but not Continue; then menu → map → briefing → mission works", () => {
     boot();
-    expect(screen.queryByRole("button", { name: /Continue Campaign/ })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /New Game/ }));
+    expect(screen.queryByRole("button", { name: /Continue/ })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /^Play$/ }));
     expect(screen.getByRole("heading", { name: "Quantum City", level: 2 })).toBeInTheDocument();
     fireEvent.click(missionBtn("A1")[0]);
-    expect(screen.getByText("Scientific problem")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Objective" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "How to play" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
     expect(screen.getByText("Experiment bench")).toBeInTheDocument();
   });
 
-  it("Continue Campaign appears only when valid saved progress exists; corrupt data is ignored", () => {
+  it("Continue appears only when valid saved progress exists; corrupt data is ignored", () => {
     localStorage.setItem("qta6.save", "{broken");
     boot();
-    expect(screen.queryByRole("button", { name: /Continue Campaign/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Continue/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /New campaign/ })).not.toBeInTheDocument();
   });
 
-  it("New Game asks for confirmation before erasing an existing save", () => {
+  it("New campaign asks for confirmation before erasing an existing save", () => {
     localStorage.setItem("qta6.save", JSON.stringify(save(["A1"])));
     boot();
-    fireEvent.click(screen.getByRole("button", { name: /New Game/ }));
+    fireEvent.click(screen.getByRole("button", { name: /New campaign/ }));
     const dlg = screen.getByRole("dialog", { name: /Start a new campaign/ });
     fireEvent.click(within(dlg).getByRole("button", { name: "Cancel" }));
     expect(JSON.parse(localStorage.getItem("qta6.save")!).completed.A1).toBeDefined();
-    fireEvent.click(screen.getByRole("button", { name: /New Game/ }));
+    fireEvent.click(screen.getByRole("button", { name: /New campaign/ }));
     fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: /Erase progress/ }));
     expect(JSON.parse(localStorage.getItem("qta6.save")!).completed).toEqual({});
   });
 
-  it("locked missions cannot be opened and the map has a keyboard-reachable list of districts", () => {
+  it("only the selected district's missions are listed; locked ones say why and cannot be opened; districts are keyboard-reachable", () => {
     boot();
-    fireEvent.click(screen.getByRole("button", { name: /New Game/ }));
-    expect(missionBtn("D1").length).toBeGreaterThan(0);
-    for (const b of missionBtn("D1")) expect(b).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: /^Play$/ }));
+    expect(missionBtn("A1")).toHaveLength(1);
+    expect(missionBtn("D1")).toHaveLength(0); // other districts' missions are not on screen
+    fireEvent.click(screen.getByRole("tab", { name: /Neon Labs/ }));
+    expect(missionBtn("D1")).toHaveLength(1);
+    expect(missionBtn("A1")).toHaveLength(0);
+    for (const b of missionBtn("D1")) { expect(b).toHaveAttribute("aria-disabled", "true"); expect(b.textContent).toMatch(/locked: finish A4 · Protect the Message/); }
+    fireEvent.click(missionBtn("D1")[0]);
+    expect(screen.getByRole("alert")).toHaveTextContent(/D1 is locked\. Complete A4 · Protect the Message first/);
+    expect(screen.getByRole("region", { name: /Recommended next mission/ })).toHaveTextContent(/A1 · The First Qubit/);
     const districts = screen.getAllByRole("button", { name: /missions completed/ });
     expect(districts).toHaveLength(6);
     for (const d of districts) expect(d.getAttribute("tabindex")).toBe("0");
     fireEvent.click(districts[1]); // select Neon Labs; it is locked at the start
     expect(screen.getAllByText(/Neon Labs/).length).toBeGreaterThan(0);
+    expect(missionBtn("D1")).toHaveLength(1);
   });
 
   it("district selection works from the keyboard", () => {
     boot();
-    fireEvent.click(screen.getByRole("button", { name: /New Game/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Play$/ }));
     const sunset = screen.getByRole("button", { name: /^Sunset Bay:/ });
     fireEvent.keyDown(sunset, { key: "Enter" });
     expect(screen.getByRole("button", { name: /^Sunset Bay:.*selected/ })).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("states that results are replayed from precomputed simulations rather than live", () => {
+  it("states that results are replayed from precomputed simulations rather than live, without blocking the menu", () => {
     boot();
-    expect(screen.getByRole("status")).toHaveTextContent(/replayed from precomputed experiment data/);
+    expect(document.body.textContent).toMatch(/replayed from precomputed runs/);
     expect(document.body.textContent).not.toMatch(/Every outcome is a real simulation/);
+    expect(document.body.textContent).not.toMatch(/uvicorn|python -m|pip install/); // no installation text on the title screen
   });
 });
 
@@ -94,7 +111,7 @@ describe("mission workspaces", () => {
   it("A1: measuring spends the shot budget (HUD) and shows counts; success shows the result screen", () => {
     localStorage.setItem("qta6.save", JSON.stringify(save([])));
     boot();
-    fireEvent.click(screen.getByRole("button", { name: /Continue Campaign|New Game/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^(Continue|Play)$/ }));
     fireEvent.click(missionBtn("A1")[0]);
     fireEvent.click(screen.getByRole("button", { name: /Begin mission/ }));
     fireEvent.click(screen.getByRole("button", { name: "10000" }));
@@ -110,7 +127,7 @@ describe("mission workspaces", () => {
 
   it("a failed mission shows an evidence-based explanation and allows a retry with a fresh budget", () => {
     openMission("D1");
-    fireEvent.click(screen.getByRole("button", { name: /Run experiment/ })); // zero sentinels: no gain, so the goal is not met
+    fireEvent.click(screen.getByRole("button", { name: /^Execute$/ })); // zero sentinels: no gain, so the goal is not met
     expect(screen.getByText(/Goal not met/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "End attempt" }));
     expect(screen.getByText("MISSION INCOMPLETE")).toBeInTheDocument();
@@ -126,21 +143,28 @@ describe("mission workspaces", () => {
     expect(screen.queryByText(/Before and after/)).not.toBeInTheDocument();
     fireEvent.click(qubit(0));
     fireEvent.click(qubit(2));
-    expect(screen.getByText(/extra 2-qubit gates \(cost preview\)/)).toBeInTheDocument();
-    expect(screen.queryByText("acceptance κ (shots kept)")).not.toBeInTheDocument(); // not leaked before running
-    fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
+    expect(screen.getByText(/Cost preview:/)).toBeInTheDocument();
+    expect(screen.queryByText("Acceptance (shots kept)")).not.toBeInTheDocument(); // not leaked before running
+    fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     for (const t of [/1 · Original unprotected circuit/, /2 · Matched unprotected gate skeleton/, /3 · Protected circuit, all shots kept/, /4 · Protected circuit, post-selected/])
       expect(screen.getByText(t)).toBeInTheDocument();
-    expect(screen.getByText("acceptance κ (shots kept)")).toBeInTheDocument();
+    expect(screen.getByText("Acceptance (shots kept)")).toBeInTheDocument();
+    expect(screen.getByText("Fidelity (kept shots)")).toBeInTheDocument();
+    expect(screen.getByText("Resource cost")).toBeInTheDocument();
     expect(screen.getByText("shots discarded")).toBeInTheDocument();
     expect(screen.getByRole("img", { name: /Of 500 raw shots/ })).toBeInTheDocument();
   });
 
-  it("D1: an over-budget selection cannot be run", () => {
+  it("D1: a sentinel beyond the ancilla budget cannot be placed, and says why", () => {
     openMission("D1");
-    for (const q of [0, 1, 2, 3]) fireEvent.click(qubit(q));
-    expect(screen.getByRole("button", { name: /Run experiment/ })).toBeDisabled();
-    expect(screen.getByText(/Over the ancilla budget/)).toBeInTheDocument();
+    for (const q of [0, 1, 2]) fireEvent.click(qubit(q));
+    expect(screen.getByText(/Sentinels/).parentElement).toHaveTextContent("3 / 3");
+    fireEvent.click(qubit(3)); // the fourth is refused
+    expect(screen.getByText(/ancilla budget is full/)).toBeInTheDocument();
+    expect(screen.getByText(/Sentinels/).parentElement).toHaveTextContent("3 / 3");
+    expect(screen.getByRole("button", { name: /^Execute$/ })).toBeEnabled(); // the three placed ones are valid
+    fireEvent.click(qubit(2)); // removing is always allowed
+    expect(screen.getByText(/Sentinels/).parentElement).toHaveTextContent("2 / 3");
   });
 
   it("D5: the negative result is stated plainly when protection does not help", () => {
@@ -149,7 +173,7 @@ describe("mission workspaces", () => {
     const worse = Object.values<any>(m.outcomes).find((o) => o.feasible && o.n_checks > 0 && o.postselected_fidelity <= o.baseline_fidelity);
     expect(worse, "D5 must contain a configuration where protection hurts").toBeTruthy();
     for (const q of worse.targets) fireEvent.click(qubit(q));
-    fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     expect(screen.getByText(/Negative result:/)).toBeInTheDocument();
   });
 
@@ -157,7 +181,7 @@ describe("mission workspaces", () => {
     openMission("M3");
     fireEvent.change(screen.getByLabelText("Noise scale factors"), { target: { value: "1,3,5" } });
     fireEvent.change(screen.getByLabelText("Extrapolation"), { target: { value: "richardson" } });
-    fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     expect(screen.getByRole("img", { name: /Zero-noise extrapolation: measured values at noise scales 1, 3, 5/ })).toBeInTheDocument();
     expect(screen.getAllByText(/degree-2 polynomial through the measured points \(Richardson\)/).length).toBeGreaterThan(0);
     expect(screen.getByText(/No points are added to smooth the curve/)).toBeInTheDocument();
@@ -167,8 +191,8 @@ describe("mission workspaces", () => {
   it("M2: the calibration slider snaps to executed configurations and the budget split is charged in full", () => {
     openMission("M2");
     fireEvent.change(screen.getByLabelText("Calibration share (%)"), { target: { value: "5" } });
-    expect(screen.getByText(/snaps to one of the 6 settings that were actually simulated/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
+    expect(screen.getByText(/snaps to one of the 6 settings that were really simulated/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     expect(screen.getByLabelText(/Shots: 0 left of 8000/)).toBeInTheDocument();
   });
 
@@ -182,8 +206,8 @@ describe("mission workspaces", () => {
     fireEvent.click(screen.getByRole("button", { name: /Undo/ }));
     expect(el).toHaveAttribute("aria-pressed", "false");
     toggleEdges(ref.mwpm_edges);
-    expect(screen.getByText("defects remaining (live check)").previousSibling?.textContent).toBe("0");
-    fireEvent.click(screen.getByRole("button", { name: /Submit correction/ }));
+    expect(screen.getByText("defects remaining (live)").previousSibling?.textContent).toBe("0");
+    fireEvent.click(screen.getByRole("button", { name: /^Submit$/ }));
     expect(screen.getByText("Evaluation")).toBeInTheDocument();
     expect(screen.getByText("logical state preserved")).toBeInTheDocument();
     expect(screen.getByText(/Syndrome cleared and the logical qubit preserved/)).toBeInTheDocument();
@@ -203,7 +227,7 @@ describe("mission workspaces", () => {
     const m = mission("C5");
     const ref = m.reference.instances[0];
     toggleEdges(ref.syndrome_clearing_but_logically_wrong_example);
-    fireEvent.click(screen.getByRole("button", { name: /Submit correction/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Submit$/ }));
     expect(screen.getByText(/Syndrome cleared, but the logical qubit was flipped/)).toBeInTheDocument();
     expect(screen.getByText(/Logical trap:/)).toBeInTheDocument();
     expect(screen.queryByText(/Syndrome cleared and the logical qubit preserved/)).not.toBeInTheDocument();
@@ -220,10 +244,10 @@ describe("mission workspaces", () => {
     expect(screen.getByText(/model: Full circuit-level model/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Simulate d = 7" })); // 97 qubits exceed the 60-qubit budget: refused, nothing charged
     expect(screen.getByRole("alert")).toHaveTextContent(/physical qubits budget/);
-    expect(screen.queryByText("95% Wilson interval")).not.toBeInTheDocument();
+    expect(screen.queryByText(/95% range \(Wilson\)/)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Simulate d = 5" }));
-    expect(screen.getByText("95% Wilson interval")).toBeInTheDocument();
-    expect(screen.getByText("p_L (point estimate)")).toBeInTheDocument();
+    expect(screen.getByText(/95% range \(Wilson\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Logical failure rate/)).toBeInTheDocument();
   });
 
   it("O2: spending is charged and the hidden true noise is only revealed after execution", () => {
@@ -259,7 +283,7 @@ describe("N1 — the integrated final mission", () => {
     fireEvent.change(screen.getByLabelText("Shots for the lab"), { target: { value: String(row.mitigation_total) } });
     fireEvent.click(screen.getByRole("button", { name: /Continue/ })); // → stage 4
     fireEvent.click(screen.getByLabelText(`distance ${row.distance}`));
-    fireEvent.click(screen.getByRole("button", { name: /Continue/ })); // → stage 5 (review)
+    fireEvent.click(screen.getByRole("button", { name: /Continue/ })); // → stage 5 (review resources)
   };
 
   it("N1 has 768 executed plans, 512 feasible and 36 successful (current data)", () => {
@@ -270,12 +294,17 @@ describe("N1 — the integrated final mission", () => {
   it("walks through all stages, executes a winning plan once, charges the wallet and restores every subsystem", () => {
     openMission("N1");
     const { key, row } = planKey(true);
-    expect(screen.getByText(/Stage 1 — Emergency briefing/)).toBeInTheDocument();
+    expect(screen.getByText(/Stage 1 — Inspect the crisis/)).toBeInTheDocument();
     walk(row);
-    expect(screen.getByText(/Stage 5 — Review and execute/)).toBeInTheDocument();
+    expect(screen.getByText(/Stage 5 — Review resources/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Quantum credits: 150\.0 left of 150\.0/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Execute integrated plan/ }));
-    expect(screen.getByText(/Stage 6 — Network status/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Continue/ })); // → stage 6 (execute and restore)
+    expect(screen.getByText(/Stage 6 — Execute and restore/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Quantum credits: 150\.0 left of 150\.0/)).toBeInTheDocument(); // nothing is spent before the player confirms
+    fireEvent.click(screen.getByRole("button", { name: /Execute and restore the network/ }));
+    const dlg = screen.getByRole("dialog", { name: /Execute this plan/ });
+    expect(screen.getByLabelText(/Quantum credits: 150\.0 left of 150\.0/)).toBeInTheDocument(); // still nothing spent behind the dialog
+    fireEvent.click(within(dlg).getByRole("button", { name: "Execute" }));
     expect(screen.getAllByText(/✔ restored/)).toHaveLength(3);
     expect(screen.getByLabelText(/Quantum credits: .* left of 150\.0/).getAttribute("aria-label")).not.toMatch(/150\.0 left of 150\.0/); // the plan was charged
     expect(mission("N1").outcomes[key].units.shots).toBeGreaterThan(0);
@@ -289,7 +318,9 @@ describe("N1 — the integrated final mission", () => {
     openMission("N1", data.missions.map((m: any) => m.id).filter((id: string) => id !== "N1"));
     const { row } = planKey(false);
     walk(row);
-    fireEvent.click(screen.getByRole("button", { name: /Execute integrated plan/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Continue/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Execute and restore the network/ }));
+    fireEvent.click(within(screen.getByRole("dialog", { name: /Execute this plan/ })).getByRole("button", { name: "Execute" }));
     expect(screen.getAllByText(/✘ not restored/).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole("button", { name: "End attempt" }));
     expect(screen.getByText(/NETWORK STILL DOWN|PARTIAL RESTORATION/)).toBeInTheDocument();
@@ -305,7 +336,8 @@ describe("N1 — the integrated final mission", () => {
     const bad = Object.values<any>(m.outcomes).find((o) => !o.feasible);
     walk(bad);
     expect(screen.getByText(/exceeds the shared budget/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Execute integrated plan/ })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: /Continue/ }));
+    expect(screen.getByRole("button", { name: /Execute and restore the network/ })).toBeDisabled();
   });
 });
 
@@ -317,14 +349,14 @@ describe("shell, settings and sandbox", () => {
     fireEvent.click(screen.getByRole("button", { name: "Quantum Codex" }));
     expect(screen.getByRole("heading", { name: "Quantum Codex" })).toBeInTheDocument();
     expect(screen.getByText("Pareto front")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("tab", { name: "Key distinctions" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Research mode" }));
     expect(screen.getByText("Mitigation is not correction")).toBeInTheDocument();
   });
 
   it("the sandbox explains that it is unavailable and does not send requests while no API is reachable", () => {
     const f = vi.spyOn(globalThis, "fetch");
     boot();
-    fireEvent.click(screen.getByRole("button", { name: /Scientific Sandbox/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Sandbox/ }));
     expect(screen.getAllByText(/Live sandbox unavailable/).length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Run live" })).toBeDisabled();
     expect(f.mock.calls.filter((c) => String(c[0]).includes("/api/")).length).toBeLessThanOrEqual(1); // at most the single startup probe
@@ -338,7 +370,7 @@ describe("shell, settings and sandbox", () => {
       return new Response(JSON.stringify({ experiment_id: "abc", provenance: { kind: "exact_numerical", runtime_s: 0.1 }, result: { ok: true } }), { status: 200 });
     });
     boot();
-    fireEvent.click(screen.getByRole("button", { name: /Scientific Sandbox/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Sandbox/ }));
     fireEvent.change(screen.getByLabelText("API base URL"), { target: { value: "http://127.0.0.1:8000" } });
     fireEvent.click(screen.getByRole("button", { name: "Check connection" }));
     expect(await screen.findByText(/live computation via the Python API/)).toBeInTheDocument();
@@ -349,7 +381,9 @@ describe("shell, settings and sandbox", () => {
 
   it("the campaign works with the API absent (offline) and loads its data from a relative path", () => {
     boot();
-    expect(screen.getByText(/precomputed campaign is fully playable offline/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Sandbox/ }));
+    expect(screen.getAllByText(/precomputed campaign is fully playable offline/).length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole("button", { name: /Back/ }));
     const f = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
     render(<App skipIntro />);
     expect(f).toHaveBeenCalledWith("data/campaign.json"); // no leading slash: works under a sub-path such as /quantumgrad/
@@ -388,7 +422,7 @@ describe("shell, settings and sandbox", () => {
 
   it("leaving a mission with runs asks for confirmation; a dialog traps focus and closes on Escape", () => {
     openMission("D1");
-    fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     fireEvent.click(screen.getByRole("button", { name: /Exit/ }));
     const dlg = screen.getByRole("dialog", { name: /Leave this mission/ });
     expect(dlg).toHaveAttribute("aria-modal", "true");
@@ -401,7 +435,7 @@ describe("shell, settings and sandbox", () => {
     openMission("D1");
     expect(screen.getByLabelText(/Ancillas: 3 left of 3/)).toBeInTheDocument();
     fireEvent.click(qubit(0));
-    fireEvent.click(screen.getByRole("button", { name: /Run experiment/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Execute$/ }));
     expect(screen.getByLabelText(/Ancillas: 2 left of 3/)).toBeInTheDocument();
   });
 });

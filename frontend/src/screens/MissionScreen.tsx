@@ -7,7 +7,8 @@ import { DetectionWorkspace } from "../components/DetectionWorkspace";
 import { FinalMission } from "../components/FinalMission";
 import { MitigationWorkspace } from "../components/MitigationWorkspace";
 import { DiagnosisWorkspace, DistanceWorkspace, DriftWorkspace, ExperimentWorkspace, JointWorkspace, OptimizationWorkspace, RepetitionWorkspace } from "../components/OtherWorkspaces";
-import { DISTRICT_ART, MISSION_NARRATIVE, speaker } from "../content/narrative";
+import { DISTRICT_ART, HOW_TO, MISSION_NARRATIVE } from "../content/narrative";
+import { ScientificText } from "../math";
 import { useSettings } from "../settings";
 import { useGame } from "../store";
 import { useUi } from "../ui";
@@ -20,7 +21,7 @@ const WORKSPACES: Record<string, () => React.ReactElement> = {
 };
 
 export function MissionScreen() {
-  const { mission, go, restart, leaveMission, notice, state, history, solved, progress, data } = useGame();
+  const { mission, restart, leaveMission, notice, state, history, solved, progress, data, mode } = useGame();
   const { open } = useUi();
   const { sfx } = useSettings();
   const [help, setHelp] = useState(false);
@@ -29,7 +30,6 @@ export function MissionScreen() {
   const W = WORKSPACES[mission.kind as string];
   const art = DISTRICT_ART[mission.district];
   const nar = MISSION_NARRATIVE[mission.id];
-  const who = speaker(mission.id);
   const attempts = (progress.completed[mission.id]?.attempts ?? 0) + (progress.failures[mission.id] ?? 0) + 1;
   const total = mission.ui?.instances?.length;
   const dist = data?.districts.find((d: { id: string }) => d.id === mission.district);
@@ -44,25 +44,26 @@ export function MissionScreen() {
           <Difficulty d={mission.difficulty} />
           <span className="chip" aria-label={`attempt ${attempts}`}>attempt {attempts}</span>
           {total ? <span className="chip" aria-label={`${Object.values(solved).filter(Boolean).length} of ${total} instances solved`}>solved {Object.values(solved).filter(Boolean).length}/{total}</span> : null}
-          <span className="chip" role="status">{state.replace(/_/g, " ")}</span>
+          <span className="sr-only" role="status">{state.replace(/_/g, " ")}</span>
+          {mode === "demo" && <span className="chip hot">Quick Demo</span>}
           <div className="tools">
-            <button className="small" onClick={() => setHelp(true)} aria-label="Help for this mission"><Icon name="help" /> Help</button>
+            <button className="small" onClick={() => setHelp(true)} aria-label="Hint and rules for this mission"><Icon name="help" /> Hint</button>
             <button className="small" onClick={() => open("settings")} aria-label="Open settings"><Icon name="settings" /></button>
             <button className="small" onClick={askRestart}><Icon name="reset" /> Restart</button>
             <button className="small" onClick={askExit}><Icon name="exit" /> Exit</button>
           </div>
-          <div className="objective"><Icon name="star" /> Objective: {mission.success_conditions.join(" · ")}</div>
+          <div className="objective"><Icon name="star" /> Objective: {mission.success_conditions.map((c: string, i: number) => <span key={c}>{i > 0 && " · "}<ScientificText text={c} /></span>)}</div>
         </div>
         <ResourceBar />
       </section>
-      <p className="muted small" style={{ margin: "0 0 8px" }}><strong style={{ color: who.color }}>{who.name}:</strong> {nar?.brief}</p>
       <div aria-live="assertive">{notice && <p className="notice" role="alert">{notice}</p>}</div>
       {W ? <W /> : <p className="notice">No workspace for mission kind “{mission.kind}”.</p>}
       {help && (
-        <Dialog title={`Help — ${mission.title}`} onClose={() => setHelp(false)} actions={<button className="primary" onClick={() => setHelp(false)}>Close</button>}>
-          {nar?.hint && <p><strong>Hint.</strong> {nar.hint}</p>}
+        <Dialog title={`Hint: ${mission.title}`} onClose={() => setHelp(false)} actions={<button className="primary" onClick={() => setHelp(false)}>Close</button>}>
+          {nar?.hint && <p><strong>Strategy.</strong> <ScientificText text={nar.hint} /></p>}
+          <p>{HOW_TO[mission.kind]}</p>
           <h4>You can</h4><ul>{mission.allowed_actions.map((s: string) => <li key={s}>{s}</li>)}</ul>
-          <h4>Constraints</h4><ul>{mission.constraints.map((s: string) => <li key={s}>{s}</li>)}</ul>
+          <h4>Constraints</h4><ul>{mission.constraints.map((s: string) => <li key={s}><ScientificText text={s} /></li>)}</ul>
           <p className="muted small">Results are replayed from precomputed simulations of exactly the configurations you can select; nothing is interpolated.</p>
         </Dialog>
       )}

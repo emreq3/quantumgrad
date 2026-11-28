@@ -7,6 +7,7 @@ export type Json = any; // campaign data is schema-validated on the Python side
 export const SAVE_SCHEMA = "qta6.save/2";
 export const LEGACY_SAVE_SCHEMAS = ["qta6.save/1"]; // migrated on load: v2 only adds the failure counter
 export const SAVE_KEY = "qta6.save";
+export const DEMO_KEY = "qta6.demo.save"; // Quick Demo progress lives under its own key and never touches the campaign save
 
 export type GameState =
   | "main_menu" | "district_selection" | "mission_briefing" | "strategy_configuration"
@@ -84,9 +85,9 @@ export function safeStorage(): Storage | null {
   }
 }
 
-export function loadProgress(storage: Pick<Storage, "getItem"> | null = safeStorage()): Progress {
+export function loadProgress(storage: Pick<Storage, "getItem"> | null = safeStorage(), key: string = SAVE_KEY): Progress {
   try {
-    const s = storage?.getItem(SAVE_KEY);
+    const s = storage?.getItem(key);
     return s ? validateProgress(JSON.parse(s)) : emptyProgress();
   } catch {
     return emptyProgress(); // corrupted or unsupported data never crashes the game
@@ -105,18 +106,40 @@ export function mergeProgress(a: Progress, b: Progress): Progress {
   return { ...a, completed, failures, tutorial_done: a.tutorial_done || b.tutorial_done };
 }
 
-export function saveProgress(p: Progress, storage: Pick<Storage, "getItem" | "setItem"> | null = safeStorage(), replace = false): void {
+export function saveProgress(p: Progress, storage: Pick<Storage, "getItem" | "setItem"> | null = safeStorage(), replace = false, key: string = SAVE_KEY): void {
   try {
     if (!storage) return; // progress stays in memory only
     let out = p;
-    if (!replace) { try { const cur = storage.getItem(SAVE_KEY); if (cur) out = mergeProgress(p, validateProgress(JSON.parse(cur))); } catch { /* overwrite unreadable data */ } }
-    storage.setItem(SAVE_KEY, JSON.stringify(out));
+    if (!replace) { try { const cur = storage.getItem(key); if (cur) out = mergeProgress(p, validateProgress(JSON.parse(cur))); } catch { /* overwrite unreadable data */ } }
+    storage.setItem(key, JSON.stringify(out));
   } catch { /* quota or privacy mode: keep playing without persistence */ }
 }
 
 export function isUnlocked(progress: Progress, mission: Json): boolean {
   return (mission.unlock_requires as string[]).every((r) => r in progress.completed);
 }
+
+/** Why a mission is locked, in words: the prerequisite missions that are not completed yet (empty when it is open). */
+export function lockReason(progress: Progress, mission: Json, data: Json): string[] {
+  return (mission.unlock_requires as string[]).filter((r) => !(r in progress.completed)).map((r) => {
+    const m = (data.missions as Json[]).find((x) => x.id === r);
+    return m ? `${m.id} · ${m.title}` : r;
+  });
+}
+
+// ---- Quick Demo ---------------------------------------------------------------------------------------
+// A curated path through six of the campaign's own missions (nothing is re-simulated or re-labelled). Each has a verified winning
+// strategy (tests/gameplay/test_campaign_solvability.py plays all 29), and demo progress is stored apart from the campaign save.
+export interface DemoStep { id: string; concept: string }
+export const DEMO_STEPS: DemoStep[] = [
+  { id: "A2", concept: "A simple error: some noise is invisible in the wrong measurement basis." },
+  { id: "D1", concept: "Detection: sentinel qubits flag faults in spacetime, at the cost of discarded shots." },
+  { id: "M2", concept: "Mitigation: split a fixed shot budget between calibration and signal." },
+  { id: "C3", concept: "Correction: decode surface-code defects by hand and check the logical qubit." },
+  { id: "C6", concept: "Decision: the code distance that fits a qubit budget and a failure target." },
+  { id: "N1", concept: "Integrated challenge: detection, mitigation and correction on one shared budget." },
+];
+export const DEMO_IDS: string[] = DEMO_STEPS.map((s) => s.id);
 
 // ---- wallet -----------------------------------------------------------------------------------------
 export interface Wallet { credits: number; caps: Record<string, number>; usedCredits: number; used: Record<string, number>; }

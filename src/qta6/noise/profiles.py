@@ -67,7 +67,7 @@ PROFILES: dict[str, NoiseProfile] = {
         "gate_dominated", "synthetic", "Two-qubit gate errors dominate (p2 = 1%).",
         p1=0.0005, p2=0.01, ro01=0.005, ro10=0.005),
     "readout_dominated": NoiseProfile(
-        "readout_dominated", "synthetic", "Asymmetric readout errors dominate (P(1|0)=2%, P(0|1)=6%).",
+        "readout_dominated", "synthetic", r"Asymmetric readout errors dominate ($P(1|0)=2\%$, $P(0|1)=6\%$).",
         p1=0.0005, p2=0.002, ro01=0.02, ro10=0.06),
     "relaxation_dominated": NoiseProfile(
         "relaxation_dominated", "synthetic", "T1-limited device (T1=T2/1.5 = 20 us), moderate gate times.",

@@ -69,10 +69,10 @@ export interface MissionNarrative { speaker: CharacterId; scenario: string; brie
 const N = (speaker: CharacterId, scenario: string, brief: string, success: string, failure: string, hint?: string): MissionNarrative => ({ speaker, scenario, brief, success, failure, hint });
 
 export const MISSION_NARRATIVE: Record<string, MissionNarrative> = {
-  A1: N("valcourt", "A street-light controller in the Academy courtyard keeps reporting the wrong state.", "One qubit, one question: how often does it flip? A single measurement proves nothing — but how many do you need before you can trust the answer?", "You asked the data for evidence and got it. That is the whole craft.", "Not enough shots, or too many wasted. Measure, then ask how wide your uncertainty is.", "Statistical error shrinks like 1/√shots: ten times the shots, about three times narrower."),
-  A2: N("valcourt", "A lab qubit in superposition is quietly losing its phase.", "Some errors are invisible in the basis you are looking at. Choose where to look.", "Right basis, right conclusion. A Z-readout cannot see a Z error on |+⟩.", "Your readout was blind to the error you were hunting. Try the other basis.", "A phase (Z) error flips |+⟩ to |−⟩, which only an X-basis measurement distinguishes."),
-  A3: N("valcourt", "Two entangled qubits that should always agree have started to disagree.", "Entangled qubits agree in several bases at once. Find the correlation that noise broke.", "You found which correlation noise damaged — and quantified it.", "The correlation you measured is not the one that carries the damage. Compare ZZ, XX and YY.", "A perfect Bell pair has ⟨ZZ⟩ = 1, ⟨XX⟩ = 1 and ⟨YY⟩ = −1."),
-  A4: N("valcourt", "A message is stored in three qubits and one of them has been hit.", "Read the syndrome — two parity checks — and decide which qubit to flip back. The code corrects one bit-flip, not everything.", "Recovered. The code worked because it measured parities, not the message itself.", "Your recovery did not match what the syndrome pointed at.", "The syndrome (Z0Z1, Z1Z2) = (1,0) points at qubit 0; (1,1) at qubit 1; (0,1) at qubit 2."),
+  A1: N("valcourt", "A street-light controller in the Academy courtyard keeps reporting the wrong state.", "One qubit, one question: how often does it flip? A single measurement proves nothing — but how many do you need before you can trust the answer?", "You asked the data for evidence and got it. That is the whole craft.", "Not enough shots, or too many wasted. Measure, then ask how wide your uncertainty is.", "Statistical error shrinks like $1/\\sqrt{N}$ for $N$ shots: ten times the shots, about $\\sqrt{10}\\approx 3.2$ times narrower."),
+  A2: N("valcourt", "A lab qubit in superposition is quietly losing its phase.", "Some errors are invisible in the basis you are looking at. Choose where to look.", "Right basis, right conclusion. A $Z$-readout cannot see a $Z$ error on $|+\\rangle$.", "Your readout was blind to the error you were hunting. Try the other basis.", "A phase ($Z$) error flips $|+\\rangle$ to $|-\\rangle$, which only an $X$-basis measurement distinguishes."),
+  A3: N("valcourt", "Two entangled qubits that should always agree have started to disagree.", "Entangled qubits agree in several bases at once. Find the correlation that noise broke.", "You found which correlation noise damaged — and quantified it.", "The correlation you measured is not the one that carries the damage. Compare ZZ, XX and YY.", "A perfect Bell pair has $\\langle ZZ\\rangle=1$, $\\langle XX\\rangle=1$ and $\\langle YY\\rangle=-1$."),
+  A4: N("valcourt", "A message is stored in three qubits and one of them has been hit.", "Read the syndrome — two parity checks — and decide which qubit to flip back. The code corrects one bit-flip, not everything.", "Recovered. The code worked because it measured parities, not the message itself.", "Your recovery did not match what the syndrome pointed at.", "The syndrome $(Z_0Z_1,\\,Z_1Z_2)=(1,0)$ points at qubit 0; $(1,1)$ at qubit 1; $(0,1)$ at qubit 2."),
   D1: N("vale", "A four-qubit core circuit in Neon Labs must run without silent faults.", "Pick which qubits get a sentinel. The Paulice search builds the checks; we discard any shot where a sentinel fires.", "Sentinels placed, fidelity up, acceptance acceptable. Note what the veto cost you.", "Either the checks did not beat the unprotected circuit, or too many shots were vetoed.", "Doing nothing is a legitimate configuration — but this mission asks for a measurable gain."),
   D2: N("vale", "The lab's ancilla stock is limited and every check costs two-qubit gates.", "More sentinels are not automatically better. Find the point where one more stops paying for itself.", "Enough protection, not too much. The budget thanks you.", "You overspent resources or lost too many shots for too little fidelity.", "Compare added gates and acceptance, not just the fidelity."),
   D3: N("vale", "An alarm fired, one sentinel reads FIRED and nobody knows why.", "A fault hit the circuit somewhere. Which single faults would raise exactly this alarm? There may be several.", "Every consistent location identified. Detection tells you something fired — not always where.", "Your list included a location that cannot cause this alarm, or missed one that can.", "A fault trips a check only if it anticommutes with what that check monitors at that point in time."),
@@ -82,7 +82,7 @@ export const MISSION_NARRATIVE: Record<string, MissionNarrative> = {
   M1: N("castellanos", "Readings from the bay stations are consistently biased.", "The readout itself lies: sometimes a 0 is read as 1 and vice versa. Calibrate it and invert the lie.", "Calibration paid for itself. The estimate is closer to the truth.", "The calibration cost more than it gave, or it was too thin to trust.", "More calibration shots means a better matrix but fewer signal shots."),
   M2: N("castellanos", "A fixed budget of 8000 shots at a measurement station.", "Split it between calibration and signal. Too little calibration and the correction is noise; too much and the signal starves.", "A well-balanced split. Estimation error is the target, not the state.", "Your split left the estimate noisier than needed.", "Look for the sweet spot — the best share is neither the smallest nor the largest."),
   M3: N("castellanos", "Gate noise biases the result in a way readout calibration cannot touch.", "Amplify the noise on purpose, measure at several strengths, and extrapolate back to zero noise.", "Bias down. Remember what you paid for it: variance.", "Not enough noise points, or an extrapolation that did not cut the bias.", "Mitigation improves the estimate; it does not repair the quantum state."),
-  M4: N("castellanos", "Only 2000 shots, and a tempting high-order extrapolation.", "With few shots, a fancy extrapolation amplifies statistical noise. Sometimes the best strategy is the plain one.", "You chose the strategy the budget could afford. Restraint is a technique.", "Your extrapolation cost more variance than it removed bias.", "Compare MSE, not bias alone: MSE = bias² + variance."),
+  M4: N("castellanos", "Only 2000 shots, and a tempting high-order extrapolation.", "With few shots, a fancy extrapolation amplifies statistical noise. Sometimes the best strategy is the plain one.", "You chose the strategy the budget could afford. Restraint is a technique.", "Your extrapolation cost more variance than it removed bias.", "Compare MSE, not bias alone: $\\mathrm{MSE}=\\mathrm{Bias}^2+\\mathrm{Var}$."),
   M5: N("castellanos", "You do not know how noisy each circuit variant is.", "Spend a small pilot to learn where the variance lives, then allocate the rest. The pilot is not free.", "Adaptive allocation earned its pilot cost this time. It does not always.", "The pilot cost more than the allocation saved. Try a different pilot size.", "At small budgets adaptive allocation can lose to plain uniform allocation."),
   M6: N("castellanos", "The bay's most demanding estimation job.", "Combine calibration, extrapolation and allocation under one shot budget — and beat the target error.", "Precision target met on a fair budget. Well calibrated.", "The combination did not beat the unmitigated baseline by enough.", "Every strategy here gets exactly the same total shots; compare like with like."),
   C1: N("ndiaye", "A repetition-code memory in the Core's test rack, damaged again.", "Read each syndrome and choose the recovery. Warm-up for the real code.", "Clean recoveries. Now for the surface code.", "A recovery did not match its syndrome.", "Same table as the Academy: the syndrome points at the flipped qubit."),
@@ -102,12 +102,12 @@ export const MISSION_NARRATIVE: Record<string, MissionNarrative> = {
 
 export interface N1Stage { id: string; title: string; text: string }
 export const N1_STAGES: N1Stage[] = [
-  { id: "alert", title: "Emergency briefing", text: "Quantum network instability is spreading from the downtown tower. Inspect the available hardware and the shared budget before committing anything." },
-  { id: "detect", title: "Subsystem 1 — detection", text: "Choose how many sentinels guard the first subsystem and on which qubits. More sentinels raise fidelity and lower acceptance." },
-  { id: "mitigate", title: "Subsystem 2 — mitigation", text: "Choose a mitigation strategy and a shot allocation for the estimation task. It must fit what detection leaves over." },
-  { id: "correct", title: "Subsystem 3 — logical memory", text: "Choose the surface-code distance that protects the logical memory within the qubit budget." },
-  { id: "review", title: "Review and execute", text: "One execution per budget. Each subsystem is evaluated separately against its own scientific target." },
-  { id: "outcome", title: "Network status", text: "" },
+  { id: "alert", title: "Inspect the crisis", text: "Quantum network instability is spreading from the downtown tower. Look at the hardware and the shared budget before you commit anything." },
+  { id: "detect", title: "Choose detection", text: "Pick how many sentinels guard the first subsystem and on which qubits. More sentinels raise fidelity and lower acceptance." },
+  { id: "mitigate", title: "Choose mitigation", text: "Pick a mitigation strategy and a shot allocation for the estimation task. It must fit what detection leaves over." },
+  { id: "correct", title: "Choose correction", text: "Pick the surface-code distance that protects the logical memory within the qubit budget." },
+  { id: "review", title: "Review resources", text: "Check the whole plan against the shared budget. Nothing is spent until you execute." },
+  { id: "outcome", title: "Execute and restore", text: "One execution per budget. Each subsystem is then judged separately against its own scientific target." },
 ];
 
 export const ENDINGS = {
@@ -117,3 +117,33 @@ export const ENDINGS = {
 };
 
 export const speaker = (missionId: string): Character => CAST[MISSION_NARRATIVE[missionId]?.speaker ?? "valcourt"];
+
+/** The mathematics behind each mission kind, shown under "Learn more" (Level 2). `$...$` is rendered by KaTeX. */
+export const KIND_MATH: Record<string, string> = {
+  experiment: "Statistical error of a measured probability: $\\sigma\\approx\\sqrt{p(1-p)/N}$. The Wilson interval is used for the 95% interval.",
+  repetition: "The syndrome $(Z_0Z_1,\\,Z_1Z_2)$ identifies a single bit-flip; $Y$ and $Z$ errors are not corrected by this code.",
+  detection: "Post-selected fidelity $F_{\\mathrm{ps}}=\\langle\\psi|\\rho_{\\mathrm{acc}}|\\psi\\rangle$ with acceptance $\\kappa=\\Pr[\\text{no check fires}]$. Shots needed for equal precision scale as $1/(\\kappa F_{\\mathrm{ps}}^{2})$ (undefined when $\\kappa=0$).",
+  diagnosis: "A single fault at a spacetime location flips check $j$ iff it anticommutes with that check's flow there.",
+  mitigation: "$\\mathrm{MSE}=\\mathrm{Bias}^{2}+\\mathrm{Var}$, estimated over independent repeated trials with the same total shot budget.",
+  decoding: "Edge weight $w=\\ln\\frac{1-p}{p}$; logical success needs the parity of the chosen edges' logical flips to equal the true flip.",
+  distance: "Logical failure $p_L$ with a Wilson 95% interval; qubit-rounds = active qubits $\\times$ rounds.",
+  optimization: "A candidate $x$ is dominated if another candidate is at least as good on every objective and strictly better on one.",
+  drift: "Relative regret $=(\\mathrm{MSE}_{\\mathrm{chosen}}-\\mathrm{MSE}_{\\mathrm{best}})/\\max(\\mathrm{MSE}_{\\mathrm{best}},10^{-6})$, evaluated under the true (drifted) noise.",
+  joint: "Raw detection shots $=\\lceil 2000/\\kappa\\rceil$; total shots = detection + mitigation; credits follow the published price list.",
+  integrated: "Each subsystem keeps its own metric ($F_{\\mathrm{ps}}$, MSE ratio, $p_L$); only the budget couples them.",
+};
+
+/** "How to play" in one or two sentences per mission kind (Level 1 of the briefing). */
+export const HOW_TO: Record<string, string> = {
+  experiment: "Pick a measurement setting and a number of shots, then press Measure. More shots narrow the uncertainty, but shots are limited.",
+  repetition: "Read the two parity checks (the syndrome), then choose which qubit to flip back, or do nothing.",
+  detection: "Click qubits to place sentinel checks, then press Run. Watch the fidelity (quality), the acceptance (shots kept) and the extra gates the checks cost.",
+  diagnosis: "Tick every location where a single fault could have raised exactly this alarm, then submit.",
+  mitigation: "Set the strategy and how the shot budget is split, then press Run. Compare the error with doing nothing.",
+  decoding: "Click error edges to connect the glowing defects (or send them to a boundary), then submit. Clearing the alarm is not enough: the logical qubit must survive.",
+  distance: "Simulate each code distance and pick the one that meets the failure target inside the qubit budget.",
+  optimization: "Choose a protection plan. A good plan is one that no other plan beats on every measure.",
+  drift: "Choose a strategy ranked on old calibration data, optionally buy a fresh calibration, then run it on today's drifted device.",
+  joint: "Pick a detection circuit, a lab strategy and a shot allocation. One execution spends the shared budget.",
+  integrated: "Follow the six steps: inspect the crisis, choose detection, mitigation and correction, review the budget, then execute once.",
+};

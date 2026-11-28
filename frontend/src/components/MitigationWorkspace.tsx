@@ -2,9 +2,10 @@ import { useMemo, useState } from "react";
 import type { Json } from "../engine";
 import { Icon } from "../art";
 import { modelAt, modelName } from "../mitigationModel";
+import { InlineMath, ScientificText } from "../math";
 import { useGame } from "../store";
 import { BarList } from "./charts";
-import { Metric, Panel, ResultPanel, f3 } from "./common";
+import { Details, Metric, Panel, ResultPanel, f3 } from "./common";
 
 function ExtrapolationChart({ out, ui }: { out: Json; ui: Json }) {
   const xs: number[] = out.scales, ys: number[] = out.example_values;
@@ -83,11 +84,12 @@ export function MitigationWorkspace() {
   const profile = ui.readout_profile;
   const sd = (s: Json) => Math.sqrt(Math.max(0, s.variance));
   const settings = useMemo(() => Object.keys(mission!.outcomes).length, [mission]);
+  const outside = out && Math.abs(out.example_estimate) > 1 + 1e-9;
   return (
     <div className="grid2">
       <div>
-        <Panel title={`Measurement and calibration console — fixed budget of ${total} shots`} accent="purple">
-          <p className="muted small">Every control snaps to one of the {settings} settings that were actually simulated for this mission; nothing is interpolated.</p>
+        <Panel title={`Set up the measurement: ${total} shots in total`} accent="purple">
+          <BudgetSplit total={total} cal={res?.calibration_shots ?? 0} pilot={res?.pilot_shots ?? 0} signal={out?.example_allocation ?? [Math.max(0, total - (res?.calibration_shots ?? 0) - (res?.pilot_shots ?? 0))]} />
           {names.filter((k) => dims[k].length > 1).map((k) => (
             <div key={k} className="ctl">
               <label htmlFor={`ctl-${k}`}>{ui.dim_labels[k] ?? k}</label>
@@ -104,52 +106,55 @@ export function MitigationWorkspace() {
               )}
             </div>
           ))}
-          {res && <BudgetSplit total={total} cal={res.calibration_shots} pilot={res.pilot_shots} signal={out?.example_allocation ?? [Math.max(0, total - res.calibration_shots - res.pilot_shots)]} />}
+          <p className="muted small">Each control snaps to one of the {settings} settings that were really simulated for this mission, so nothing is interpolated.</p>
           {cur && cur.feasible === false && <p className="bad">{cur.reason}</p>}
-          <p className="muted small">This setting runs {res?.two_qubit_gates ?? "—"} two-qubit gates at the deepest noise scale (executed gate count of the folded circuit).</p>
-          <button className="primary" disabled={state !== "strategy_configuration"} onClick={() => run(key)}><Icon name="play" /> Run experiment</button>
+          <button className="primary" disabled={state !== "strategy_configuration"} onClick={() => run(key)}><Icon name="play" /> Execute</button>
         </Panel>
-        <Panel title="Noise amplification (saved, exact)">
+        <Details title="Scientific details: noise amplification, readout matrix, baseline">
+          <h4>Noise amplification (saved, exact)</h4>
           <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Noise amplification (scrollable)"><table className="tbl"><caption className="sr-only">Executed noise-scaled circuits</caption>
-            <thead><tr><th>scale λ</th><th>depth</th><th>2q gates</th><th>⟨O⟩ noisy</th><th>⟨O⟩ with readout error</th><th>|error| vs ideal</th></tr></thead>
+            <thead><tr>{[String.raw`scale $\lambda$`, "depth", "2q gates", String.raw`$\langle O\rangle$ noisy`, String.raw`$\langle O\rangle$ with readout error`, String.raw`$|\text{error}|$ vs ideal`].map((h) => <th key={h}><ScientificText text={h} /></th>)}</tr></thead>
             <tbody>{Object.keys(curve).map((s) => <tr key={s}><td>{s}</td><td>{curve[s].depth}</td><td>{curve[s].two_qubit_gates}</td><td className="mono">{f3(curve[s].exact_noisy, 4)}</td><td className="mono">{f3(curve[s].exact_observed, 4)}</td><td className="mono">{f3(Math.abs(curve[s].exact_noisy - ui.ideal), 4)}</td></tr>)}</tbody></table></div>
-          <p className="muted small">Larger λ folds the circuit (U (U†U)^k) so gate noise grows while the ideal result stays the same; the error grows with λ, which is what the extrapolation exploits.</p>
-        </Panel>
-        {profile && <Panel title="Readout assignment matrix (synthetic profile)"><AssignmentMatrix p01={profile.p01} p10={profile.p10} /><p className="muted small">{profile.note}. Calibration shots estimate this matrix; fewer calibration shots mean a noisier estimate of it.</p></Panel>}
+          <p className="muted small"><ScientificText text={String.raw`Larger $\lambda$ folds the circuit ($U(U^{\dagger}U)^k$), so gate noise grows while the ideal result stays the same. The error grows with $\lambda$, which is what the extrapolation exploits.`} /> This setting runs {res?.two_qubit_gates ?? "n/a"} two-qubit gates at the deepest scale.</p>
+          {profile && <><h4>Readout assignment matrix (synthetic profile)</h4><AssignmentMatrix p01={profile.p01} p10={profile.p10} /><p className="muted small"><ScientificText text={profile.note} />. Calibration shots estimate this matrix; fewer calibration shots mean a noisier estimate of it.</p></>}
+          <h4>Unmitigated baseline for this scenario</h4>
+          <div className="metrics"><Metric label="ideal $\langle O\rangle$" value={f3(ui.ideal)} /><Metric label="bias" value={f3(base.bias, 4)} /><Metric label="variance" value={f3(base.variance, 5)} /><Metric label="MSE" value={f3(base.mse, 5)} /></div>
+          <p className="muted small">Mean squared error over {base.n} independent trials with the same total budget.</p>
+        </Details>
       </div>
       <div>
         {out ? (
-          <Panel title="Result" accent="cyan">
+          <Panel title="Outcome" accent="cyan">
             <ExtrapolationChart out={out} ui={ui} />
-            <div className="metrics">
-              <Metric label="estimate (this single run)" value={f3(out.example_estimate)} hint="one run of the chosen strategy" />
-              <Metric label="ideal ⟨O⟩" value={f3(ui.ideal)} />
-              <Metric label="bias (mean − ideal, over trials)" value={f3(out.summary.bias, 4)} />
-              <Metric label="standard deviation over trials" value={f3(sd(out.summary), 4)} hint="spread of the estimator across repeated independent runs; not a confidence interval of the single run" />
-              <Metric label="MSE (repeated trials)" value={f3(out.summary.mse, 5)} hint="bias² + variance over independent trials, not the error of one lucky run" tone={out.mse_ratio > 1 ? "bad" : "good"} />
-              <Metric label="MSE vs unmitigated" value={`${f3(out.mse_ratio, 2)}×`} tone={out.mse_ratio > 1 ? "bad" : "good"} />
+            <div className="metrics four">
+              <Metric label="Estimate (this run)" value={f3(out.example_estimate)} hint="One run of the chosen strategy. The estimate can lie outside the physical range." />
+              <Metric label="Error vs ideal" value={f3(Math.abs(out.example_estimate - ui.ideal), 3)} hint={`Distance to the noiseless value ${f3(ui.ideal)}`} tone={out.mse_ratio > 1 ? "bad" : "good"} />
+              <Metric label="Shots spent" value={out.resources.raw_shots + out.resources.calibration_shots + out.resources.pilot_shots} hint="Every shot is charged: signal, calibration and pilot" />
+              <Metric label="Uncertainty (±)" value={f3(sd(out.summary), 3)} hint="Spread of the estimator over repeated independent runs; not a confidence interval for this single run" />
             </div>
-            <BarList lo={0} hi={Math.max(out.summary.mse, base.mse, out.summary.bias ** 2, base.bias ** 2, out.summary.variance, base.variance) * 1.05} fmt={(x) => x.toExponential(2)}
-              caption={`Estimator quality over ${out.trials} independent repeated trials with the same total budget (lower is better). Bias² + variance = MSE.`}
-              rows={[
-                { label: "bias² — this strategy", value: out.summary.bias ** 2, tone: "mine" }, { label: "bias² — unmitigated", value: base.bias ** 2, tone: "base" },
-                { label: "variance — this strategy", value: out.summary.variance, tone: "mine" }, { label: "variance — unmitigated", value: base.variance, tone: "base" },
-                { label: "MSE — this strategy", value: out.summary.mse, tone: out.mse_ratio > 1 ? "bad" : "good" }, { label: "MSE — unmitigated", value: base.mse, tone: "base" },
-              ]} />
-            <p className="muted small">Shots per noise scale: {out.example_allocation.join(", ")} · calibration {out.resources.calibration_shots}, pilot {out.resources.pilot_shots}. Mitigation improves the <em>estimate</em> of ⟨O⟩; it does not repair the quantum state.
-              {out.mse_ratio > 1 && " Here the strategy had a larger MSE than doing nothing: variance grew more than bias fell."}</p>
+            {outside && <p className="notice" role="status"><Icon name="warn" /> The estimate lies outside the physical range [−1, 1]. Extrapolation weights are not constrained to physical values; the number is shown as computed, not clipped.</p>}
+            <Details>
+              <div className="metrics">
+                <Metric label="bias (mean − ideal, over trials)" value={f3(out.summary.bias, 4)} />
+                <Metric label="MSE (repeated trials)" value={f3(out.summary.mse, 5)} hint="Bias² + variance over independent trials, not the error of one lucky run" tone={out.mse_ratio > 1 ? "bad" : "good"} />
+                <Metric label="MSE vs unmitigated" value={`${f3(out.mse_ratio, 2)}×`} tone={out.mse_ratio > 1 ? "bad" : "good"} />
+              </div>
+              <BarList lo={0} hi={Math.max(out.summary.mse, base.mse, out.summary.bias ** 2, base.bias ** 2, out.summary.variance, base.variance) * 1.05} fmt={(x) => x.toExponential(2)}
+                caption={`Estimator quality over ${out.trials} independent repeated trials with the same total budget (lower is better). Bias² + variance = MSE.`}
+                rows={[
+                  { label: "bias² — this strategy", value: out.summary.bias ** 2, tone: "mine" }, { label: "bias² — unmitigated", value: base.bias ** 2, tone: "base" },
+                  { label: "variance — this strategy", value: out.summary.variance, tone: "mine" }, { label: "variance — unmitigated", value: base.variance, tone: "base" },
+                  { label: "MSE — this strategy", value: out.summary.mse, tone: out.mse_ratio > 1 ? "bad" : "good" }, { label: "MSE — unmitigated", value: base.mse, tone: "base" },
+                ]} />
+              <p className="muted small">Shots per noise scale: {out.example_allocation.join(", ")} · calibration {out.resources.calibration_shots}, pilot {out.resources.pilot_shots}. The extrapolation chart shows one run; the table values average {out.trials} repeated runs. Mitigation improves the <em>estimate</em> of <InlineMath tex={String.raw`\langle O\rangle`} />; it does not repair the quantum state.</p>
+              <h4>Your runs</h4>
+              <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Your runs (scrollable)"><table className="tbl"><thead><tr><th>#</th><th>setting</th><th>MSE ratio</th><th>bias</th><th>variance</th></tr></thead>
+                <tbody>{history.map((h) => <tr key={h.n}><td>{h.n}</td><td className="mono">{h.key}</td><td>{f3(h.outcome.mse_ratio, 2)}</td><td>{f3(h.outcome.summary?.bias, 4)}</td><td>{f3(h.outcome.summary?.variance, 5)}</td></tr>)}</tbody></table></div>
+            </Details>
             {lastSpend && <span className="sr-only" aria-live="polite">Run complete.</span>}
           </Panel>
-        ) : <Panel title="Result"><p className="muted">Set the controls and run. The result chart will show the measured points, the fitted model and the extrapolated estimate separately.</p></Panel>}
+        ) : <Panel title="Outcome"><p className="muted">Set the controls and press Execute. The chart will show the measured points, the fitted model and the extrapolated estimate separately.</p></Panel>}
         {out && <ResultPanel outcome={out} />}
-        <Panel title="Unmitigated baseline for this scenario">
-          <div className="metrics"><Metric label="ideal ⟨O⟩" value={f3(ui.ideal)} /><Metric label="bias" value={f3(base.bias, 4)} /><Metric label="variance" value={f3(base.variance, 5)} /><Metric label="MSE" value={f3(base.mse, 5)} /></div>
-          <p className="muted small">Mean squared error over {base.n} independent trials with the same total budget.</p>
-        </Panel>
-        <Panel title="Your runs">
-          <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Your runs (scrollable)"><table className="tbl"><thead><tr><th>#</th><th>setting</th><th>MSE ratio</th><th>bias</th><th>variance</th></tr></thead>
-            <tbody>{history.map((h) => <tr key={h.n}><td>{h.n}</td><td className="mono">{h.key}</td><td>{f3(h.outcome.mse_ratio, 2)}</td><td>{f3(h.outcome.summary?.bias, 4)}</td><td>{f3(h.outcome.summary?.variance, 5)}</td></tr>)}</tbody></table></div>
-        </Panel>
       </div>
     </div>
   );

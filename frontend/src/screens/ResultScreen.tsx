@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Icon } from "../art";
-import { Conditions, Explanation, Metric, Panel, ProvenanceBadge, ScoreBreakdown, f3 } from "../components/common";
+import { Conditions, Details, Explanation, Metric, OneLine, Panel, ProvenanceBadge, ScoreBreakdown, f3 } from "../components/common";
+import { ScientificText } from "../math";
 import { ENDINGS, MISSION_NARRATIVE, speaker } from "../content/narrative";
 import type { Json } from "../engine";
 import { useSettings } from "../settings";
@@ -59,15 +60,16 @@ export function improvementHints(mission: Json, last: Json): string[] {
 }
 
 export function ResultScreen({ success }: { success: boolean }) {
-  const { mission, last, go, restart, progress, data, isUnlocked, wallet, history, selectMission, leaveMission } = useGame();
+  const { mission, last, go, restart, progress, data, isUnlocked, wallet, history, selectMission, leaveMission, mode } = useGame();
   const { sfx } = useSettings();
   useEffect(() => { sfx(success ? "success" : "failure"); }, [success, sfx]);
   if (!mission || !last) return null;
+  const demo = mode === "demo";
   const rec = progress.completed[mission.id];
   const who = speaker(mission.id);
   const nar = MISSION_NARRATIVE[mission.id];
-  const unlockedNow = (data?.missions ?? []).filter((m: Json) => m.unlock_requires.includes(mission.id) && isUnlocked(m));
-  const all = data && Object.keys(progress.completed).length === data.missions.length;
+  const unlockedNow = demo ? [] : (data?.missions ?? []).filter((m: Json) => m.unlock_requires.includes(mission.id) && isUnlocked(m));
+  const all = !demo && data && Object.keys(progress.completed).length === data.missions.length;
   const integrated = mission.kind === "integrated";
   const partial = integrated && !success && (last.conditions ?? []).some((c: Json) => c.id !== "budget" && c.met);
   const tone = success ? "success" : partial ? "partial" : "fail";
@@ -75,48 +77,48 @@ export function ResultScreen({ success }: { success: boolean }) {
   const next = data ? nextObjective(data, progress, isUnlocked) : null;
   const lines = baselineLines(mission, last);
   const spent = wallet ? Object.entries(wallet.used).filter(([, v]) => v > 0) : [];
+  const back = demo ? "Back to the demo" : "Back to map";
   return (
     <div>
       <div className={`result-banner ${tone}`} role="status" aria-live="polite">
         <h2>{title}</h2>
-        <p className="muted">{mission.id} · {mission.title}</p>
-        <p style={{ maxWidth: 680, margin: "6px auto" }}><strong style={{ color: who.color }}>{who.name}:</strong> {success ? nar?.success : nar?.failure}</p>
+        <p className="muted">{mission.id} · {mission.title}{demo ? " · Quick Demo" : ""}</p>
+        <p style={{ maxWidth: 680, margin: "6px auto" }}><strong style={{ color: who.color }}>{who.name}:</strong> <ScientificText text={success ? nar?.success : nar?.failure} /></p>
       </div>
       {integrated && <RestorationBoard last={last} />}
       {integrated && <p className="panel" style={{ marginTop: 12 }}>{success ? ENDINGS.success : partial ? ENDINGS.partial : ENDINGS.failure}</p>}
-      <div className="grid2">
-        <Panel title="Scientific summary" accent={success ? "success" : "warning"}>
-          <Conditions items={last.conditions} />
-          <div className="metrics">
-            <Metric label="score this attempt" value={f3(last.score, 1)} hint="pedagogical score (game-design weights)" />
-            {rec && <Metric label="best score" value={f3(rec.best_score, 1)} />}
-            <Metric label="runs this attempt" value={history.length} />
-          </div>
-          <ProvenanceBadge kind={last.result_kind} />
-        </Panel>
-        <Panel title="Comparison with baselines">
-          {lines.length ? <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Baseline comparison (scrollable)"><table className="tbl"><tbody>{lines.map((l) => <tr key={l.label}><th scope="row">{l.label}</th><td className="mono">{l.value}</td></tr>)}</tbody></table></div> : <p className="muted">No separate baseline applies to this mission type.</p>}
-          <h4>Resources used</h4>
-          <p className="mono small">{spent.length ? spent.map(([k, v]) => `${k.replace(/_/g, " ")}: ${v}`).join(" · ") : "none"}{wallet ? ` · credits: ${wallet.usedCredits.toFixed(1)} of ${wallet.credits}` : ""}</p>
-        </Panel>
-      </div>
+      <Panel title="Result" accent={success ? "success" : "warning"}>
+        <Conditions items={last.conditions} />
+        {last.explanation?.plain && <OneLine><ScientificText text={last.explanation.plain} /></OneLine>}
+        <div className="metrics">
+          <Metric label="score this attempt" value={f3(last.score, 1)} hint="pedagogical score (game-design weights)" />
+          {rec && <Metric label="best score" value={f3(rec.best_score, 1)} />}
+          <Metric label="runs this attempt" value={history.length} />
+        </div>
+      </Panel>
       {!success && (
         <Panel title="What to try next" accent="orange">
-          <ul>{improvementHints(mission, last).map((h) => <li key={h}>{h}</li>)}</ul>
+          <ul>{improvementHints(mission, last).map((h) => <li key={h}><ScientificText text={h} /></li>)}</ul>
         </Panel>
       )}
-      <Panel title="Explanation">
-        <Explanation e={last.explanation} />
-        <ScoreBreakdown sb={last.score_breakdown} />
-      </Panel>
       {success && unlockedNow.length > 0 && <Panel accent="cyan" title="Unlocked"><ul>{unlockedNow.map((m: Json) => <li key={m.id}><Icon name="star" /> {m.id} · {m.title}</li>)}</ul></Panel>}
-      {nar && success && who.campaign.length > 0 && <p className="muted small"><strong>{who.name}:</strong> {who.campaign[Math.min(who.campaign.length - 1, (rec?.attempts ?? 1) > 1 ? 1 : 0)]}</p>}
       <div className="row">
         <button onClick={restart}>{success ? "Replay with another strategy" : "Retry mission"}</button>
         {success && next && next.id !== mission.id && <button className="primary" onClick={() => { go("district_selection"); selectMission(next.id); }}>Next: {next.id} · {next.title}</button>}
-        <button className={success && next ? "" : "primary"} onClick={() => { leaveMission(); }}>Back to map</button>
+        <button className={success && next ? "" : "primary"} onClick={() => { leaveMission(); }}>{back}</button>
         {all && <button className="primary" onClick={() => go("campaign_complete")}>Finish campaign</button>}
       </div>
+      {nar && success && who.campaign.length > 0 && <p className="muted small"><strong>{who.name}:</strong> {who.campaign[Math.min(who.campaign.length - 1, (rec?.attempts ?? 1) > 1 ? 1 : 0)]}</p>}
+      <Details title="Scientific details: baselines, resources, explanation, score">
+        <ProvenanceBadge kind={last.result_kind} />
+        <h4>Comparison with baselines</h4>
+        {lines.length ? <div className="tbl-wrap" tabIndex={0} role="region" aria-label="Baseline comparison (scrollable)"><table className="tbl"><tbody>{lines.map((l) => <tr key={l.label}><th scope="row">{l.label}</th><td className="mono">{l.value}</td></tr>)}</tbody></table></div> : <p className="muted">No separate baseline applies to this mission type.</p>}
+        <h4>Resources used</h4>
+        <p className="mono small">{spent.length ? spent.map(([k, v]) => `${k.replace(/_/g, " ")}: ${v}`).join(" · ") : "none"}{wallet ? ` · credits: ${wallet.usedCredits.toFixed(1)} of ${wallet.credits}` : ""}</p>
+        <h4>Explanation</h4>
+        <Explanation e={last.explanation} />
+        <ScoreBreakdown sb={last.score_breakdown} />
+      </Details>
     </div>
   );
 }

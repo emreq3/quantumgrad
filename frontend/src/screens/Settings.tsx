@@ -7,9 +7,10 @@ import { useUi } from "../ui";
 
 export function SettingsScreen({ onClose }: { onClose: () => void }) {
   const { settings, update, sfx, unlockAudio, reducedMotion, audio } = useSettings();
-  const { progress, setDifficulty, resetCampaign } = useGame();
+  const { campaignProgress: progress, setDifficulty, resetCampaign, resetDemo, demoProgress } = useGame();
   const { playIntro } = useUi();
   const [confirm, setConfirm] = useState(false);
+  const [confirmDemo, setConfirmDemo] = useState(false);
   const pct = (x: number) => `${Math.round(x * 100)} %`;
   const slider = (id: "master" | "music" | "sfx", label: string) => (
     <div className="ctl"><label htmlFor={`set-${id}`}>{label}</label>
@@ -45,8 +46,13 @@ export function SettingsScreen({ onClose }: { onClose: () => void }) {
         <div className="ctl"><label htmlFor="set-diff">Difficulty focus</label>
           <select id="set-diff" value={progress.difficulty} onChange={(e) => setDifficulty(e.target.value as never)}><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div>
         <p className="muted small">Progress is stored in this browser only. Difficulty focus highlights missions; it does not change the science.</p>
-        <button className="danger" onClick={() => setConfirm(true)}>Reset campaign progress</button>
+        <div className="row">
+          <button className="danger" onClick={() => setConfirm(true)}>Reset campaign progress</button>
+          <button className="danger" onClick={() => setConfirmDemo(true)} disabled={Object.keys(demoProgress.completed).length === 0}>Reset Quick Demo progress</button>
+        </div>
       </Panel>
+      {confirmDemo && <ConfirmDialog danger title="Reset Quick Demo progress?" confirm="Reset demo" onCancel={() => setConfirmDemo(false)} onConfirm={() => { setConfirmDemo(false); resetDemo(); }}
+        body={<p>Only the Quick Demo is cleared. Your campaign progress is not affected.</p>} />}
       {confirm && <ConfirmDialog danger title="Reset all campaign progress?" confirm="Reset progress" onCancel={() => setConfirm(false)} onConfirm={() => { setConfirm(false); resetCampaign(); onClose(); }}
         body={<p>Completed missions and scores in this browser will be erased. Settings are kept.</p>} />}
     </div>

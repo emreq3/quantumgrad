@@ -38,7 +38,7 @@ export function Sandbox({ onClose }: { onClose: () => void }) {
         <span className={`badge ${online ? "" : "warn"}`}>{online ? "⏺ live computation via the Python API" : "API not reachable"}</span></div>
       {!online && (
         <Panel accent="warning" title="Live sandbox unavailable">
-          <p>The sandbox runs <strong>new</strong> simulations through the project's Python API. None is reachable from this page, so no request is being repeated. The campaign does not need it: its missions replay simulations that were executed ahead of time.</p>
+          <p>The sandbox runs <strong>new</strong> simulations through the project's Python API. None is reachable from this page, so no request is being repeated. The campaign does not need it: the precomputed campaign is fully playable offline, and its missions replay simulations that were executed ahead of time.</p>
           <p className="small">Start it locally with <code>uvicorn qta6.api.app:app --port 8000</code>, then enter its address below (the development server proxies <code>/api</code> automatically).</p>
         </Panel>
       )}

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { defaultApiBase } from "./config";
 import {
-  canAfford, canGo, charge, creditCost, emptyProgress, evaluateCorrection, isUnlocked, loadProgress, newWallet, outcomeUnits,
+  canAfford, canGo, charge, creditCost, DEMO_IDS, DEMO_KEY, emptyProgress, evaluateCorrection, isUnlocked, loadProgress, newWallet, outcomeUnits,
   safeStorage, saveProgress, SAVE_KEY, validateProgress, type GameState, type Json, type Progress, type Wallet,
 } from "./engine";
 
@@ -16,13 +16,18 @@ interface Ctx {
   apiAvailable: boolean;
   recheckApi: (base?: string | null) => Promise<boolean>;
   state: GameState;
+  /** "campaign" or the curated Quick Demo. `progress` below is always the progress of the CURRENT mode; the other one is never touched. */
+  mode: "campaign" | "demo";
   progress: Progress;
+  campaignProgress: Progress;
+  demoProgress: Progress;
   mission: Json | null;
   wallet: Wallet | null;
   history: Run[];
   last: Json | null;
   solved: Record<string, boolean>;
   notice: string | null;
+  setNoticeText: (s: string | null) => void;
   lastSpend: { n: number; credits: number; units: Record<string, number> } | null;
   go: (to: GameState) => void;
   selectMission: (id: string) => void;
@@ -35,6 +40,8 @@ interface Ctx {
   restart: () => void;
   leaveMission: () => void;
   resetCampaign: () => void;
+  resetDemo: () => void;
+  startDemo: () => void;
   setDifficulty: (d: Progress["difficulty"]) => void;
   isUnlocked: (m: Json) => boolean;
 }
@@ -57,7 +64,7 @@ export function correctionFeedback(res: Json): Json {
   return {
     plain,
     scientific: `Path cost ${res.path_cost.toFixed(2)} vs MWPM reference ${res.mwpm_cost.toFixed(2)}; MWPM was ${res.mwpm_logical_correct ? "right" : "wrong"} on this instance. Corrections equivalent up to stabilizers are all accepted.`,
-    math: "Weight w_e = ln((1-p_e)/p_e); logical success requires XOR of chosen edges' observable flips = true observable flip.",
+    math: String.raw`Edge weight $w_e=\ln\frac{1-p_e}{p_e}$. The correction $C$ preserves the logical qubit iff $\bigoplus_{e\in C}o_e=o_{\mathrm{true}}$ (the parity of observable flips along the chosen edges matches the true flip).`,
     refs,
   };
 }
@@ -68,7 +75,9 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
   const [apiBase, setApiBase] = useState<string | null>(() => defaultApiBase());
   const [apiState, setApiState] = useState<ApiState>(() => (defaultApiBase() === null ? "disabled" : "unknown"));
   const [state, setState] = useState<GameState>("main_menu");
-  const [progress, setProgress] = useState<Progress>(() => loadProgress());
+  const [campaignProgress, setCampaign] = useState<Progress>(() => loadProgress());
+  const [demoProgress, setDemo] = useState<Progress>(() => loadProgress(safeStorage(), DEMO_KEY));
+  const [mode, setMode] = useState<"campaign" | "demo">("campaign");
   const [mission, setMission] = useState<Json | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [history, setHistory] = useState<Run[]>([]);
@@ -81,6 +90,11 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
   // (double click, key repeat, an animation callback firing twice) would otherwise both read the stale snapshot and
   // both execute / both charge. All guards read these refs, which are updated before anything else happens.
   const stateRef = useRef<GameState>("main_menu");
+  const modeRef = useRef<"campaign" | "demo">("campaign");
+  const progress = mode === "demo" ? demoProgress : campaignProgress;
+  /** Writes go to the progress of the mode the player is in *right now* (read from the ref, so a late callback can never write to the other save). */
+  const setProgress = (fn: (p: Progress) => Progress) => (modeRef.current === "demo" ? setDemo(fn) : setCampaign(fn));
+  const setModeBoth = (m: "campaign" | "demo") => { modeRef.current = m; setMode(m); };
   const walletRef = useRef<Wallet | null>(null);
   const missionRef = useRef<Json | null>(null);
   const solvedRef = useRef<Record<string, boolean>>({});
@@ -114,19 +128,24 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
   }, [apiBase]);
   useEffect(() => { if (apiBase !== null) void recheckApi(apiBase); /* single startup probe */ }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => saveProgress(progress), [progress]);
+  useEffect(() => saveProgress(campaignProgress), [campaignProgress]);
+  useEffect(() => saveProgress(demoProgress, safeStorage(), false, DEMO_KEY), [demoProgress]);
   useEffect(() => { // multi-tab: adopt a valid save written by another tab (a reset in one tab wins everywhere)
     const onStorage = (e: StorageEvent) => {
       if (e.key !== SAVE_KEY && e.key !== null) return;
-      try { const raw = safeStorage()?.getItem(SAVE_KEY); setProgress(raw ? validateProgress(JSON.parse(raw)) : emptyProgress()); } catch { /* ignore corrupt writes */ }
+      try { const raw = safeStorage()?.getItem(SAVE_KEY); setCampaign(raw ? validateProgress(JSON.parse(raw)) : emptyProgress()); } catch { /* ignore corrupt writes */ }
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const go = useCallback((to: GameState) => {
-    if (canGo(stateRef.current, to)) setS(to); else console.error(`illegal transition ${stateRef.current} -> ${to}`);
+    if (!canGo(stateRef.current, to)) { console.error(`illegal transition ${stateRef.current} -> ${to}`); return; }
+    if (to === "main_menu") { modeRef.current = "campaign"; setMode("campaign"); } // leaving the demo hub for the menu always ends the demo mode
+    setS(to);
   }, []);
+  /** The Quick Demo has no unlock chain: its six curated missions are all open. The campaign keeps its own prerequisites. */
+  const isOpen = (m: Json) => (modeRef.current === "demo" ? DEMO_IDS.includes(m.id) : isUnlocked(campaignProgress, m));
 
   const resetAttempt = (m: Json | null) => {
     setW(m ? newWallet(m) : null); setHistory([]); setLast(null); setSolvedBoth({}); setNotice(null); setLastSpend(null); nRef.current = 0;
@@ -134,7 +153,7 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
 
   const selectMission = (id: string) => {
     const m = data?.missions.find((x: Json) => x.id === id);
-    if (!m || !isUnlocked(progress, m)) { setNotice(`Mission ${id} is locked`); return; }
+    if (!m || !isOpen(m)) { setNotice(`Mission ${id} is locked`); return; }
     if (!canGo(stateRef.current, "mission_briefing")) return;
     setS("mission_briefing");
     missionRef.current = m; setMission(m); resetAttempt(m);
@@ -224,7 +243,7 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
           explanation: {
             plain: ok ? "Every location whose fault flips exactly the fired checks is consistent with the alarm." : "Some selected locations do not produce this syndrome, or some consistent locations were missed.",
             scientific: "A fault flips a check iff it anticommutes with that check's flow at that spacetime location.",
-            math: "Syndrome bit j = x-component (final Pauli) on ancilla j after Pauli propagation.", refs: ["research/03_error_detection.md"],
+            math: String.raw`Syndrome bit $s_j=1$ iff the propagated fault has an $X$ or $Y$ component on ancilla $j$ (it flips that ancilla's $Z$-basis readout).`, refs: ["research/03_error_detection.md"],
           },
         },
       };
@@ -269,17 +288,25 @@ export function GameProvider({ children, dataUrl = "data/campaign.json", initial
 
   const resetCampaign = () => {
     const fresh = emptyProgress();
-    setProgress(fresh);
+    setCampaign(fresh);
     saveProgress(fresh, safeStorage(), true); // an explicit reset replaces the stored save instead of merging
+    setModeBoth("campaign");
     missionRef.current = null; setMission(null); resetAttempt(null); setS("main_menu");
   };
-  const setDifficulty = (d: Progress["difficulty"]) => setProgress((p) => ({ ...p, difficulty: d }));
-  const unlocked = useCallback((m: Json) => isUnlocked(progress, m), [progress]);
+  /** Clears only the Quick Demo progress; the campaign save is untouched. */
+  const resetDemo = () => { const fresh = emptyProgress(); setDemo(fresh); saveProgress(fresh, safeStorage(), true, DEMO_KEY); };
+  const startDemo = () => {
+    if (stateRef.current !== "main_menu") return;
+    setModeBoth("demo");
+    go("district_selection");
+  };
+  const setDifficulty = (d: Progress["difficulty"]) => setCampaign((p) => ({ ...p, difficulty: d }));
+  const unlocked = useCallback((m: Json) => (mode === "demo" ? DEMO_IDS.includes(m.id) : isUnlocked(campaignProgress, m)), [mode, campaignProgress]);
 
   const value = useMemo<Ctx>(() => ({
-    data, error, apiBase, apiState, apiAvailable: apiState === "online", recheckApi, state, progress, mission, wallet, history, last, solved, notice, lastSpend,
-    go, selectMission, begin, run, submitCorrection, submitDiagnosis, continuePlaying, finish, restart, leaveMission, resetCampaign, setDifficulty, isUnlocked: unlocked,
-  }), [data, error, apiBase, apiState, recheckApi, state, progress, mission, wallet, history, last, solved, notice, lastSpend, go, unlocked]); // eslint-disable-line react-hooks/exhaustive-deps
+    data, error, apiBase, apiState, apiAvailable: apiState === "online", recheckApi, state, mode, progress, campaignProgress, demoProgress, mission, wallet, history, last, solved, notice, setNoticeText: setNotice, lastSpend,
+    go, selectMission, begin, run, submitCorrection, submitDiagnosis, continuePlaying, finish, restart, leaveMission, resetCampaign, resetDemo, startDemo, setDifficulty, isUnlocked: unlocked,
+  }), [data, error, apiBase, apiState, recheckApi, state, mode, progress, campaignProgress, demoProgress, mission, wallet, history, last, solved, notice, lastSpend, go, unlocked]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }

@@ -5,7 +5,8 @@ import { useGame } from "../store";
 import { BarList } from "./charts";
 import { CircuitView } from "./CircuitView";
 import { DetectionWorkspace } from "./DetectionWorkspace";
-import { Metric, Panel, ProvenanceBadge, ResultPanel, f3 } from "./common";
+import { Details, Metric, OneLine, Panel, ProvenanceBadge, ResultPanel, f3 } from "./common";
+import { ScientificText } from "../math";
 
 // ---------------------------------------------------------------- Academy experiments (A1-A3)
 export function ExperimentWorkspace() {
@@ -45,7 +46,7 @@ export function ExperimentWorkspace() {
             </svg>
             <div className="metrics"><Metric label={out.estimate.observable} value={f3(out.estimate.value)} />
               <Metric label="standard error" value={f3(out.estimate.stderr, 4)} />
-              {out.estimate.sigma_from_ideal !== undefined && <Metric label="deviation from ideal (σ)" value={f3(out.estimate.sigma_from_ideal, 1)} />}
+              {out.estimate.sigma_from_ideal !== undefined && <Metric label="deviation from ideal ($\sigma$)" value={f3(out.estimate.sigma_from_ideal, 1)} />}
               {out.estimate.ci95_halfwidth !== undefined && <Metric label="95% half-width" value={f3(out.estimate.ci95_halfwidth, 4)} />}</div>
             <p>{out.summary}</p>
           </Panel>
@@ -73,7 +74,7 @@ export function RepetitionWorkspace() {
                   {[0, 1, 2].map((q) => <g key={q}><circle cx={40 + q * 90} cy={40} r={15} fill="#141a38" stroke="#8B5CF6" strokeWidth={2} /><text x={40 + q * 90} y={44} textAnchor="middle" fontSize={11} fill="#F1F5F9" fontFamily="JetBrains Mono, monospace">q{q}</text></g>)}
                   {[0, 1].map((c) => <g key={c}><rect x={72 + c * 90} y={4} width={28} height={18} rx={3} fill={i.syndrome[c] ? "#FF2D95" : "#0e2a33"} stroke="#00E5FF" /><text x={86 + c * 90} y={17} textAnchor="middle" fontSize={11} fill={i.syndrome[c] ? "#12081f" : "#F1F5F9"} fontWeight={700}>{i.syndrome[c] ? "1 !" : "0"}</text></g>)}
                 </svg>
-                <span className="muted small">syndrome (Z₀Z₁, Z₁Z₂) = ({i.syndrome.join(", ")})</span>
+                <span className="muted small"><ScientificText text={String.raw`syndrome $(Z_0Z_1,\,Z_1Z_2)=(${i.syndrome.join(",")})$`} /></span>
               </div>
               <div className="row tight">
                 {["none", "0", "1", "2"].map((r) => (
@@ -152,12 +153,17 @@ export function DistanceWorkspace() {
       <div>
         {out && (
           <Panel title="Logical memory result (Monte Carlo)" accent="cyan">
-            <div className="metrics"><Metric label="logical failures / trials" value={`${out.failures} / ${out.trials}`} /><Metric label="p_L (point estimate)" value={f3(out.p_logical, 5)} />
-              <Metric label="95% Wilson interval" value={`${f3(out.wilson95[0], 4)}–${f3(out.wilson95[1], 4)}`} /><Metric label="qubit-rounds" value={out.qubit_rounds} />
-              <Metric label="decode µs/shot (this machine)" value={f3(out.decode_us_per_shot, 1)} hint="wall-clock time; machine dependent and not part of the score" /></div>
-            <BarList lo={0} hi={Math.max(ui.target_pl, out.wilson95[1]) * 1.1} fmt={(x) => x.toFixed(4)} caption="Logical failure probability with its 95 % interval; the target is the dashed requirement."
-              rows={[{ label: "lower end of the interval", value: out.wilson95[0], tone: "uncertain" }, { label: "point estimate", value: out.p_logical, tone: "mine" }, { label: "upper end of the interval", value: out.wilson95[1], tone: "uncertain" }, { label: "target (must hold for the upper end)", value: ui.target_pl, tone: "good" }]} />
+            <div className="metrics three"><Metric label="Logical failure rate $p_L$" value={f3(out.p_logical, 4)} /><Metric label="95% range (Wilson)" value={`${f3(out.wilson95[0], 4)}–${f3(out.wilson95[1], 4)}`} />
+              <Metric label="Physical qubits" value={out.physical_qubits} hint="rotated surface code: 2d²−1 qubits (data plus measure)" /></div>
             {out.failures < 10 && <p className="warn"><Icon name="warn" /> Only {out.failures} failures were observed: the point estimate is uncertain; rely on the interval.</p>}
+            <OneLine>The mission needs the <em>upper</em> end of the range to stay below {f3(ui.target_pl, 3)}: here it is {f3(out.wilson95[1], 4)}.</OneLine>
+            <Details>
+              <div className="metrics"><Metric label="logical failures / trials" value={`${out.failures} / ${out.trials}`} /><Metric label="qubit-rounds" value={out.qubit_rounds} />
+                <Metric label="decode µs/shot (this machine)" value={f3(out.decode_us_per_shot, 1)} hint="wall-clock time; machine dependent and not part of the score" /></div>
+              <BarList lo={0} hi={Math.max(ui.target_pl, out.wilson95[1]) * 1.1} fmt={(x) => x.toFixed(4)} caption="Logical failure probability with its 95 % interval; the target is the dashed requirement."
+                rows={[{ label: "lower end of the interval", value: out.wilson95[0], tone: "uncertain" }, { label: "point estimate", value: out.p_logical, tone: "mine" }, { label: "upper end of the interval", value: out.wilson95[1], tone: "uncertain" }, { label: "target (must hold for the upper end)", value: ui.target_pl, tone: "good" }]} />
+              <p className="muted small">The result depends on the noise model and on the round policy ({ui.rounds_rule}); another policy moves the numbers and the crossover distance.</p>
+            </Details>
           </Panel>)}
         {out && <ResultPanel outcome={out} />}
       </div>
@@ -189,9 +195,13 @@ export function DriftWorkspace() {
         {out && (
           <Panel title="3 · Hidden TRUE (drifted) noise — revealed after execution" accent="cyan">
             <p className="small muted">{out.bought_calibration ? "2 · You updated the calibration before running." : "2 · You ran on the stale calibration."}</p>
-            <div className="metrics"><Metric label="your true MSE" value={f3(out.true_summary.mse, 5)} /><Metric label="MSE you expected (stale)" value={f3(out.estimated_summary.mse, 5)} />
-              <Metric label="relative regret" value={`${f3(100 * out.regret_ratio, 0)} %`} hint="(MSE − best MSE) / max(best MSE, 1e-6) under the true noise" />
-              <Metric label="absolute regret (MSE)" value={f3(out.absolute_regret_mse, 5)} /><Metric label="robust choice?" value={out.is_robust_choice ? "yes" : "no"} /></div>
+            <div className="metrics three"><Metric label="your true MSE" value={f3(out.true_summary.mse, 5)} /><Metric label="MSE you expected (stale)" value={f3(out.estimated_summary.mse, 5)} />
+              <Metric label="relative regret" value={`${f3(100 * out.regret_ratio, 0)} %`} hint="How much worse than the best plan under the true noise, relative to that best plan" /></div>
+            <OneLine>{out.regret_ratio <= 0.15 ? "Your plan held up under the drift." : "The drift changed which plan is best: your choice was well behind the best one."}</OneLine>
+            <Details>
+              <div className="metrics"><Metric label="absolute regret (MSE)" value={f3(out.absolute_regret_mse, 5)} /><Metric label="robust choice?" value={out.is_robust_choice ? "yes" : "no"} /></div>
+              <p className="muted small"><ScientificText text={String.raw`Relative regret $=(\mathrm{MSE}_{\mathrm{chosen}}-\mathrm{MSE}_{\mathrm{best}})/\max(\mathrm{MSE}_{\mathrm{best}},10^{-6})$ under the true noise. The "robust choice" is the plan with the best mean-plus-spread MSE over the old and the true calibration: a game rule, not a universally optimal robust strategy.`} /></p>
+            </Details>
           </Panel>)}
         {out && <ResultPanel outcome={out} />}
       </div>
@@ -214,7 +224,7 @@ export function JointWorkspace() {
   const row: Json | undefined = mission!.outcomes[key];
   const out: Json | null = last && last.detection_key ? last : null;
   const refb = mission!.reference?.baselines;
-  const label = (k: string) => { const o = ui.detection_options[k]; return `${o.ancillas} sentinel${o.ancillas === 1 ? "" : "s"} on qubits [${o.targets.join(",")}] — F ${f3(o.fidelity)}, κ ${f3(o.acceptance, 2)}`; };
+  const label = (k: string) => { const o = ui.detection_options[k]; return `${o.ancillas} sentinel${o.ancillas === 1 ? "" : "s"} on qubits [${o.targets.join(",")}]: fidelity ${f3(o.fidelity)}, acceptance ${f3(o.acceptance, 2)}`; };
   const afford = row?.units ? (wallet ? wallet.usedCredits + row.totals.credits <= wallet.credits && (wallet.used.shots ?? 0) + row.units.shots <= (wallet.caps.shots ?? Infinity) : true) : true;
   return (
     <div className="grid2">
@@ -233,15 +243,17 @@ export function JointWorkspace() {
       </div>
       <div>
         {out && (
-          <Panel title="Per-task scientific results (kept separate)" accent="cyan">
-            <div className="metrics">
-              <Metric label="detection: F_ps / κ" value={`${f3(out.detection.fidelity)} / ${f3(out.detection.acceptance, 2)}`} />
-              <Metric label="detection: raw shots" value={out.detection.raw_shots} />
+          <Panel title="Outcome: each system judged by its own metric" accent="cyan">
+            <div className="metrics three">
+              <Metric label="detection: $F_{\mathrm{ps}}$ / $\kappa$" value={`${f3(out.detection.fidelity)} / ${f3(out.detection.acceptance, 2)}`} />
               <Metric label="mitigation: MSE vs unmitigated" value={`${f3(out.mitigation_metrics.mse_ratio, 2)}×`} />
-              <Metric label="total qubits" value={out.totals.qubits} /><Metric label="total shots" value={out.totals.shots} />
+              <Metric label="total shots" value={out.totals.shots} />
             </div>
-            {refb && <p className="muted small">Reference (automated, within the {mission!.reference.n_rows} enumerated plans): random feasible plan mean score {f3(refb.random_feasible.mean_score, 1)}, greedy-sequential {f3(refb.greedy_sequential.score, 1)}, best enumerated {f3(refb.best_enumerated.score, 1)}. {mission!.reference.optimality_scope}.</p>}
-            <ProvenanceBadge kind="monte_carlo" />
+            <Details>
+              <div className="metrics"><Metric label="detection: raw shots" value={out.detection.raw_shots} /><Metric label="total qubits" value={out.totals.qubits} /></div>
+              {refb && <p className="muted small">Reference (automated, within the {mission!.reference.n_rows} enumerated plans): random feasible plan mean score {f3(refb.random_feasible.mean_score, 1)}, greedy-sequential {f3(refb.greedy_sequential.score, 1)}, best enumerated {f3(refb.best_enumerated.score, 1)}. {mission!.reference.optimality_scope}. Scores use game-design weights, not physical constants.</p>}
+              <ProvenanceBadge kind="monte_carlo" />
+            </Details>
           </Panel>)}
         {out && <ResultPanel outcome={out} />}
       </div>
