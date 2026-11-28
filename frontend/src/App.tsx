@@ -1,33 +1,81 @@
-import { useState } from "react";
-import { GameProvider, useGame } from "./store";
-import { Briefing, CampaignComplete, DistrictMap, EndScreen, Glossary, MainMenu, MissionScreen, Sandbox } from "./screens";
+import { Icon } from "./art";
+import { ConfirmDialog } from "./components/common";
 import type { Json } from "./engine";
+import { Briefing } from "./screens/Briefing";
+import { CampaignComplete } from "./screens/Complete";
+import { Codex } from "./screens/Codex";
+import { Credits } from "./screens/Credits";
+import { Intro } from "./screens/Intro";
+import { MainMenu } from "./screens/MainMenu";
+import { MapScreen } from "./screens/MapScreen";
+import { MissionScreen } from "./screens/MissionScreen";
+import { ResultScreen } from "./screens/ResultScreen";
+import { Sandbox } from "./screens/Sandbox";
+import { SettingsScreen } from "./screens/Settings";
+import { SettingsProvider, useSettings } from "./settings";
+import { GameProvider, useGame } from "./store";
+import { UiProvider, useUi } from "./ui";
+import { useState } from "react";
 
-function Router() {
+function Screen() {
   const { state, data, error } = useGame();
-  const [overlay, setOverlay] = useState<"glossary" | "sandbox" | null>(null);
-  if (error) return <p className="bad">Could not load the campaign data: {error}. Run <code>python -m qta6.cli export --profile standard</code>.</p>;
-  if (!data) return <p>Loading campaign data…</p>;
-  if (overlay === "glossary") return <Glossary onClose={() => setOverlay(null)} />;
-  if (overlay === "sandbox") return <Sandbox onClose={() => setOverlay(null)} />;
+  if (error) return <div className="notice" role="alert">Could not load the campaign data: {error}. Run <code>python -m qta6.cli export --profile standard</code> (or reload the page).</div>;
+  if (!data) return <p role="status">Loading campaign data…</p>;
   switch (state) {
-    case "main_menu": return <MainMenu onGlossary={() => setOverlay("glossary")} onSandbox={() => setOverlay("sandbox")} />;
-    case "district_selection": return <DistrictMap />;
+    case "main_menu": return <MainMenu />;
+    case "district_selection": return <MapScreen />;
     case "mission_briefing": return <Briefing />;
-    case "strategy_configuration": case "resource_allocation": case "experiment_execution": case "scientific_analysis": case "replay":
-      return <MissionScreen />;
-    case "mission_success": return <EndScreen success />;
-    case "mission_failure": return <EndScreen success={false} />;
+    case "strategy_configuration": case "resource_allocation": case "experiment_execution": case "scientific_analysis": case "replay": return <MissionScreen />;
+    case "mission_success": return <ResultScreen success />;
+    case "mission_failure": return <ResultScreen success={false} />;
     case "campaign_complete": return <CampaignComplete />;
   }
 }
 
-export default function App({ initialData }: { initialData?: Json }) {
+function Shell() {
+  const { state, go, history, leaveMission } = useGame();
+  const { overlay, open, close, introActive, finishIntro } = useUi();
+  const { settings, update, sfx, unlockAudio } = useSettings();
+  const [leave, setLeave] = useState(false);
+  const inMission = ["strategy_configuration", "scientific_analysis", "resource_allocation", "experiment_execution", "replay"].includes(state);
+  const toMenu = () => { leaveMission(); go("main_menu"); };
+  const brand = () => (inMission && history.length > 0 ? setLeave(true) : toMenu());
+  const mute = async () => { const muted = !settings.muted; update({ muted }); if (!muted) { await unlockAudio(); window.setTimeout(() => sfx("confirm"), 40); } };
   return (
-    <GameProvider initialData={initialData}>
-      <header className="top"><span className="logo">QTA6</span><span className="muted">quantum error detection · mitigation · correction</span></header>
-      <main><Router /></main>
-      <footer className="muted">Simulation-backed prototype. Noise profiles are synthetic game scenarios, not device calibrations. Interface is a placeholder.</footer>
-    </GameProvider>
+    <div className="app">
+      <a className="skip-link" href="#main">Skip to content</a>
+      {introActive && <Intro onDone={finishIntro} />}
+      <header className="topbar">
+        <button className="brand" onClick={brand} aria-label="QTA6 — main menu">QTA6</button>
+        <span className="tagline">quantum error detection · mitigation · correction</span>
+        <span className="spacer" />
+        <button className="small ghost" onClick={() => (state === "district_selection" ? go("main_menu") : go("district_selection"))} hidden={inMission} aria-label="Toggle map"><Icon name="map" /> {state === "district_selection" ? "Menu" : "Map"}</button>
+        <button className="small ghost" onClick={() => open("codex")} aria-label="Open the Quantum Codex"><Icon name="book" /></button>
+        <button className="small ghost" onClick={() => open("settings")} aria-label="Open settings"><Icon name="settings" /></button>
+        <button className="small ghost" role="switch" aria-checked={!settings.muted} onClick={() => void mute()} aria-label="Sound effects and music"><Icon name={settings.muted ? "mute" : "volume"} /></button>
+      </header>
+      <main id="main" className={state === "main_menu" && !overlay ? "" : "page"} tabIndex={-1}>
+        {/* the underlying screen stays mounted while an overlay is open, so no in-progress mission state is lost */}
+        <div hidden={!!overlay}><Screen /></div>
+        {overlay === "codex" && <Codex onClose={close} />}
+        {overlay === "sandbox" && <Sandbox onClose={close} />}
+        {overlay === "settings" && <SettingsScreen onClose={close} />}
+        {overlay === "credits" && <Credits onClose={close} />}
+      </main>
+      <footer className="center muted small" style={{ padding: 12 }}>
+        QTA6 is a work of science fiction. Noise models are synthetic; campaign results are generated by validated quantum simulations and replayed from precomputed data (live only in the sandbox). Artwork and audio are original and generated by code.
+      </footer>
+      {leave && <ConfirmDialog danger title="Leave this mission?" confirm="Leave and go to menu" onCancel={() => setLeave(false)} onConfirm={() => { setLeave(false); toMenu(); }} body={<p>Your runs in this attempt will be lost.</p>} />}
+    </div>
+  );
+}
+
+export default function App({ initialData, skipIntro }: { initialData?: Json; skipIntro?: boolean }) {
+  return (
+    <SettingsProvider>
+      <UiProvider skipIntro={skipIntro}>
+        <GameProvider initialData={initialData}><Shell /></GameProvider>
+      </UiProvider>
+    </SettingsProvider>
   );
 }
