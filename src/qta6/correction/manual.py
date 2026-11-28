@@ -214,6 +214,21 @@ def code_capacity_graph(distance: int, p: float) -> tuple[dict[int, list[float]]
     return coords, edges, {q: inc["data_coords"][q] for q in inc["data_coords"]}
 
 
+def code_capacity_edge_qubits(distance: int) -> dict[int, dict]:
+    """Which data qubit (and where) is behind each edge of :func:`code_capacity_graph` (same iteration order)."""
+    from .surface import data_error_incidence
+
+    inc = data_error_incidence(distance)
+    out: dict[int, dict] = {}
+    k = 0
+    for q in sorted(inc["detectors"]):
+        if not inc["detectors"][q]:
+            continue
+        out[k] = {"qubit": int(q), "xy": [float(c) for c in inc["data_coords"][q]]}
+        k += 1
+    return out
+
+
 def sample_code_capacity_instance(distance: int, p: float, seed: int, *, require_events: bool = True,
                                   want_mwpm_failure: bool | None = None, need_boundary: bool = False,
                                   max_tries: int = 100000) -> DecodingInstance:

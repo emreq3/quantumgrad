@@ -22,7 +22,7 @@ from .. import DATA_SCHEMA_VERSION, __version__
 from ..circuits.clifford import PayloadSpec, random_clifford_payload
 from ..core.provenance import git_revision, software_versions
 from ..core.rng import stream
-from ..correction.manual import (class_probabilities, enumerate_corrections, evaluate_correction,
+from ..correction.manual import (class_probabilities, code_capacity_edge_qubits, enumerate_corrections, evaluate_correction,
                                  sample_code_capacity_instance, sample_instance)
 from ..correction.repetition import run_with_recovery, run_single_error
 from ..correction.surface import build_experiment, geometry, run_memory
@@ -473,7 +473,9 @@ def build_decoding_mission(m: dict, size: dict) -> tuple[dict, dict, dict]:
             inst = sample_instance(cfg["d"], cfg["rounds"], cfg["p"], "phenom", ic["seed"])
         pub = _instance_public(inst, cfg["mode"])
         pub["id"] = f"i{i + 1}"
-        pub["data_coords"] = None
+        # presentation only: where the data qubit behind each matching-graph edge sits on the lattice (None for graphs
+        # whose edges are not single data qubits, i.e. the phenomenological model)
+        pub["data_coords"] = ({str(k): v["xy"] for k, v in code_capacity_edge_qubits(cfg["d"]).items()} if cfg["graph"] == "code_capacity" else None)
         insts_ui.append(pub)
         ref = {"id": pub["id"], "hidden_logical_flip": inst.hidden_logical_flip, "mwpm_edges": inst.mwpm_edges,
                "mwpm_logical": inst.mwpm_logical, "mwpm_cost": sum(e.weight for e in inst.edges if e.id in inst.mwpm_edges)}

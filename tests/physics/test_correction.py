@@ -147,3 +147,17 @@ def test_stabilizer_types_in_geometry_match_first_round_detectors(d):
     x = {(q["x"], q["y"]) for q in g["measure_qubits"] if q["type"] == "X"}
     assert z == first and not (z & x) and len(z) == len(x) == (d * d - 1) // 2
     assert all(q["type"] in ("X", "Z") for q in g["measure_qubits"])
+
+
+@pytest.mark.parametrize("d", [3, 5])
+def test_code_capacity_edges_map_to_the_data_qubit_between_their_detectors(d):
+    """Presentation data: the qubit behind an internal edge sits at the midpoint of the two Z detectors it flips."""
+    from qta6.correction.manual import code_capacity_edge_qubits, code_capacity_graph
+    coords, edges, _ = code_capacity_graph(d, 0.1)
+    q = code_capacity_edge_qubits(d)
+    assert len(q) == len(edges) and sorted(q) == [e.id for e in edges]
+    assert len({tuple(v["xy"]) for v in q.values()}) == len(q)  # every edge has its own location (no overlapping click targets)
+    for e in edges:
+        if e.v is not None:
+            a, b = coords[e.u], coords[e.v]
+            assert q[e.id]["xy"] == [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
